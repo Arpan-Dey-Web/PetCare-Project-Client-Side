@@ -5,6 +5,7 @@ import Register from "../SharedComponent/Register";
 import Dashboard from "../Layout/Dashboard";
 import AddPet from "../DashboardComponent/AddPet";
 import PrivateRoute from "./PrivateRoute";
+import MyAddedPets from "../DashboardComponent/MyAddedPets";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
             <AddPet />
           </PrivateRoute>
         ),
+      },
+      {
+        path: "my-added-pets",
+        Component:MyAddedPets,
       },
     ],
   },

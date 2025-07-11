@@ -5,6 +5,8 @@ import { AuthContext } from "../context/AuthContext";
 import { useContext } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import Swal from "sweetalert2";
+
+import useAxiosPublic from "../hooks/useAxiosPublic";
 // createUser: (email, password) => {…}
 // loading
 // :
@@ -39,10 +41,12 @@ const Register = () => {
   const { createUser, updataUserProfile, logInWithGoogle, logInWithGithub } =
     useContext(AuthContext);
 
+  const axiosPublic = useAxiosPublic();
+
   const [error, setError] = useState("");
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
   const imgbbAPI = import.meta.env.VITE_imgbb_api_key;
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -87,21 +91,19 @@ const Register = () => {
       const imageUrl = data.data.url;
 
       // ✅ Final User Info
-      const userInfo = { name, email, password, imageUrl };
-      console.log("User Info Submitted:", userInfo);
+      const userInfo = { name, email, password, image: imageUrl, role: "user" };
 
       createUser(email, password)
         .then((res) => {
-
+          updataUserProfile({ displayName: name, photoURL: imageUrl });
           Swal.fire({
-            title: "Login Sucessfull",
+            title: "Register Account Sucessfull",
             icon: "success",
             draggable: true,
           });
-          updataUserProfile({ displayName: name, photoURL: imageUrl });
-
         })
-        .then((res) => {
+        .then(async (res) => {
+          const response = await axiosPublic.post("/register", userInfo);
           toast.success(" Profile Updated Sucessfully");
           navigate("/");
         })
@@ -112,35 +114,41 @@ const Register = () => {
             text: "Profile Update  Unsucessfull",
           });
         });
-
-      // Optional: redirect or send to backend here
-      // navigate("/dashboard");
     } catch (err) {
       console.log(err);
       setError("Image upload failed. Please try again.");
     }
   };
-
   const handleGithubLogin = () => {
     console.log("login with github");
     logInWithGithub()
       .then((res) => {
         console.log(res);
-        navigate ('/')
+        navigate("/");
       })
       .catch((err) => {
         console.log(err);
       });
   };
   const handleGoogleLogin = () => {
-    console.log("login with google");
-    logInWithGoogle().then((res) => {
-      console.log(res);
-      navigate("/");
-    }).catch(err => {
-      console.log(err);
-    })
+    logInWithGoogle()
+      .then(async (res) => {
+        const userInfo = {
+          name: res?.user?.displayName,
+          email: res?.user?.email,
+          image: res?.user?.photoURL,
+          role: "user",
+        };
+        const response = await axiosPublic.post("/register", userInfo);
+        // console.log(response);
+        toast.success(" Profile Updated Sucessfully");
+        navigate("/");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
+
   return (
     <motion.div
       key="register"
@@ -302,9 +310,7 @@ const Register = () => {
             </button>
           </div>
         </div>
-        <Toaster
-         position="top-right"
-         reverseOrder={false}/>
+        <Toaster position="top-right" reverseOrder={false} />
       </div>
     </motion.div>
   );

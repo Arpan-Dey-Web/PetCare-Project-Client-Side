@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { NavLink, Outlet } from "react-router"; // ✅ Fixed react-router import
 import Navbar from "../SharedComponent/Nabbar";
-import { NavLink, Outlet } from "react-router"; // ✅ fixed router import
 import {
   FaPaw,
   FaPlusCircle,
@@ -10,7 +10,6 @@ import {
   FaDonate,
   FaHeart,
 } from "react-icons/fa";
-
 
 const sidebarLinks = [
   { to: "add-pet", icon: <FaPlusCircle />, label: "Add Pet" },
@@ -36,44 +35,41 @@ const sidebarLinks = [
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // Auto-collapse sidebar on small screens
+  // Auto collapse on small screens
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setSidebarOpen(false);
-      } else {
-        setSidebarOpen(true);
-      }
+      if (window.innerWidth < 768) setSidebarOpen(false);
+      else setSidebarOpen(true);
     };
-
-    handleResize(); // Run on mount
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col w-11/12 mx-auto max-w-7xl my-4">
+    <div className="h-screen flex flex-col max-w-7xl mx-auto">
       {/* Top Navbar */}
-      <Navbar />
+      <div className="sticky top-0 z-50 shadow bg-white">
+        <Navbar />
+      </div>
 
-      {/* Main Layout */}
-      <div className="flex flex-1 max-w-7xl mx-auto w-11/12 my-6 gap-4">
+      {/* Layout Wrapper */}
+      <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <aside
           className={`${
-            sidebarOpen ? "w-64" : "w-20"
-          } bg-white shadow-xl rounded-xl transition-all duration-300 flex flex-col overflow-hidden border border-gray-200`}
+            sidebarOpen ? "w-64" : "w-16"
+          } sticky top-[64px] h-[calc(100vh-64px)] bg-white shadow-md transition-all duration-300  z-40`}
         >
-          {/* Sidebar Header (optional logo or title) */}
           <div className="flex items-center justify-between px-4 pt-4">
             {sidebarOpen && (
-              <h2 className="text-lg font-bold text-blue-600 tracking-wide">
-                PetAdopt
+              <h2 className="text-xl font-bold text-blue-600 tracking-wide">
+                Dashboard
               </h2>
             )}
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 rounded-full bg-gray-200 hover:bg-blue-500 hover:text-white transition-colors shadow flex items-center justify-center ml-auto"
+              className="p-2 rounded-full bg-gray-200 hover:bg-blue-500 hover:text-white transition-colors shadow ml-auto"
               aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
             >
               {sidebarOpen ? (
@@ -84,8 +80,7 @@ const Dashboard = () => {
             </button>
           </div>
 
-          {/* Navigation Links */}
-          <nav className="flex flex-col mt-6 space-y-1 px-2">
+          <nav className="mt-6 px-2 space-y-1">
             {sidebarLinks.map(({ to, icon, label }) => (
               <NavLink
                 key={to}
@@ -93,12 +88,12 @@ const Dashboard = () => {
                 end
                 className={({ isActive }) =>
                   `group flex items-center gap-4 px-4 py-2 rounded-lg text-gray-700 font-medium transition-all duration-300
-          hover:bg-blue-100 hover:text-blue-700 ${
-            isActive ? "bg-blue-200 text-blue-800 font-semibold" : ""
-          }`
+                    hover:bg-blue-100 hover:text-blue-700 ${
+                      isActive ? "bg-blue-200 text-blue-800 font-semibold" : ""
+                    }`
                 }
               >
-                <span className="text-xl text-blue-500 transition-transform duration-300 group-hover:scale-110">
+                <span className="text-xl text-blue-500 group-hover:scale-110 transition-transform">
                   {icon}
                 </span>
                 {sidebarOpen && (
@@ -111,9 +106,11 @@ const Dashboard = () => {
           </nav>
         </aside>
 
-        {/* Content Area */}
-        <main className="flex-1 bg-white rounded-md shadow-md p-4 md:p-6 overflow-auto">
-          <Outlet />
+        {/* Scrollable Main Content */}
+        <main className="no-scrollbar flex-1 overflow-y-auto scrollbar-hide scroll-smooth p-4 md:p-6">
+          <div className="max-w-6xl mx-auto">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

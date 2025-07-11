@@ -1,3 +1,29 @@
 @import "tailwindcss";
 
-
+/* Hide scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  /* Add this in your global CSS or Tailwind file for basic Tiptap styling */
+.tiptap {
+    min-height: 160px;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    background: white;
+    font-family: inherit;
+    font-size: 1rem;
+  }
+  /* tiptap.css */
+.ProseMirror {
+    outline: none;
+    min-height: 150px;
+    font-size: 1rem;
+    padding: 0.5rem;
+    line-height: 1.6;
+  }
+  
