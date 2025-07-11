@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from "react-router";
 import { motion } from "framer-motion"; // 🌀 Import motion
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import { AuthContext } from "../context/AuthContext";
+import Swal from "sweetalert2";
 
 const Login = () => {
   const { signInuser, logInWithGoogle, logInWithGithub } =
@@ -50,22 +51,40 @@ const Login = () => {
     console.log("login with github");
     logInWithGithub()
       .then((res) => {
-        console.log(res);
+        Swal.fire({
+          title: "Logged In!",
+          icon: "success",
+          draggable: true,
+        });
         navigate("/");
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Please Enter Valid Email Password!",
+        });
       });
   };
   const handleGoogleLogin = () => {
-    console.log("login with google");
+    // console.log("login with google");
     logInWithGoogle()
       .then((res) => {
-        // console.log(res);
+        Swal.fire({
+          title: "Logged In!",
+          icon: "success",
+          draggable: true,
+        });
         navigate("/");
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Please Enter Valid Email Password!",
+        });
       });
   };
 
@@ -211,6 +230,7 @@ const Login = () => {
           </div>
         </div>
       </div>
+      <Toaster position="top-right" reverseOrder={false} />
     </motion.div>
   );
 };

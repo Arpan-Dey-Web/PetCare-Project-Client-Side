@@ -6,6 +6,7 @@ import axios from "axios";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import toast, { Toaster } from "react-hot-toast";
+import useAxiosSecure from "../hooks/useAxiosSecure";
 
 const imgbbAPI = import.meta.env.VITE_imgbb_api_key;
 
@@ -28,7 +29,7 @@ const validationSchema = Yup.object({
 
 const AddPet = () => {
   const [uploading, setUploading] = useState(false);
-
+  const axiosSecure = useAxiosSecure();
   const editor = useEditor({
     extensions: [StarterKit],
     content: "",
@@ -43,8 +44,6 @@ const AddPet = () => {
     try {
       setUploading(true);
 
-        
-        
       const handleImageUpload = async (file) => {
         const formData = new FormData();
         formData.append("image", file);
@@ -56,7 +55,7 @@ const AddPet = () => {
 
         return response.data.data.url;
       };
-    
+
       const imageUrl = await handleImageUpload(values.image);
 
       const newPet = {
@@ -69,16 +68,20 @@ const AddPet = () => {
         image: imageUrl,
         adopted: false,
         createdAt: new Date().toISOString(),
-        };
-        console.log(newPet);
+      };
+      console.log(newPet);
 
-    //   await axios.post("https://your-backend-api.com/pets", newPet);
+      const res = await axiosSecure.post("/pet", newPet);
+      console.log(res);
 
-    //   toast.success("Pet added successfully!");
-    //   resetForm();
-    //   editor?.commands.setContent("");
+
+
+
+      toast.success("Pet added successfully!");
+      resetForm();
+      editor?.commands.setContent("");
     } catch (err) {
-      console.error(err);
+      console.log(err);
       setFieldError("submit", "Failed to add pet. Please try again.");
     } finally {
       setUploading(false);
@@ -86,7 +89,6 @@ const AddPet = () => {
     }
   };
 
- 
   return (
     <div className="w-11/12 max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold text-blue-600 mb-6">Add a New Pet</h2>
