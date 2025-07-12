@@ -4,6 +4,7 @@ import { motion } from "framer-motion"; // 🌀 Import motion
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import { AuthContext } from "../context/AuthContext";
 import Swal from "sweetalert2";
+import { Toaster } from "react-hot-toast";
 
 const Login = () => {
   const { signInuser, logInWithGoogle, logInWithGithub } =
@@ -96,7 +97,7 @@ const Login = () => {
       exit={{ opacity: 0, x: 40 }}
       transition={{ duration: 0.4, ease: "easeInOut" }}
     >
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <div className="min-h-screen flex items-center justify-center  px-4">
         <div className="w-full max-w-xl bg-white shadow-lg rounded-lg p-8">
           <div className="grid grid-cols-2 gap-4 mb-8">
             <NavLink

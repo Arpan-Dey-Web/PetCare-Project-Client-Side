@@ -2,32 +2,37 @@ import { useEffect, useState } from "react";
 import { ThemeContext } from "./ThemeContext";
 
 const ThemeProvider = ({ children }) => {
-  const [mode, setMode] = useState("dark");
-  const [theme,setTheme] = useState("")
+  const [mode, setMode] = useState(() => {
+    return localStorage.getItem("theme") || "light";
+  });
+
   useEffect(() => {
-    const html = document.querySelector("html");
+    const html = document.documentElement;
     html.dataset.theme = mode;
+
+    if (mode === "dark") {
+      html.classList.add("dark");
+    } else {
+      html.classList.remove("dark");
+    }
+
+    localStorage.setItem("theme", mode);
   }, [mode]);
+
   const changeTheme = () => {
-    setMode((prevTheme) => {
-      if (prevTheme == "dark") {
-        setTheme('dark')
-        return "light";
-      } else {
-        setTheme("light");
-        return "dark";
-      }
-    });
-    
+    setMode((prevMode) => (prevMode === "dark" ? "light" : "dark"));
   };
 
-
-  const themecontext = {
-    theme,
-    setTheme,
+  const themeContext = {
+    theme: mode,
     changeTheme,
   };
-  return <ThemeContext value={themecontext}>{children}</ThemeContext>;
+
+  return (
+    <ThemeContext.Provider value={themeContext}>
+      {children}
+    </ThemeContext.Provider>
+  );
 };
 
 export default ThemeProvider;

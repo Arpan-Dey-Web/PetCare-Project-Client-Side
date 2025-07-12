@@ -2,8 +2,11 @@ import React, { useState, useContext } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 
 import { AuthContext } from "../context/AuthContext";
-import { NavLink } from "react-router";
+import { Link, NavLink } from "react-router";
 import Swal from "sweetalert2";
+import Logo from "./Logo";
+import ThemeToggle from "./ThemeToggle";
+
 
 const Navbar = () => {
   const { user, signOutUser } = useContext(AuthContext);
@@ -35,33 +38,36 @@ const Navbar = () => {
 
   const navLinks = (
     <>
-      <NavLink
-        to="/"
-        className="text-gray-700 hover:text-blue-600 font-medium"
-        onClick={() => setIsOpen(false)}
-      >
-        Home
+      <NavLink to="/" className="rounded-2xl" onClick={() => setIsOpen(false)}>
+        <button className="text-gray-700  font-medium p-2 ">
+          Home
+        </button>
       </NavLink>
       <NavLink
         to="/pets"
-        className="text-gray-700 hover:text-blue-600 font-medium"
+        className="rounded-2xl"
         onClick={() => setIsOpen(false)}
       >
-        Pets
+        <button className="text-gray-700  font-medium p-2 ">
+          {" "}
+          Pets
+        </button>
       </NavLink>
       <NavLink
         to="/donations"
-        className="text-gray-700 hover:text-blue-600 font-medium"
+        className="rounded-2xl"
         onClick={() => setIsOpen(false)}
       >
-        Donations
+        <button className="text-gray-700 font-medium p-2 ">
+          Donations
+        </button>
       </NavLink>
     </>
   );
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+    <nav className="bg-white dark:bg-dark  shadow-md sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
         {/* Left Section: Hamburger + Logo */}
         <div className="flex items-center gap-4">
           <button
@@ -71,16 +77,20 @@ const Navbar = () => {
           >
             {isOpen ? <FiX /> : <FiMenu />}
           </button>
-          <NavLink to="/" className="text-xl font-bold text-blue-700">
-            🐾 PetAdopt
-          </NavLink>
+          <Link to="/" className="">
+            <div className="">
+              <Logo />
+            </div>
+          </Link>
         </div>
 
         {/* Center Section: NavLinks (only md+) */}
         <div className="hidden md:flex gap-8">{navLinks}</div>
 
         {/* Right Section: User or Login Button */}
-        <div className="relative">
+
+        <div className="flex items-center gap-4 relative">
+          <ThemeToggle />
           {user ? (
             <>
               {/* Profile Image */}
@@ -98,7 +108,7 @@ const Navbar = () => {
 
               {/* Dropdown Menu */}
               {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                <div className="absolute right-0 top-12 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50">
                   <NavLink
                     to="/dashboard"
                     onClick={() => setDropdownOpen(false)}

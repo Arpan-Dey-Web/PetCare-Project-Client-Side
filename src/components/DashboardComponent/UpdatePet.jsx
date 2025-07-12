@@ -1,4 +1,5 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import Select from "react-select";
 import * as Yup from "yup";
@@ -8,6 +9,7 @@ import StarterKit from "@tiptap/starter-kit";
 import toast, { Toaster } from "react-hot-toast";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import { AuthContext } from "../context/AuthContext";
+import Loading from "../SharedComponent/Loading";
 
 const imgbbAPI = import.meta.env.VITE_imgbb_api_key;
 
@@ -25,19 +27,55 @@ const validationSchema = Yup.object({
   category: Yup.object().required("Pet category is required"),
   location: Yup.string().required("Location is required"),
   shortDescription: Yup.string().required("Short description is required"),
-  image: Yup.mixed().required("Image is required"),
+  // image optional on update
 });
 
-const AddPet = () => {
+const UpdatePet = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const { user } = useContext(AuthContext);
-  const [uploading, setUploading] = useState(false);
   const axiosSecure = useAxiosSecure();
+
+  const [initialValues, setInitialValues] = useState(null);
+  const [uploading, setUploading] = useState(false);
+
   const editor = useEditor({
     extensions: [StarterKit],
     content: "",
   });
 
-  const handleAddPet = async (
+  useEffect(() => {
+    const fetchPet = async () => {
+      try {
+        const res = await axiosSecure.get(`/pet/${id}`);
+        const pet = res.data;
+
+        setInitialValues({
+          name: pet.name,
+          age: pet.age,
+          category: categoryOptions.find((opt) => opt.value === pet.category),
+          location: pet.location,
+          shortDescription: pet.shortDescription,
+          image: null,
+        });
+
+        if (editor) editor.commands.setContent(pet.longDescription || "");
+      } catch (error) {
+        console.error("Failed to fetch pet:", error);
+        toast.error("Failed to load pet data.");
+      }
+    };
+    if (id) fetchPet();
+  }, [id, axiosSecure, editor]);
+
+  if (!initialValues)
+    return (
+      <div>
+        <Loading />
+      </div>
+    );
+
+  const handleUpdatePet = async (
     values,
     resetForm,
     setFieldError,
@@ -46,21 +84,19 @@ const AddPet = () => {
     try {
       setUploading(true);
 
-      const handleImageUpload = async (file) => {
-        const formData = new FormData();
-        formData.append("image", file);
+      let imageUrl = initialValues.image; // keep old image by default
 
+      if (values.image) {
+        const formData = new FormData();
+        formData.append("image", values.image);
         const response = await axios.post(
           `https://api.imgbb.com/1/upload?key=${imgbbAPI}`,
           formData
         );
+        imageUrl = response.data.data.url;
+      }
 
-        return response.data.data.url;
-      };
-
-      const imageUrl = await handleImageUpload(values.image);
-
-      const newPet = {
+      const updatedPet = {
         name: values.name,
         age: values.age,
         category: values.category.value,
@@ -68,21 +104,15 @@ const AddPet = () => {
         shortDescription: values.shortDescription,
         longDescription: editor?.getText(),
         image: imageUrl,
-        adopted: false,
-        owner: user?.email,
-        createdAt: new Date().toISOString(),
       };
-      console.log(newPet);
 
-      const res = await axiosSecure.post("/pet", newPet);
-      console.log(res);
+      await axiosSecure.patch(`/pets/${id}`, updatedPet);
 
-      toast.success("Pet added successfully!");
-      resetForm();
-      editor?.commands.setContent("");
+      toast.success("Pet updated successfully!");
+      navigate("/dashboard/my-pets");
     } catch (err) {
-      console.log(err);
-      setFieldError("submit", "Failed to add pet. Please try again.");
+      console.error(err);
+      setFieldError("submit", "Failed to update pet. Please try again.");
     } finally {
       setUploading(false);
       setSubmitting(false);
@@ -91,28 +121,27 @@ const AddPet = () => {
 
   return (
     <div className="w-11/12 max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-blue-600 mb-6">Add a New Pet</h2>
+      <h2 className="text-2xl font-bold text-blue-600 mb-6">Update Pet</h2>
 
       <Formik
-        initialValues={{
-          name: "",
-          age: "",
-          category: null,
-          location: "",
-          shortDescription: "",
-          image: null,
-        }}
+        initialValues={initialValues}
         validationSchema={validationSchema}
-        onSubmit={(values, { resetForm, setFieldError, setSubmitting }) =>
-          handleAddPet(values, resetForm, setFieldError, setSubmitting)
+        onSubmit={(values, helpers) =>
+          handleUpdatePet(
+            values,
+            helpers.resetForm,
+            helpers.setFieldError,
+            helpers.setSubmitting
+          )
         }
+        enableReinitialize
       >
         {({ setFieldValue, isSubmitting, values }) => (
           <Form className="space-y-4">
             {/* Image Upload */}
             <div>
               <label className="block font-semibold mb-2 text-gray-700">
-                Pet Image <span className="text-red-500">*</span>
+                Pet Image (Upload new to replace)
               </label>
               <input
                 type="file"
@@ -122,7 +151,7 @@ const AddPet = () => {
                 }
                 className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
-              {values.image && (
+              {values.image && typeof values.image !== "string" && (
                 <p className="text-sm text-gray-500 mt-1">
                   Selected:{" "}
                   <span className="font-medium">{values.image.name}</span>
@@ -223,7 +252,7 @@ const AddPet = () => {
             {/* Long Description */}
             <div>
               <label className="block font-semibold mb-2 text-gray-700">
-                Long Description <span className="text-red-500">*</span>
+                Long Description
               </label>
               <div className="border border-gray-300 rounded-md bg-white min-h-[150px] p-2">
                 <EditorContent editor={editor} />
@@ -267,7 +296,7 @@ const AddPet = () => {
                     <span>Uploading Image...</span>
                   </>
                 ) : (
-                  <span>Add Pet</span>
+                  <span>Update Pet</span>
                 )}
               </button>
               <ErrorMessage
@@ -285,4 +314,4 @@ const AddPet = () => {
   );
 };
 
-export default AddPet;
+export default UpdatePet;

@@ -10,6 +10,8 @@ import Pets from "../Pages/Pets";
 import Home from "../Pages/Home";
 import RootLayout from "../Layout/RootLayout";
 import PetDetails from "../SharedComponent/PetDetails";
+import AdoptionRequests from "../DashboardComponent/AdoptionRequests";
+import UpdatePet from "../DashboardComponent/UpdatePet";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -34,7 +36,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/pets/:id",
-        Component:PetDetails
+        Component: PetDetails,
       },
     ],
   },
@@ -57,6 +59,18 @@ const router = createBrowserRouter([
             <MyAddedPets />
           </PrivateRoute>
         ),
+      },
+      {
+        path: "adoption-requests",
+        element: (
+          <PrivateRoute>
+            <AdoptionRequests />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "update-pet/:id",
+        Component:UpdatePet
       },
     ],
   },

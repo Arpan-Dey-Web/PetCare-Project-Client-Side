@@ -1,11 +1,25 @@
-import React from 'react';
+import React from "react";
 
 const Logo = () => {
-    return (
-        <div>
-            <h1>Pet Adoption</h1>
-        </div>
-    );
+  return (
+    <div className="flex items-center gap-2">
+      <img
+        className="w-10 rounded-xl"
+        src="https://i.ibb.co/d4FJcpGW/Paw-s-Home-Logo-with-Vibrant-Compassionate-Design.png"
+        alt="Paw's Home Logo"
+      />
+      <h1
+        className="
+          font-bold 
+          text-primary 
+          dark:text-accent 
+          transition-colors duration-300
+        "
+      >
+        PawHome
+      </h1>
+    </div>
+  );
 };
 
 export default Logo;

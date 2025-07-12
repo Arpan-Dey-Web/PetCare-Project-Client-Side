@@ -1,6 +1,92 @@
 @import "tailwindcss";
 
 
+.active{
+  background-color:#c52482;
+
+ 
+}
+/* App.css or index.css */
+.bg-primary {
+  background-color: #E63946; /* Crimson Rose */
+}
+
+.bg-secondary {
+  background-color: #1D3557; /* Deep Navy */
+}
+
+.bg-accent {
+  background-color: #F1FA8C; /* Sun Glow */
+}
+
+.text-primary {
+  color: #E63946;
+}
+
+.text-secondary {
+  color: #1D3557;
+}
+
+.text-accent {
+  color: #F1FA8C;
+}
+
+.text-light {
+  color: #1E293B;
+}
+
+.text-dark {
+  color: #F1F5F9;
+}
+
+.bg-light {
+  background-color: #F7F9FC;
+}
+
+.bg-dark {
+  background-color: #0F172A;
+}
+
+.border-primary {
+  border-color: #E63946;
+}
+
+.btn-primary {
+  background-color: #E63946;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #C53030;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* Hide scrollbar */
 .no-scrollbar::-webkit-scrollbar {
