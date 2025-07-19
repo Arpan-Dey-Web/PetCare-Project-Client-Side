@@ -12,16 +12,37 @@ import RootLayout from "../Layout/RootLayout";
 import PetDetails from "../SharedComponent/PetDetails";
 import AdoptionRequests from "../DashboardComponent/AdoptionRequests";
 import UpdatePet from "../DashboardComponent/UpdatePet";
+import CreateDonationCampaign from "../DashboardComponent/CreateDonationCampaign";
+import MyDonationCampaigns from "../DashboardComponent/MyDonationCampaigns";
+import ErrorPage from "../Pages/ErrorPage";
+import EditMyDonation from "../DashboardComponent/EditMyDonation";
+import DonationCampaigns from "../Pages/DonationCampaigns";
+import DonationDetailsPage from "../Pages/DonationDetailsPage";
+import AdminRoute from "./AdminRoute";
+import Users from "../DashboardComponent/Users";
+import AllPet from "../DashboardComponent/AllPet";
+import AlldonationCampaign from "../DashboardComponent/AlldonationCampaign";
+import MyDonations from "../DashboardComponent/MyDonations";
+import DashboardHomePage from "../DashboardComponent/DashboardHomePage";
+
 const router = createBrowserRouter([
   {
     path: "/",
     Component: RootLayout,
+    errorElement: <ErrorPage />,
     children: [
       {
         index: true,
         Component: Home,
       },
-
+      {
+        path: "/donations",
+        Component: DonationCampaigns,
+      },
+      {
+        path: "/donations-details/:id",
+        Component: DonationDetailsPage,
+      },
       {
         path: "/login",
         Component: Login,
@@ -42,8 +63,17 @@ const router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    Component: Dashboard,
+    errorElement: <ErrorPage />,
+    element: (
+      <PrivateRoute>
+        <Dashboard></Dashboard>
+      </PrivateRoute>
+    ),
     children: [
+      {
+        index: true,
+        element: <DashboardHomePage></DashboardHomePage>,
+      },
       {
         path: "add-pet",
         element: (
@@ -70,7 +100,67 @@ const router = createBrowserRouter([
       },
       {
         path: "update-pet/:id",
-        Component:UpdatePet
+        element: (
+          <PrivateRoute>
+            <UpdatePet></UpdatePet>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "create-donation-campaign",
+        element: (
+          <PrivateRoute>
+            <CreateDonationCampaign></CreateDonationCampaign>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "my-donation-campaigns",
+        element: (
+          <PrivateRoute>
+            <MyDonationCampaigns></MyDonationCampaigns>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "edit-donation/:id",
+        element: (
+          <PrivateRoute>
+            <EditMyDonation></EditMyDonation>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "my-donations",
+        element: (
+          <PrivateRoute>
+            <MyDonations></MyDonations>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "admin/allusers",
+        element: (
+          <AdminRoute>
+            <Users></Users>
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "admin/allpets",
+        element: (
+          <AdminRoute>
+            <AllPet></AllPet>
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "admin/alldonation",
+        element: (
+          <AdminRoute>
+            <AlldonationCampaign></AlldonationCampaign>
+          </AdminRoute>
+        ),
       },
     ],
   },

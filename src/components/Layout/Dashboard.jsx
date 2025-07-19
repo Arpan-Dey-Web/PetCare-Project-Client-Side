@@ -9,31 +9,15 @@ import {
   FaHandHoldingHeart,
   FaDonate,
   FaHeart,
+  FaUsers,
+  FaDog,
 } from "react-icons/fa";
+import useRole from "../hooks/useRole";
 
-const sidebarLinks = [
-  { to: "add-pet", icon: <FaPlusCircle />, label: "Add Pet" },
-  { to: "my-added-pets", icon: <FaPaw />, label: "My Added Pets" },
-  {
-    to: "adoption-requests",
-    icon: <FaClipboardList />,
-    label: "Adoption Request",
-  },
-  {
-    to: "create-donation-campaign",
-    icon: <FaDonate />,
-    label: "Create Donation Campaign",
-  },
-  {
-    to: "my-donation-campaigns",
-    icon: <FaHandHoldingHeart />,
-    label: "My Donation Campaigns",
-  },
-  { to: "my-donations", icon: <FaHeart />, label: "My Donations" },
-];
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [role] = useRole();
 
   // Auto collapse on small screens
   useEffect(() => {
@@ -45,6 +29,44 @@ const Dashboard = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+
+  const sidebarLinks = [
+    { to: "add-pet", icon: <FaPlusCircle />, label: "Add Pet" },
+    { to: "my-added-pets", icon: <FaPaw />, label: "My Added Pets" },
+    {
+      to: "adoption-requests",
+      icon: <FaClipboardList />,
+      label: "Adoption Request",
+    },
+    {
+      to: "create-donation-campaign",
+      icon: <FaDonate />,
+      label: "Create Donation Campaign",
+    },
+    {
+      to: "my-donation-campaigns",
+      icon: <FaHandHoldingHeart />,
+      label: "My Donation Campaigns",
+    },
+    { to: "my-donations", icon: <FaHeart />, label: "My Donations" },
+    // Admin-only routes (conditionally spread)
+    ...(role === "admin"
+      ? [
+          {
+            to: "admin/allusers",
+            icon: <FaUsers />,
+            label: "Active Users (Admin)",
+          },
+          { to: "admin/allpets", icon: <FaDog />, label: "All Pets (Admin)" },
+          {
+            to: "admin/alldonation",
+            icon: <FaDonate />,
+            label: "All Donations (Admin)",
+          },
+        ]
+      : []),
+  ];
 
   return (
     <div className="h-screen flex flex-col max-w-7xl mx-auto">
@@ -107,7 +129,7 @@ const Dashboard = () => {
         </aside>
 
         {/* Scrollable Main Content */}
-        <main className="no-scrollbar flex-1 overflow-y-auto scrollbar-hide scroll-smooth p-4 md:p-6">
+        <main className="no-scrollbar flex-1 overflow-y-auto scrollbar-hide scroll-smooth ">
           <div className="max-w-6xl mx-auto">
             <Outlet />
           </div>

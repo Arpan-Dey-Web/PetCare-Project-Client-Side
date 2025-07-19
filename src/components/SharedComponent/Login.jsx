@@ -49,7 +49,6 @@ const Login = () => {
   };
 
   const handleGithubLogin = () => {
-    console.log("login with github");
     logInWithGithub()
       .then((res) => {
         Swal.fire({
@@ -60,16 +59,14 @@ const Login = () => {
         navigate("/");
       })
       .catch((err) => {
-        // console.log(err);
         Swal.fire({
           icon: "error",
           title: "Oops...",
-          text: "Please Enter Valid Email Password!",
+          text: "Email already Exist!",
         });
       });
   };
   const handleGoogleLogin = () => {
-    // console.log("login with google");
     logInWithGoogle()
       .then((res) => {
         Swal.fire({
@@ -80,7 +77,6 @@ const Login = () => {
         navigate("/");
       })
       .catch((err) => {
-        // console.log(err);
         Swal.fire({
           icon: "error",
           title: "Oops...",

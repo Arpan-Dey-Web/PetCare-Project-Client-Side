@@ -2,6 +2,7 @@ import React, { use } from "react";
 import Navbar from "../SharedComponent/Nabbar";
 import { Outlet } from "react-router";
 import { ThemeContext } from "../context/ThemeContext";
+import Footer from "../SharedComponent/Footer";
 
 const RootLayout = () => {
   const { theme } = use(ThemeContext)
@@ -13,6 +14,7 @@ const RootLayout = () => {
         <div className=" my-10">
           <Outlet />
         </div>
+        <Footer></Footer>
       </div>
     </div>
   );

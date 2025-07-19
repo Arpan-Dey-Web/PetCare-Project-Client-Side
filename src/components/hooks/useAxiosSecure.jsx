@@ -1,18 +1,13 @@
+import { useMemo } from "react";
 import axios from "axios";
-import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
 
 const useAxiosSecure = () => {
-  const { user } = useContext(AuthContext);
-
-  const token = user?.accessToken;
-
-  const axiosSecure = axios.create({
-    baseURL: "http://localhost:3000", 
-    headers: {
-      Authorization: token ? `Bearer ${token}` : "",
-    },
-  });
+  const axiosSecure = useMemo(() => {
+    return axios.create({
+      baseURL: import.meta.env.VITE_API,
+      withCredentials: true,
+    });
+  }, []);
 
   return axiosSecure;
 };

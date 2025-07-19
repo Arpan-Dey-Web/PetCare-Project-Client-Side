@@ -106,10 +106,10 @@ const UpdatePet = () => {
         image: imageUrl,
       };
 
-      await axiosSecure.patch(`/pets/${id}`, updatedPet);
-
+      const res = await axiosSecure.put(`/pets/${id}`, updatedPet);
+      // console.log(res);
       toast.success("Pet updated successfully!");
-      navigate("/dashboard/my-pets");
+      // navigate("/dashboard/my-pets");
     } catch (err) {
       console.error(err);
       setFieldError("submit", "Failed to update pet. Please try again.");

@@ -49,7 +49,7 @@ const Navbar = () => {
         onClick={() => setIsOpen(false)}
       >
         <button className="text-gray-700  font-medium p-2 ">
-          {" "}
+        
           Pets
         </button>
       </NavLink>

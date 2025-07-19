@@ -64,6 +64,7 @@ const PetDetails = () => {
       requestedUserEmail: user?.email,
       requestedUserAddress: address,
       owner: pet.owner,
+      status: "requested",
     };
     try {
       // TODO: send to backend

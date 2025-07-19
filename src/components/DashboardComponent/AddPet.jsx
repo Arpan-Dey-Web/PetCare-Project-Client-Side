@@ -70,12 +70,13 @@ const AddPet = () => {
         image: imageUrl,
         adopted: false,
         owner: user?.email,
+        ownerName: user?.displayName,
         createdAt: new Date().toISOString(),
       };
       console.log(newPet);
 
       const res = await axiosSecure.post("/pet", newPet);
-      console.log(res);
+      // console.log(res);
 
       toast.success("Pet added successfully!");
       resetForm();

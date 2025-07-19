@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext";
 
 import {
-  createUserWithEmailAndPassword,  
+  createUserWithEmailAndPassword,
   GithubAuthProvider,
   GoogleAuthProvider,
   onAuthStateChanged,
@@ -12,21 +12,23 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth } from "../utils/firebase.init";
+import axios from "axios";
+import useAxiosSecure from "../hooks/useAxiosSecure";
+
 // import axios from "axios";
 const googleProvider = new GoogleAuthProvider();
 const githubProvider = new GithubAuthProvider();
-
 
 const logInWithGoogle = () => {
   return signInWithPopup(auth, googleProvider);
 };
 const logInWithGithub = () => {
   return signInWithPopup(auth, githubProvider);
-}
+};
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const axiosSecure = useAxiosSecure();
   const createUser = (email, password) => {
     setLoading(true);
     return createUserWithEmailAndPassword(auth, email, password);
@@ -43,29 +45,21 @@ const AuthProvider = ({ children }) => {
     return updateProfile(auth.currentUser, profile);
   };
 
-
-
   useEffect(() => {
-    // console.log(user);
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      // if (currentUser?.email) {
-      //   const useremail = { email: currentUser?.email};
-        
-      //   axios
-      //     .post(
-      //       "https://assaignment-11-server-iota.vercel.app/jwt",
-      //       useremail,
-      //       {
-      //         withCredentials: true,
-      //       }
-      //     )
-      //     .then((res) => {
-      //       // console.log(res.data);
-      //     })
-      //     .catch((err) => {
-      //       console.log(err);
-      //     });
-      // }
+      if (currentUser?.email) {
+        const userData = { email: currentUser.email };
+        axiosSecure
+          .post("/jwt", userData, {
+            withCredentials: true,
+          })
+          .then((res) => {
+            // console.log(res.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
 
       setUser(currentUser);
       setLoading(false);
@@ -91,3 +85,4 @@ const AuthProvider = ({ children }) => {
 };
 
 export default AuthProvider;
+

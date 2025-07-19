@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion"; // 🔥 Animation
+import { motion } from "framer-motion";
 import { NavLink, useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 import { useContext } from "react";
@@ -141,8 +141,10 @@ const Register = () => {
         };
         const response = await axiosPublic.post("/register", userInfo);
         // console.log(response);
-        toast.success(" Profile Updated Sucessfully");
-        navigate("/");
+        if (response.status == 201) {
+          toast.success(" Profile Updated Sucessfully");
+          navigate("/");
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -156,7 +158,7 @@ const Register = () => {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -40 }}
       transition={{ duration: 0.4, ease: "easeInOut" }}
-      className="min-h-screen flex items-center justify-center bg-gray-100 px-4"
+      className="min-h-screen flex items-center justify-center  px-4"
     >
       <div className="bg-white p-6 rounded-lg shadow-md space-y-4 max-w-xl w-full">
         <form onSubmit={handleSubmit}>
