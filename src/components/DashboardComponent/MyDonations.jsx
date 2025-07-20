@@ -2,7 +2,8 @@ import React, { useContext, useState } from "react";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import { AuthContext } from "../context/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-hot-toast";
+import { toast, Toaster } from "react-hot-toast";
+import axios from "axios";
 
 const MyDonations = () => {
   const axiosSecure = useAxiosSecure();
@@ -22,7 +23,7 @@ const MyDonations = () => {
       const res = await axiosSecure.get(
         `/donation-transations-details/${user.email}`
       );
-      console.log(res);
+
       return res.data;
     },
     enabled: !!user.email,
@@ -30,31 +31,26 @@ const MyDonations = () => {
     cacheTime: 10 * 60 * 1000,
   });
 
-  // Refund mutation
-  const refundMutation = useMutation({
-    mutationFn: async (transactionId) => {
-      const res = await axiosSecure.delete(`/donation-refund/${transactionId}`);
-      return res.data;
-    },
-    onSuccess: (data) => {
-      toast.success("Refund processed successfully!");
-      queryClient.invalidateQueries(["transaction-details", user.email]);
-      setRefundingId(null);
-    },
-    onError: (error) => {
-      toast.error(error.response?.data?.message || "Failed to process refund");
-      setRefundingId(null);
-    },
-  });
+  console.log(transactionDetails);
+  const handleRefund = async (transaction) => {
+    // console.log(transaction);
+    const mongoid = transaction._id;
+    const transactionId = transaction.campaignId;
+    const transectionAmount = transaction.amount;
+    const deleteTransection = axiosSecure.delete(
+      `/delete-my-donation/${mongoid}`
+    );
 
-  const handleRefund = (transactionId) => {
-    if (
-      window.confirm(
-        "Are you sure you want to request a refund? This action cannot be undone."
-      )
-    ) {
-      setRefundingId(transactionId);
-      refundMutation.mutate(transactionId);
+    const response = await axiosSecure.put("/update-campaign-amount", {
+      transactionId,
+      transectionAmount,
+    });
+    console.log(deleteTransection, response);
+
+    if ((await deleteTransection).status == 200 || response == 2000) {
+      await queryClient.invalidateQueries(["donations"]); // Refresh donations list
+      await queryClient.invalidateQueries(["campaign", transactionId]); // Refresh campaign data
+      await queryClient.invalidateQueries(["my-donations"]); // Refresh user's donations
     }
   };
 
@@ -221,11 +217,7 @@ const MyDonations = () => {
                       {/* Refund Button */}
                       <td className="px-6 py-4 whitespace-nowrap text-center">
                         <button
-                          onClick={() => handleRefund(transaction._id)}
-                          disabled={
-                            refundingId === transaction._id ||
-                            refundMutation.isLoading
-                          }
+                          onClick={() => handleRefund(transaction)}
                           className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md transition-colors duration-200 ${
                             refundingId === transaction._id
                               ? "bg-gray-100 text-gray-400 cursor-not-allowed"
@@ -305,6 +297,7 @@ const MyDonations = () => {
           </>
         )}
       </div>
+      <Toaster position="top-right" reverseOrder={false}></Toaster>
     </div>
   );
 };

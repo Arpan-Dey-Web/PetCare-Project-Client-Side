@@ -24,6 +24,7 @@ import AllPet from "../DashboardComponent/AllPet";
 import AlldonationCampaign from "../DashboardComponent/AlldonationCampaign";
 import MyDonations from "../DashboardComponent/MyDonations";
 import DashboardHomePage from "../DashboardComponent/DashboardHomePage";
+import AdminDashboard from "../DashboardComponent/AdminDashboard";
 
 const router = createBrowserRouter([
   {
@@ -136,6 +137,14 @@ const router = createBrowserRouter([
           <PrivateRoute>
             <MyDonations></MyDonations>
           </PrivateRoute>
+        ),
+      },
+      {
+        path: "admin-dashboard",
+        element: (
+          <AdminRoute>
+            <AdminDashboard></AdminDashboard>
+          </AdminRoute>
         ),
       },
       {

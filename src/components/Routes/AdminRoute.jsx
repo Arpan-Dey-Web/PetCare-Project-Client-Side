@@ -5,7 +5,7 @@ const AdminRoute = ({ children }) => {
   const [role, isLoading] = useRole();
 //   console.log(role);
   if (isLoading) return <div>Checking admin access...</div>;
-  if (role !== "admin") return <Navigate to="/dashboard/unauthorized" />;
+  if (role !== "admin") return <Navigate to="/dashboard" />;
 
   return children;
 };

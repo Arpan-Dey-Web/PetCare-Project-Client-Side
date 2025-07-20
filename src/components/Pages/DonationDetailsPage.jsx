@@ -6,7 +6,7 @@ import {
   FaTimes,
   FaPaw,
 } from "react-icons/fa";
-import { useParams } from "react-router";
+import { Link, NavLink, useParams } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../hooks/useAxiosSecure";
@@ -54,9 +54,8 @@ const PetDonationDetailsPage = () => {
     },
   });
 
+
   const randomCampaigns = getRandomItems(recommended, 3);
-
-
 
   const progressPercentage = campaign.maxDonation
     ? (campaign.donatedAmount / campaign.maxDonation) * 100
@@ -74,7 +73,7 @@ const PetDonationDetailsPage = () => {
     setDonationAmount("");
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <div className="h-screen">Loading...</div>;
   if (error || !campaign._id) return <div>Error loading campaign.</div>;
 
   return (
@@ -176,6 +175,13 @@ const PetDonationDetailsPage = () => {
                 <p className="text-sm text-gray-600">
                   {item.shortDescription.slice(0, 80)}...
                 </p>
+                {/* View Details Button */}
+                <Link
+                  to={`/donations-details/${campaign._id}`}
+                  className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-200 flex items-center justify-center"
+                >
+                  View Details
+                </Link>
               </div>
             ))}
           </div>

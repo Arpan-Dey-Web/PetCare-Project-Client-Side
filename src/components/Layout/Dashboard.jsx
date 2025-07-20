@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { NavLink, Outlet } from "react-router"; // ✅ Fixed react-router import
+import { NavLink, Outlet } from "react-router";
 import Navbar from "../SharedComponent/Nabbar";
 import {
   FaPaw,
@@ -11,9 +11,9 @@ import {
   FaHeart,
   FaUsers,
   FaDog,
+  FaUserShield,
 } from "react-icons/fa";
 import useRole from "../hooks/useRole";
-
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -29,7 +29,6 @@ const Dashboard = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
 
   const sidebarLinks = [
     { to: "add-pet", icon: <FaPlusCircle />, label: "Add Pet" },
@@ -50,9 +49,13 @@ const Dashboard = () => {
       label: "My Donation Campaigns",
     },
     { to: "my-donations", icon: <FaHeart />, label: "My Donations" },
-    // Admin-only routes (conditionally spread)
     ...(role === "admin"
       ? [
+          {
+            to: "admin-dashboard",
+            icon: <FaUserShield />,
+            label: "Admin Dashboard",
+          },
           {
             to: "admin/allusers",
             icon: <FaUsers />,
@@ -83,7 +86,7 @@ const Dashboard = () => {
             sidebarOpen ? "w-64" : "w-16"
           } sticky top-[64px] h-[calc(100vh-64px)] bg-white shadow-md transition-all duration-300  z-40`}
         >
-          <div className="flex items-center justify-between px-4 pt-4">
+          <div className="flex  py-2">
             {sidebarOpen && (
               <h2 className="text-xl font-bold text-blue-600 tracking-wide">
                 Dashboard
@@ -102,7 +105,7 @@ const Dashboard = () => {
             </button>
           </div>
 
-          <nav className="mt-6 px-2 space-y-1">
+          <nav className=" px-2 space-y-1">
             {sidebarLinks.map(({ to, icon, label }) => (
               <NavLink
                 key={to}
