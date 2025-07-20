@@ -1,13 +1,13 @@
 import React, { useContext, useState } from "react";
-import { useParams } from "react-router";
+import { useParams } from "react-router"; // corrected
 import { useQuery } from "@tanstack/react-query";
 import useAxiosPublic from "../hooks/useAxiosPublic";
 import Modal from "react-modal";
 import { AuthContext } from "../context/AuthContext";
 import Loading from "./Loading";
-// import useAxiosSecure from "../hooks/useAxiosSecure";
+import { ThemeContext } from "../context/ThemeContext";
 
-// Set modal accessibility root element ONCE
+// Modal accessibility root
 Modal.setAppElement("#root");
 
 const PetDetails = () => {
@@ -17,7 +17,7 @@ const PetDetails = () => {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const { user } = useContext(AuthContext);
-  // Fetch pet details
+  const { theme } = useContext(ThemeContext);
 
   const {
     data: pet = {},
@@ -32,8 +32,7 @@ const PetDetails = () => {
     },
     enabled: !!id,
   });
-  console.log(pet);
-  // UI states
+
   if (isLoading) {
     return (
       <div className="text-center p-10">
@@ -42,19 +41,9 @@ const PetDetails = () => {
     );
   }
 
-  if (isError) {
-    console.log(isError, error);
-    // return (
-    //   <div className="text-center text-red-600 p-10">
-    //     Error: {error.message}
-    //   </div>
-    // );
-  }
-
-  // Form submit handler
+  // Form submit
   const handleAdoptionSubmit = async (e) => {
     e.preventDefault();
-
     const adoptRequestPetData = {
       petId: pet._id,
       petName: pet.name,
@@ -66,25 +55,15 @@ const PetDetails = () => {
       owner: pet.owner,
       status: "requested",
     };
+
     try {
-      // TODO: send to backend
-      // await axiosPublic.post("/adoptions", adoptionData);
-
-      console.log("Adoption data submitted:", adoptRequestPetData);
-
       const res = await axiosSecure.post(
         "/adoption-request",
         adoptRequestPetData
       );
       console.log(res);
-
-      // Show success
       alert("Adoption request submitted!");
-
-      // ✅ Close modal AFTER success
       setIsOpen(false);
-
-      // Optionally reset form
       setPhone("");
       setAddress("");
     } catch (err) {
@@ -93,21 +72,34 @@ const PetDetails = () => {
     }
   };
 
+  // Themed class logic
+  const bgClass =
+    theme === "dark" ? "bg-dark text-dark" : "bg-light text-light";
+  const cardBg = theme === "dark" ? "card-dark" : "card-light";
+  const btnClass =
+    theme === "dark"
+      ? "button-dark hover:bg-cyan-600"
+      : "button-light hover:bg-violet-700";
+  const inputBg =
+    theme === "dark"
+      ? "bg-[#27324a] text-white border-gray-600"
+      : "bg-white text-gray-700";
+
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10 bg-white shadow-xl rounded-2xl border border-gray-200">
-      {/* Pet Profile */}
+    <div
+      className={`max-w-4xl mx-auto px-6 py-10 rounded-2xl border border-gray-200 shadow-xl ${cardBg}`}
+    >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
         <img
           src={pet.image}
           alt={pet.name}
           className="w-full h-80 object-cover rounded-xl shadow-md"
         />
-
         <div>
-          <h1 className="text-4xl font-extrabold text-gray-800 mb-4">
+          <h1 className="text-4xl font-extrabold text-accent-light dark:text-light mb-4">
             {pet.name}
           </h1>
-          <div className="text-gray-700 space-y-2">
+          <div className="space-y-2">
             <p>
               <span className="font-semibold">Age:</span> {pet.age} year(s)
             </p>
@@ -129,11 +121,10 @@ const PetDetails = () => {
               {pet.longDescription}
             </p>
           </div>
-
           <div className="mt-6">
             <button
               onClick={() => setIsOpen(true)}
-              className="bg-indigo-600 text-white px-6 py-2 rounded-lg shadow hover:bg-indigo-700 transition"
+              className={`px-6 py-2 rounded-lg shadow transition ${btnClass}`}
             >
               Adopt Me
             </button>
@@ -145,70 +136,59 @@ const PetDetails = () => {
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={() => setIsOpen(false)}
-        className="bg-white p-6 rounded-xl max-w-md w-full mx-4 md:mx-auto relative z-50"
+        className={`p-6 rounded-xl max-w-md w-full mx-4 md:mx-auto relative z-50 ${cardBg} ${bgClass}`}
         overlayClassName="fixed inset-0 bg-black/30 flex justify-center items-center z-40"
       >
-        <h2 className="text-2xl font-bold mb-4 text-center">
+        <h2 className="text-2xl font-bold mb-4 text-center text-accent-light dark:text-accent-dark">
           Adopt {pet.name}
         </h2>
 
         <form onSubmit={handleAdoptionSubmit} className="space-y-4">
-          {/* User Name (disabled) */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Name
-            </label>
+            <label className="block text-sm font-medium mb-1">Name</label>
             <input
               type="text"
               value={user?.displayName || ""}
               disabled
-              className="w-full px-4 py-2 border rounded bg-gray-100 text-gray-700"
+              className={`w-full px-4 py-2 border rounded ${inputBg}`}
             />
           </div>
 
-          {/* Email (disabled) */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
+            <label className="block text-sm font-medium mb-1">Email</label>
             <input
               type="email"
               value={user?.email || ""}
               disabled
-              className="w-full px-4 py-2 border rounded bg-gray-100 text-gray-700"
+              className={`w-full px-4 py-2 border rounded ${inputBg}`}
             />
           </div>
 
-          {/* Phone number */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium mb-1">
               Phone Number
             </label>
             <input
               type="text"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              placeholder="Enter your phone number"
               required
-              className="w-full px-4 py-2 border rounded"
+              placeholder="Enter your phone number"
+              className={`w-full px-4 py-2 border rounded ${inputBg}`}
             />
           </div>
 
-          {/* Address */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Address
-            </label>
+            <label className="block text-sm font-medium mb-1">Address</label>
             <textarea
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              placeholder="Enter your address"
               required
-              className="w-full px-4 py-2 border rounded"
+              placeholder="Enter your address"
+              className={`w-full px-4 py-2 border rounded ${inputBg}`}
             />
           </div>
 
-          {/* Buttons */}
           <div className="flex justify-between pt-4">
             <button
               type="button"
@@ -219,7 +199,7 @@ const PetDetails = () => {
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+              className={`px-4 py-2 rounded transition ${btnClass}`}
             >
               Submit Request
             </button>

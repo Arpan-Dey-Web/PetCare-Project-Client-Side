@@ -1,117 +1,152 @@
 @import "tailwindcss";
 
-
-.active{
-  background-color:#c52482;
-
- 
+/* Hide scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
-/* App.css or index.css */
-.bg-primary {
-  background-color: #E63946; /* Crimson Rose */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+/* Add this in your global CSS or Tailwind file for basic Tiptap styling */
+.tiptap {
+  min-height: 160px;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  background: white;
+  font-family: inherit;
+  font-size: 1rem;
+}
+/* tiptap.css */
+.ProseMirror {
+  outline: none;
+  min-height: 150px;
+  font-size: 1rem;
+  padding: 0.5rem;
+  line-height: 1.6;
+}
+.active {
+  color: #ec4899;
+  padding: 4px;
+  border-bottom: 2px solid #ec4899;
+}
+:root {
+  /* Backgrounds */
+  --lightBackground: #fef9f7;
+  --darkBackground: #222e50;
+
+  /* Primary & Accent */
+  --primary: #7c3aed;
+  --accent: #06b6d4;
+
+  /* Text Colors */
+  --textColorLight: #1f2937;
+  --textColorDark: #f4f4f5;
+    /* New accent text colors */
+  --textAccentLight: #7c3aed;  /* Matches your primary */
+  --textAccentDark: #06b6d4;   /* Matches your accent */
+
+  /* Card Background */
+  --cardBackgroundLight: #ffffff;
+  --cardBackgroundDark: #2a334c;
+
+  /* Navbar Background */
+  --navbarBackgroundLight: #ffffff;
+  --navbarBackgroundDark: #1e293b;
+
+  /* Footer Background */
+  --footerBackgroundLight: #f3f4f6;
+  --footerBackgroundDark: #1c2431;
+
+  /* Form Background */
+  --formBackgroundLight: #ffffff;
+  --formBackgroundDark: #27324a;
+
+  /* White & Black */
+  --white: #ffffff;
+  --black: #111111;
+
+  /* Button Colors */
+  --buttonLightBg: var(--primary);
+  --buttonLightText: var(--white);
+  --buttonDarkBg: var(--accent);
+  --buttonDarkText: var(--black);
 }
 
-.bg-secondary {
-  background-color: #1D3557; /* Deep Navy */
+
+/* ======== BUTTON LIGHT THEME ======== */
+.button-light {
+  background-color: var(--buttonLightBg);
+  color: var(--buttonLightText);
 }
 
-.bg-accent {
-  background-color: #F1FA8C; /* Sun Glow */
+/* ======== BUTTON DARK THEME ======== */
+.button-dark {
+  background-color: var(--buttonDarkBg);
+  color: var(--buttonDarkText);
 }
 
-.text-primary {
-  color: #E63946;
+/* Light Theme */
+.bg-light {
+  background-color: var(--lightBackground);
 }
 
-.text-secondary {
-  color: #1D3557;
+/* Dark Theme */
+.bg-dark {
+  min-height: 100vh;
+  background-color: var(--darkBackground);
 }
 
-.text-accent {
-  color: #F1FA8C;
-}
-
+/* ======== TEXT COLOR ======== */
 .text-light {
-  color: #1E293B;
+  color: var(--textColorLight);
 }
 
 .text-dark {
-  color: #F1F5F9;
+  color: var(--textColorDark);
 }
 
-.bg-light {
-  background-color: #F7F9FC;
+.text-accent-light {
+  color: var(--textAccentLight);
 }
 
-.bg-dark {
-  background-color: #0F172A;
+.text-accent-dark {
+  color: var(--textAccentDark);
 }
 
-.border-primary {
-  border-color: #E63946;
+/* ======== CARD BACKGROUND ======== */
+.card-light {
+  background-color: var(--cardBackgroundLight);
 }
 
-.btn-primary {
-  background-color: #E63946;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  font-weight: 600;
-  transition: background 0.3s ease;
+.card-dark {
+  background-color: var(--cardBackgroundDark);
 }
 
-.btn-primary:hover {
-  background-color: #C53030;
+/* ======== NAVBAR BACKGROUND ======== */
+.navbar-light {
+  background-color: var(--navbarBackgroundLight);
 }
 
+.navbar-dark {
+  background-color: var(--navbarBackgroundDark);
+}
 
+/* ======== FOOTER BACKGROUND ======== */
+.footer-light {
+  background-color: var(--footerBackgroundLight);
+}
 
+.footer-dark {
+  background-color: var(--footerBackgroundDark);
+}
 
+/* ======== FORM BACKGROUND ======== */
+.form-light {
+  background-color: var(--formBackgroundLight);
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Hide scrollbar */
-.no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  .no-scrollbar {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-  }
-  /* Add this in your global CSS or Tailwind file for basic Tiptap styling */
-.tiptap {
-    min-height: 160px;
-    padding: 0.75rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.375rem;
-    background: white;
-    font-family: inherit;
-    font-size: 1rem;
-  }
-  /* tiptap.css */
-.ProseMirror {
-    outline: none;
-    min-height: 150px;
-    font-size: 1rem;
-    padding: 0.5rem;
-    line-height: 1.6;
-  }
-  
+.form-dark {
+  background-color: var(--formBackgroundDark);
+}

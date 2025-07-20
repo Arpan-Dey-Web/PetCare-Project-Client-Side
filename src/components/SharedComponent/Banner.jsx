@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 // Import Swiper styles
@@ -7,6 +7,7 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 // import required modules
 import { Pagination, Navigation, Autoplay } from "swiper/modules";
+import { ThemeContext } from "../context/ThemeContext";
 
 const bannerImage = [
   {
@@ -83,6 +84,7 @@ const bannerImage = [
 ];
 
 const Banner = () => {
+  const {theme } =useContext(ThemeContext)
   return (
     <div>
       <Swiper

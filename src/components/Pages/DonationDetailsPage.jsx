@@ -14,10 +14,12 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import CheckoutForm from "../SharedComponent/CheckoutForm";
 import toast, { Toaster } from "react-hot-toast";
+import { ThemeContext } from "../context/ThemeContext";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const PetDonationDetailsPage = () => {
+  const { theme } = useContext(ThemeContext);
   const [showModal, setShowModal] = useState(false);
   const [donationAmount, setDonationAmount] = useState("");
   const { id } = useParams();
@@ -45,7 +47,6 @@ const PetDonationDetailsPage = () => {
     return shuffled.slice(0, count);
   };
 
-  // In your component
   const { data: recommended = [], isLoading: recLoading } = useQuery({
     queryKey: ["recommended-campaigns"],
     queryFn: async () => {
@@ -53,7 +54,6 @@ const PetDonationDetailsPage = () => {
       return res.data.campaigns;
     },
   });
-
 
   const randomCampaigns = getRandomItems(recommended, 3);
 
@@ -73,15 +73,42 @@ const PetDonationDetailsPage = () => {
     setDonationAmount("");
   };
 
-  if (isLoading) return <div className="h-screen">Loading...</div>;
-  if (error || !campaign._id) return <div>Error loading campaign.</div>;
+  if (isLoading)
+    return (
+      <div className="h-screen bg-light text-light:text-dark flex items-center justify-center">
+        Loading...
+      </div>
+    );
+  if (error || !campaign._id)
+    return (
+      <div className="h-screen bg-light text-light:text-dark flex items-center justify-center">
+        Error loading campaign.
+      </div>
+    );
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm">
+    <div
+      className={`min-h-screen ${
+        theme === "dark" ? "bg-dark text-dark" : "bg-light text-light"
+      }`}
+    >
+      <header
+        className={`${
+          theme === "dark" ? "bg-navbar-dark" : "bg-navbar-light"
+        } shadow-sm`}
+      >
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
-            <FaPaw className="mr-2 text-blue-600" /> PetCare Donations
+          <h1
+            className={`text-2xl font-bold flex items-center ${
+              theme === "dark" ? "text-textColorDark" : "text-textColorLight"
+            }`}
+          >
+            <FaPaw
+              className={`${
+                theme === "dark" ? "text-accent-dark" : "text-accent-light"
+              } mr-2`}
+            />{" "}
+            PetCare Donations
           </h1>
         </div>
       </header>
@@ -89,35 +116,87 @@ const PetDonationDetailsPage = () => {
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
+            <div
+              className={`${
+                theme === "dark" ? "card-dark" : "card-light"
+              } rounded-lg shadow-md overflow-hidden`}
+            >
               <img
                 src={campaign.image}
                 alt={campaign.petName}
                 className="w-full h-64 object-cover"
               />
               <div className="p-6">
-                <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                <h1
+                  className={`text-3xl font-bold mb-4 ${
+                    theme === "dark"
+                      ? "text-textColorDark"
+                      : "text-textColorLight"
+                  }`}
+                >
                   Help {campaign.petName} - {campaign.shortDescription}
                 </h1>
-                <p className="text-gray-600 mb-6 leading-relaxed">
+                <p
+                  className={`${
+                    theme === "dark"
+                      ? "text-textColorDark"
+                      : "text-textColorLight"
+                  } mb-6 leading-relaxed`}
+                >
                   {campaign.longDescription}
                 </p>
-                <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                  <h3 className="font-semibold mb-2">Organized by</h3>
-                  <p className="text-gray-600">{campaign.owner}</p>
+                <div
+                  className={`${
+                    theme === "dark" ? "bg-form-dark" : "bg-form-light"
+                  } mt-6 p-4 rounded-lg`}
+                >
+                  <h3
+                    className={`font-semibold mb-2 ${
+                      theme === "dark"
+                        ? "text-textColorDark"
+                        : "text-textColorLight"
+                    }`}
+                  >
+                    Organized by
+                  </h3>
+                  <p
+                    className={`${
+                      theme === "dark"
+                        ? "text-textColorDark"
+                        : "text-textColorLight"
+                    }`}
+                  >
+                    {campaign.owner}
+                  </p>
                 </div>
               </div>
             </div>
           </div>
 
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6 sticky top-8">
+            <div
+              className={`${
+                theme === "dark" ? "card-dark" : "card-light"
+              } rounded-lg shadow-md p-6 sticky top-8`}
+            >
               <div className="mb-6">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-2xl font-bold text-gray-900">
+                  <span
+                    className={`text-2xl font-bold ${
+                      theme === "dark"
+                        ? "text-textColorDark"
+                        : "text-textColorLight"
+                    }`}
+                  >
                     ${campaign.donatedAmount?.toLocaleString() || "0"}
                   </span>
-                  <span className="text-sm text-gray-500">
+                  <span
+                    className={`text-sm ${
+                      theme === "dark"
+                        ? "text-textColorDark"
+                        : "text-textColorLight"
+                    }`}
+                  >
                     of ${campaign.maxDonation?.toLocaleString()} goal
                   </span>
                 </div>
@@ -127,7 +206,13 @@ const PetDonationDetailsPage = () => {
                     style={{ width: `${Math.min(progressPercentage, 100)}%` }}
                   ></div>
                 </div>
-                <div className="flex justify-between text-sm text-gray-600">
+                <div
+                  className={`flex justify-between text-sm ${
+                    theme === "dark"
+                      ? "text-textColorDark"
+                      : "text-textColorLight"
+                  }`}
+                >
                   <span>{Math.round(progressPercentage)}% funded</span>
                   <span>
                     {daysLeft > 0 ? `${daysLeft} days left` : "Campaign ended"}
@@ -141,7 +226,9 @@ const PetDonationDetailsPage = () => {
                 className={`w-full font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center ${
                   campaign.isPaused || daysLeft <= 0
                     ? "bg-gray-400 text-white cursor-not-allowed"
-                    : "bg-blue-600 hover:bg-blue-700 text-white"
+                    : theme === "dark"
+                    ? "button-dark"
+                    : "button-light"
                 }`}
               >
                 <FaHeart className="h-5 w-5 mr-2" />
@@ -151,7 +238,13 @@ const PetDonationDetailsPage = () => {
                   ? "Campaign Ended"
                   : "Donate Now"}
               </button>
-              <p className="text-xs text-center text-gray-400 mt-3">
+              <p
+                className={`text-xs text-center mt-3 ${
+                  theme === "dark"
+                    ? "text-textColorDark"
+                    : "text-textColorLight"
+                }`}
+              >
                 Secure payment with Stripe
               </p>
             </div>
@@ -160,25 +253,50 @@ const PetDonationDetailsPage = () => {
 
         {/* Recommended Campaigns */}
         <section className="mt-12">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          <h2
+            className={`text-2xl font-bold mb-4 ${
+              theme === "dark" ? "text-textColorDark" : "text-textColorLight"
+            }`}
+          >
             Recommended Donation Campaigns
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {randomCampaigns.map((item) => (
-              <div key={item._id} className="bg-white rounded-lg shadow p-4">
+              <div
+                key={item._id}
+                className={`${
+                  theme === "dark" ? "card-dark" : "card-light"
+                } rounded-lg shadow p-4`}
+              >
                 <img
                   src={item.image}
                   alt={item.petName}
                   className="h-40 w-full object-cover rounded-md"
                 />
-                <h3 className="text-lg font-semibold mt-3">{item.petName}</h3>
-                <p className="text-sm text-gray-600">
+                <h3
+                  className={`text-lg font-semibold mt-3 ${
+                    theme === "dark"
+                      ? "text-textColorDark"
+                      : "text-textColorLight"
+                  }`}
+                >
+                  {item.petName}
+                </h3>
+                <p
+                  className={`text-sm ${
+                    theme === "dark"
+                      ? "text-textColorDark"
+                      : "text-textColorLight"
+                  }`}
+                >
                   {item.shortDescription.slice(0, 80)}...
                 </p>
                 {/* View Details Button */}
                 <Link
                   to={`/donations-details/${campaign._id}`}
-                  className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-200 flex items-center justify-center"
+                  className={`w-full ${
+                    theme === "dark" ? "button-dark" : "button-light"
+                  } py-2 px-4 rounded-lg hover:opacity-90 transition duration-200 flex items-center justify-center mt-4`}
                 >
                   View Details
                 </Link>
@@ -190,14 +308,30 @@ const PetDonationDetailsPage = () => {
 
       {showModal && (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full">
+          <div
+            className={`${
+              theme === "dark" ? "card-dark" : "card-light"
+            } rounded-lg max-w-md w-full`}
+          >
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold">
+                <h3
+                  className={`text-xl font-bold ${
+                    theme === "dark"
+                      ? "text-textColorDark"
+                      : "text-textColorLight"
+                  }`}
+                >
                   Donate to {campaign.petName}
                 </h3>
                 <button onClick={handleCloseModal}>
-                  <FaTimes className="h-5 w-5 text-gray-400" />
+                  <FaTimes
+                    className={`${
+                      theme === "dark"
+                        ? "text-textColorDark"
+                        : "text-textColorLight"
+                    } h-5 w-5`}
+                  />
                 </button>
               </div>
               <input
@@ -205,7 +339,9 @@ const PetDonationDetailsPage = () => {
                 value={donationAmount}
                 onChange={(e) => setDonationAmount(e.target.value)}
                 placeholder="Enter amount"
-                className="w-full px-3 py-2 border rounded mb-4"
+                className={`${
+                  theme === "dark" ? "form-dark" : "form-light"
+                } w-full px-3 py-2 border rounded mb-4 text-textColorLight`}
               />
               {donationAmount && (
                 <Elements stripe={stripePromise}>

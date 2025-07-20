@@ -6,7 +6,7 @@ import Footer from "../SharedComponent/Footer";
 
 const RootLayout = () => {
   const { theme } = use(ThemeContext)
-  // console.log(theme);
+
   return (
     <div className={`${theme == "light" ? "bg-light" : "bg-dark"}`}>
       <Navbar />

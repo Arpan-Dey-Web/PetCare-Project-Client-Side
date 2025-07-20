@@ -5,16 +5,15 @@ import Banner from "../SharedComponent/Banner";
 import PetsCategorySection from "../SharedComponent/PetsCategorySection";
 import CallToActionSection from "../SharedComponent/CallToActionSection";
 import AboutUsSection from "../SharedComponent/AboutUsSection";
+import Footer from "../SharedComponent/Footer";
 
 const Home = () => {
   return (
-    <div className="w-11/12 mx-auto max-w-7xl my-4">
+    <div className=" mx-auto max-w-7xl my-4">
       <Banner></Banner>
       <PetsCategorySection></PetsCategorySection>
       <CallToActionSection></CallToActionSection>
       <AboutUsSection></AboutUsSection>
-
-      
     </div>
   );
 };

@@ -252,7 +252,7 @@ const AdoptionRequests = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-white">
+    <div className="max-w-6xl mx-auto p-6 ">
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
           Adoption Requests

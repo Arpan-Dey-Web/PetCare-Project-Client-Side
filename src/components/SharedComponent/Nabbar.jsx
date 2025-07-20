@@ -6,14 +6,14 @@ import { Link, NavLink } from "react-router";
 import Swal from "sweetalert2";
 import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
-
+import { ThemeContext } from "../context/ThemeContext";
 
 const Navbar = () => {
   const { user, signOutUser } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const toggleMenu = () => setIsOpen(!isOpen);
-
+  const { theme } = useContext(ThemeContext);
   const handleLogout = () => {
     Swal.fire({
       title: "Are you sure?",
@@ -38,35 +38,36 @@ const Navbar = () => {
 
   const navLinks = (
     <>
-      <NavLink to="/" className="rounded-2xl" onClick={() => setIsOpen(false)}>
-        <button className="text-gray-700  font-medium p-2 ">
-          Home
-        </button>
+      <NavLink
+        to="/"
+        className="p-1 font-bold"
+        onClick={() => setIsOpen(false)}
+      >
+        Home
       </NavLink>
       <NavLink
+        className="p-1  font-bold"
         to="/pets"
-        className="rounded-2xl"
         onClick={() => setIsOpen(false)}
       >
-        <button className="text-gray-700  font-medium p-2 ">
-        
-          Pets
-        </button>
+        Pet Listing
       </NavLink>
       <NavLink
+        className="p-1  font-bold"
         to="/donations"
-        className="rounded-2xl"
         onClick={() => setIsOpen(false)}
       >
-        <button className="text-gray-700 font-medium p-2 ">
-          Donations
-        </button>
+        Donation campaigns
       </NavLink>
     </>
   );
 
   return (
-    <nav className="bg-white dark:bg-dark  shadow-md sticky top-0 z-50">
+    <nav
+      className={` ${
+        theme == "dark" ? "text-dark bg-[#222e50] " : "text-light bg-[#FEF9F6]"
+      } shadow-md sticky top-0 z-50 `}
+    >
       <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
         {/* Left Section: Hamburger + Logo */}
         <div className="flex items-center gap-4">
@@ -90,7 +91,13 @@ const Navbar = () => {
         {/* Right Section: User or Login Button */}
 
         <div className="flex items-center gap-4 relative">
-          <ThemeToggle />
+          <span
+            className={` rounded-2xl ${
+              theme == "dark" ? "button-dark" : "button-light"
+            } `}
+          >
+            <ThemeToggle />
+          </span>
           {user ? (
             <>
               {/* Profile Image */}

@@ -11,8 +11,6 @@ const Logo = () => {
       <h1
         className="
           font-bold 
-          text-primary 
-          dark:text-accent 
           transition-colors duration-300
         "
       >

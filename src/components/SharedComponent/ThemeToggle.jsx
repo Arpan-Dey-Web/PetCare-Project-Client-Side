@@ -10,7 +10,7 @@ const ThemeToggle = () => {
     <button
       onClick={changeTheme}
       className="flex items-center gap-2 px-4 py-2 rounded-md font-semibold 
-        bg-secondary text-dark dark:bg-accent dark:text-light
+       bg-primary text-dark dark:bg-accent dark:text-light
         transition duration-300"
     >
       {theme === "dark" ? <FaSun /> : <FaMoon />}

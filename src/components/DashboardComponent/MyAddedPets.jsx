@@ -8,29 +8,35 @@ const MyAddedPets = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
+
   const [pets, setPets] = useState([]);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+
   const petsPerPage = 10;
 
   useEffect(() => {
+    let mounted = true;
     const fetchPets = async () => {
       try {
         setIsLoading(true);
         const res = await axiosSecure.get(`/pets/${user?.email}`);
-        setPets(res.data);
+        if (mounted) setPets(res.data);
       } catch (err) {
-        console.log("Failed to fetch pets:", err);
+        console.error("Failed to fetch pets:", err);
         Swal.fire({
           title: "Error!",
           text: "Failed to fetch your pets. Please try again.",
           icon: "error",
         });
       } finally {
-        setIsLoading(false);
+        if (mounted) setIsLoading(false);
       }
     };
     if (user?.email) fetchPets();
+    return () => {
+      mounted = false;
+    };
   }, [user?.email, axiosSecure]);
 
   const handleAdopt = (id) => {
@@ -82,14 +88,15 @@ const MyAddedPets = () => {
       if (result.isConfirmed) {
         try {
           await axiosSecure.delete(`/pets/${pet._id}`);
-          setPets((prev) => prev.filter((p) => p._id !== pet._id));
+          setPets((prev) => {
+            const filtered = prev.filter((p) => p._id !== pet._id);
 
-          // Reset to previous page if current page becomes empty
-          const remainingPets = pets.length - 1;
-          const maxPage = Math.ceil(remainingPets / petsPerPage);
-          if (page > maxPage && maxPage > 0) {
-            setPage(maxPage);
-          }
+            // Adjust page if current page is empty after deletion
+            const maxPage = Math.ceil(filtered.length / petsPerPage);
+            if (page > maxPage && maxPage > 0) setPage(maxPage);
+
+            return filtered;
+          });
 
           Swal.fire({
             title: "Deleted!",
@@ -108,50 +115,47 @@ const MyAddedPets = () => {
     });
   };
 
-  // Calculate pagination
-  const currentPets = pets.slice((page - 1) * petsPerPage, page * petsPerPage);
+  // Pagination logic
   const totalPages = Math.ceil(pets.length / petsPerPage);
   const startIndex = (page - 1) * petsPerPage + 1;
   const endIndex = Math.min(page * petsPerPage, pets.length);
+  const currentPets = pets.slice(startIndex - 1, endIndex);
 
-  // Generate page numbers for pagination
+  // Generate page numbers with ellipsis
   const getPageNumbers = () => {
     const pages = [];
     const maxVisiblePages = 5;
 
     if (totalPages <= maxVisiblePages) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
     } else {
-      const startPage = Math.max(1, page - 2);
-      const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+      let startPage = Math.max(1, page - 2);
+      let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
 
       if (startPage > 1) {
         pages.push(1);
         if (startPage > 2) pages.push("...");
       }
 
-      for (let i = startPage; i <= endPage; i++) {
-        pages.push(i);
-      }
+      for (let i = startPage; i <= endPage; i++) pages.push(i);
 
       if (endPage < totalPages) {
         if (endPage < totalPages - 1) pages.push("...");
         pages.push(totalPages);
       }
     }
-
     return pages;
   };
 
-  // Loading state
   if (isLoading) {
     return (
-      <div className="p-4">
+      <div className="p-4" role="status" aria-live="polite" aria-busy="true">
         <h1 className="text-2xl font-bold mb-4">My Added Pets</h1>
         <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+          <div
+            className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"
+            aria-hidden="true"
+          ></div>
           <span className="ml-4 text-gray-600">Loading your pets...</span>
         </div>
       </div>
@@ -162,7 +166,6 @@ const MyAddedPets = () => {
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">My Added Pets</h1>
 
-      {/* Empty State */}
       {pets.length === 0 ? (
         <div className="text-center py-12 bg-gray-50 rounded-lg">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-200 rounded-full mb-4">
@@ -190,6 +193,7 @@ const MyAddedPets = () => {
           <Link
             to="/dashboard/add-pet"
             className="inline-flex items-center px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200"
+            aria-label="Add your first pet"
           >
             <svg
               className="w-5 h-5 mr-2"
@@ -209,7 +213,6 @@ const MyAddedPets = () => {
         </div>
       ) : (
         <>
-          {/* Summary Info */}
           <div className="mb-4 flex justify-between items-center">
             <p className="text-gray-600">
               Showing {startIndex}-{endIndex} of {pets.length} pets
@@ -217,6 +220,7 @@ const MyAddedPets = () => {
             <Link
               to="/dashboard/add-pet"
               className="inline-flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 text-sm"
+              aria-label="Add new pet"
             >
               <svg
                 className="w-4 h-4 mr-2"
@@ -235,7 +239,6 @@ const MyAddedPets = () => {
             </Link>
           </div>
 
-          {/* Table */}
           <div className="overflow-x-auto bg-white rounded-lg shadow">
             <table className="table w-full">
               <thead className="bg-gray-50">
@@ -296,13 +299,17 @@ const MyAddedPets = () => {
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                       <Link to={`/dashboard/update-pet/${pet._id}`}>
-                        <button className="bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded-lg text-white text-xs transition-colors duration-200">
+                        <button
+                          aria-label={`Update ${pet.name}`}
+                          className="bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded-lg text-white text-xs transition-colors duration-200"
+                        >
                           Update
                         </button>
                       </Link>
 
                       <button
                         onClick={() => handleDelete(pet)}
+                        aria-label={`Delete ${pet.name}`}
                         className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded-lg text-white text-xs transition-colors duration-200"
                       >
                         Delete
@@ -311,6 +318,7 @@ const MyAddedPets = () => {
                       {!pet.adopted && (
                         <button
                           onClick={() => handleAdopt(pet._id)}
+                          aria-label={`Mark ${pet.name} as adopted`}
                           className="bg-green-500 hover:bg-green-600 px-3 py-1 rounded-lg text-white text-xs transition-colors duration-200"
                         >
                           Mark Adopted
@@ -323,7 +331,6 @@ const MyAddedPets = () => {
             </table>
           </div>
 
-          {/* Pagination - Only show if more than 10 pets */}
           {totalPages > 1 && (
             <div className="mt-6 flex items-center justify-between">
               <div className="text-sm text-gray-700">
@@ -332,11 +339,15 @@ const MyAddedPets = () => {
                 <span className="font-medium">{pets.length}</span> results
               </div>
 
-              <div className="flex items-center space-x-2">
-                {/* Previous Button */}
+              <div
+                className="flex items-center space-x-2"
+                role="navigation"
+                aria-label="Pagination Navigation"
+              >
                 <button
                   onClick={() => setPage((p) => Math.max(p - 1, 1))}
                   disabled={page === 1}
+                  aria-label="Previous Page"
                   className={`px-3 py-2 text-sm font-medium rounded-md ${
                     page === 1
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
@@ -346,7 +357,6 @@ const MyAddedPets = () => {
                   Previous
                 </button>
 
-                {/* Page Numbers */}
                 {getPageNumbers().map((pageNum, index) => (
                   <button
                     key={index}
@@ -354,6 +364,13 @@ const MyAddedPets = () => {
                       typeof pageNum === "number" && setPage(pageNum)
                     }
                     disabled={pageNum === "..."}
+                    aria-label={
+                      pageNum === "..."
+                        ? "Ellipsis"
+                        : pageNum === page
+                        ? `Current Page, Page ${pageNum}`
+                        : `Page ${pageNum}`
+                    }
                     className={`px-3 py-2 text-sm font-medium rounded-md ${
                       pageNum === page
                         ? "bg-blue-500 text-white"
@@ -366,10 +383,10 @@ const MyAddedPets = () => {
                   </button>
                 ))}
 
-                {/* Next Button */}
                 <button
                   onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
                   disabled={page === totalPages}
+                  aria-label="Next Page"
                   className={`px-3 py-2 text-sm font-medium rounded-md ${
                     page === totalPages
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"

@@ -73,16 +73,14 @@ const AddPet = () => {
         ownerName: user?.displayName,
         createdAt: new Date().toISOString(),
       };
-      console.log(newPet);
 
       const res = await axiosSecure.post("/pet", newPet);
-      // console.log(res);
 
       toast.success("Pet added successfully!");
       resetForm();
       editor?.commands.setContent("");
     } catch (err) {
-      console.log(err);
+      console.error(err);
       setFieldError("submit", "Failed to add pet. Please try again.");
     } finally {
       setUploading(false);
@@ -109,7 +107,7 @@ const AddPet = () => {
         }
       >
         {({ setFieldValue, isSubmitting, values }) => (
-          <Form className="space-y-4">
+          <Form className="space-y-6">
             {/* Image Upload */}
             <div>
               <label className="block font-semibold mb-2 text-gray-700">
@@ -121,7 +119,7 @@ const AddPet = () => {
                 onChange={(e) =>
                   setFieldValue("image", e.currentTarget.files[0])
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
               {values.image && (
                 <p className="text-sm text-gray-500 mt-1">
@@ -144,7 +142,7 @@ const AddPet = () => {
               <Field
                 type="text"
                 name="name"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
               <ErrorMessage
                 name="name"
@@ -161,7 +159,7 @@ const AddPet = () => {
               <Field
                 type="text"
                 name="age"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
               <ErrorMessage
                 name="age"
@@ -179,6 +177,9 @@ const AddPet = () => {
                 options={categoryOptions}
                 value={values.category}
                 onChange={(option) => setFieldValue("category", option)}
+                className="react-select-container"
+                classNamePrefix="react-select"
+                placeholder="Select category..."
               />
               <ErrorMessage
                 name="category"
@@ -195,7 +196,7 @@ const AddPet = () => {
               <Field
                 type="text"
                 name="location"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
               <ErrorMessage
                 name="location"
@@ -212,7 +213,7 @@ const AddPet = () => {
               <Field
                 type="text"
                 name="shortDescription"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
               <ErrorMessage
                 name="shortDescription"
@@ -226,7 +227,7 @@ const AddPet = () => {
               <label className="block font-semibold mb-2 text-gray-700">
                 Long Description <span className="text-red-500">*</span>
               </label>
-              <div className="border border-gray-300 rounded-md bg-white min-h-[150px] p-2">
+              <div className="border border-gray-300 rounded-md bg-white min-h-[150px] p-2 focus-within:ring-2 focus-within:ring-blue-400">
                 <EditorContent editor={editor} />
               </div>
             </div>
