@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   FaUsers,
   FaPaw,
@@ -6,8 +6,10 @@ import {
   FaChartLine,
   FaClipboardList,
 } from "react-icons/fa";
+import { ThemeContext } from "../context/ThemeContext";
 
 const AdminDashboard = () => {
+  const {theme} = useContext(ThemeContext)
   // Static data - replace with dynamic data later
   const stats = {
     totalUsers: 124,

@@ -13,16 +13,34 @@ const MyAddedPets = () => {
   const [pets, setPets] = useState([]);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 0,
+    totalCount: 0,
+    pageSize: 10,
+    hasNextPage: false,
+    hasPrevPage: false,
+  });
 
   const petsPerPage = 10;
 
+  // Fetch pets with pagination
   useEffect(() => {
     let mounted = true;
     const fetchPets = async () => {
       try {
         setIsLoading(true);
-        const res = await axiosSecure.get(`/pets/${user?.email}`);
-        if (mounted) setPets(res.data);
+        const res = await axiosSecure.get(`/pets/${user?.email}`, {
+          params: {
+            page: page,
+            size: petsPerPage,
+          },
+        });
+
+        if (mounted) {
+          setPets(res.data.pets);
+          setPagination(res.data.pagination);
+        }
       } catch (err) {
         console.error("Failed to fetch pets:", err);
         Swal.fire({
@@ -34,14 +52,16 @@ const MyAddedPets = () => {
         if (mounted) setIsLoading(false);
       }
     };
+
     if (user?.email) fetchPets();
+
     return () => {
       mounted = false;
     };
-  }, [user?.email, axiosSecure]);
+  }, [user?.email, axiosSecure, page]);
 
-  const handleAdopt = (id) => {
-    Swal.fire({
+  const handleAdopt = async (id) => {
+    const result = await Swal.fire({
       title: "Are you sure?",
       text: "Mark this pet as adopted?",
       icon: "warning",
@@ -49,35 +69,34 @@ const MyAddedPets = () => {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, Mark as Adopted",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          await axiosSecure.patch(`/pets/adopt/${id}`);
-          setPets((prev) =>
-            prev.map((pet) =>
-              pet._id === id ? { ...pet, adopted: true } : pet
-            )
-          );
-
-          Swal.fire({
-            title: "Congratulations!",
-            text: "Your pet has been marked as adopted",
-            icon: "success",
-          });
-        } catch (error) {
-          Swal.fire({
-            title: "Error!",
-            text: "Failed to update adoption status. Please try again.",
-            icon: "error",
-          });
-          console.error("Adopt failed:", error);
-        }
-      }
     });
+
+    if (result.isConfirmed) {
+      try {
+        await axiosSecure.patch(`/pets/adopt/${id}`);
+        // Update local state
+        setPets((prev) =>
+          prev.map((pet) => (pet._id === id ? { ...pet, adopted: true } : pet))
+        );
+
+        Swal.fire({
+          title: "Congratulations!",
+          text: "Your pet has been marked as adopted",
+          icon: "success",
+        });
+      } catch (error) {
+        Swal.fire({
+          title: "Error!",
+          text: "Failed to update adoption status. Please try again.",
+          icon: "error",
+        });
+        console.error("Adopt failed:", error);
+      }
+    }
   };
 
-  const handleDelete = (pet) => {
-    Swal.fire({
+  const handleDelete = async (pet) => {
+    const result = await Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
       icon: "warning",
@@ -85,47 +104,46 @@ const MyAddedPets = () => {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          await axiosSecure.delete(`/pets/${pet._id}`);
-          setPets((prev) => {
-            const filtered = prev.filter((p) => p._id !== pet._id);
-
-            // Adjust page if current page is empty after deletion
-            const maxPage = Math.ceil(filtered.length / petsPerPage);
-            if (page > maxPage && maxPage > 0) setPage(maxPage);
-
-            return filtered;
-          });
-
-          Swal.fire({
-            title: "Deleted!",
-            text: "Your pet has been deleted",
-            icon: "success",
-          });
-        } catch (error) {
-          Swal.fire({
-            title: "Error!",
-            text: "Failed to delete pet. Please try again.",
-            icon: "error",
-          });
-          console.error("Delete failed:", error);
-        }
-      }
     });
-  };
 
-  // Pagination logic
-  const totalPages = Math.ceil(pets.length / petsPerPage);
-  const startIndex = (page - 1) * petsPerPage + 1;
-  const endIndex = Math.min(page * petsPerPage, pets.length);
-  const currentPets = pets.slice(startIndex - 1, endIndex);
+    if (result.isConfirmed) {
+      try {
+        await axiosSecure.delete(`/pets/${pet._id}`);
+
+        // Check if current page will be empty after deletion
+        const remainingPets = pets.length - 1;
+        if (remainingPets === 0 && page > 1) {
+          setPage(page - 1);
+        } else {
+          // Refetch current page data
+          const res = await axiosSecure.get(`/pets/${user?.email}`, {
+            params: { page: page, size: petsPerPage },
+          });
+          setPets(res.data.pets);
+          setPagination(res.data.pagination);
+        }
+
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your pet has been deleted",
+          icon: "success",
+        });
+      } catch (error) {
+        Swal.fire({
+          title: "Error!",
+          text: "Failed to delete pet. Please try again.",
+          icon: "error",
+        });
+        console.error("Delete failed:", error);
+      }
+    }
+  };
 
   // Generate page numbers with ellipsis
   const getPageNumbers = () => {
     const pages = [];
     const maxVisiblePages = 5;
+    const totalPages = pagination.totalPages;
 
     if (totalPages <= maxVisiblePages) {
       for (let i = 1; i <= totalPages; i++) pages.push(i);
@@ -148,6 +166,12 @@ const MyAddedPets = () => {
     return pages;
   };
 
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= pagination.totalPages) {
+      setPage(newPage);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="p-4" role="status" aria-live="polite" aria-busy="true">
@@ -166,7 +190,7 @@ const MyAddedPets = () => {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">My Added Pets</h1>
-      {/* theme */}
+
       {pets.length === 0 ? (
         <div className="text-center py-12 bg-gray-50 rounded-lg">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-200 rounded-full mb-4">
@@ -215,7 +239,6 @@ const MyAddedPets = () => {
       ) : (
         <>
           <div className="mb-4 flex justify-between items-center">
-           
             <Link
               to="/dashboard/add-pet"
               className="inline-flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 text-sm"
@@ -237,10 +260,10 @@ const MyAddedPets = () => {
               Add New Pet
             </Link>
           </div>
-          {/* theme */}
+
           <div
-            className={`overflow-x-auto  rounded-lg shadow  ${
-              theme == "dark" ? "card-dark" : "card-light "
+            className={`overflow-x-auto rounded-lg shadow ${
+              theme == "dark" ? "card-dark" : "card-light"
             }`}
           >
             <table className="table w-full">
@@ -265,19 +288,16 @@ const MyAddedPets = () => {
                     Actions
                   </th>
                 </tr>
-                {/* 
-                ${theme == "dark" ? "card-dark" : "card-light "} 
-             */}
               </thead>
               <tbody
-                className={`divide-y divide-gray-200     ${
+                className={`divide-y divide-gray-200 ${
                   theme == "dark"
                     ? "card-dark text-light"
                     : "card-light text-dark"
-                }  `}
+                }`}
               >
-                {currentPets.map((pet, index) => (
-                  <tr key={pet._id} className="">
+                {pets.map((pet, index) => (
+                  <tr key={pet._id}>
                     <td
                       className={`px-4 py-4 whitespace-nowrap text-sm ${
                         theme == "dark" ? "text-dark" : "text-light"
@@ -351,12 +371,19 @@ const MyAddedPets = () => {
             </table>
           </div>
 
-          {totalPages > 1 && (
+          {pagination.totalPages > 1 && (
             <div className="mt-6 flex items-center justify-between">
               <div className="text-sm text-gray-700">
-                Showing <span className="font-medium">{startIndex}</span> to{" "}
-                <span className="font-medium">{endIndex}</span> of{" "}
-                <span className="font-medium">{pets.length}</span> results
+                Showing{" "}
+                <span className="font-medium">
+                  {(page - 1) * petsPerPage + 1}
+                </span>{" "}
+                to{" "}
+                <span className="font-medium">
+                  {Math.min(page * petsPerPage, pagination.totalCount)}
+                </span>{" "}
+                of <span className="font-medium">{pagination.totalCount}</span>{" "}
+                results
               </div>
 
               <div
@@ -365,11 +392,11 @@ const MyAddedPets = () => {
                 aria-label="Pagination Navigation"
               >
                 <button
-                  onClick={() => setPage((p) => Math.max(p - 1, 1))}
-                  disabled={page === 1}
+                  onClick={() => handlePageChange(page - 1)}
+                  disabled={!pagination.hasPrevPage}
                   aria-label="Previous Page"
                   className={`px-3 py-2 text-sm font-medium rounded-md ${
-                    page === 1
+                    !pagination.hasPrevPage
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                       : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
                   }`}
@@ -380,9 +407,7 @@ const MyAddedPets = () => {
                 {getPageNumbers().map((pageNum, index) => (
                   <button
                     key={index}
-                    onClick={() =>
-                      typeof pageNum === "number" && setPage(pageNum)
-                    }
+                    onClick={() => handlePageChange(pageNum)}
                     disabled={pageNum === "..."}
                     aria-label={
                       pageNum === "..."
@@ -404,11 +429,11 @@ const MyAddedPets = () => {
                 ))}
 
                 <button
-                  onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-                  disabled={page === totalPages}
+                  onClick={() => handlePageChange(page + 1)}
+                  disabled={!pagination.hasNextPage}
                   aria-label="Next Page"
                   className={`px-3 py-2 text-sm font-medium rounded-md ${
-                    page === totalPages
+                    !pagination.hasNextPage
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                       : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
                   }`}
