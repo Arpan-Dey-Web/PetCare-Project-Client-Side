@@ -3,13 +3,14 @@ import useAxiosSecure from "../hooks/useAxiosSecure";
 import { AuthContext } from "../context/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast, Toaster } from "react-hot-toast";
-import axios from "axios";
+import { ThemeContext } from "../context/ThemeContext";
 
 const MyDonations = () => {
   const axiosSecure = useAxiosSecure();
   const { user } = useContext(AuthContext);
   const queryClient = useQueryClient();
   const [refundingId, setRefundingId] = useState(null);
+  const { theme } = useContext(ThemeContext);
 
   // Fetch donation transactions
   const {
@@ -87,11 +88,11 @@ const MyDonations = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+      <div className=" rounded-lg shadow-md overflow-hidden">
         {/* Header */}
-        <div className="px-6 py-4 bg-blue-50 border-b">
-          <h1 className="text-2xl font-bold text-blue-800">My Donations</h1>
-          <p className="text-gray-600 mt-1">
+        <div className="px-6 py-4 bg-gray-400 text-wh border-b">
+          <h1 className="text-2xl font-bold text-white">My Donations</h1>
+          <p className="text-white mt-1">
             Track your donation history and manage refunds
           </p>
         </div>
@@ -110,17 +111,29 @@ const MyDonations = () => {
         ) : (
           <>
             {/* Summary */}
-            <div className="px-6 py-4 bg-gray-50 border-b">
+            <div
+              className={`px-6 py-4 border-b  ${
+                theme == "dark" ? "card-dark" : "card-light"
+              }`}
+            >
               <div className="flex justify-between items-center">
-                <div className="text-sm text-gray-600">
+                <div
+                  className={`text-sm ${theme == "dark" ? "text-white" : ""}`}
+                >
                   Total Donations:
                   <span className="font-semibold ml-1">
                     {transactionDetails.length}
                   </span>
                 </div>
-                <div className="text-sm text-gray-600">
+                <div
+                  className={`text-sm ${theme == "dark" ? "text-white" : ""}`}
+                >
                   Total Amount:
-                  <span className="ml-1 text-lg font-semibold text-green-600">
+                  <span
+                    className={`ml-1 text-lg font-semibold ${
+                      theme == "dark" ? "text-white" : ""
+                    }`}
+                  >
                     $
                     {transactionDetails.reduce(
                       (sum, transaction) =>
@@ -136,31 +149,41 @@ const MyDonations = () => {
             {/* Table */}
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50">
+                <thead
+                  className={`${
+                    theme == "dark" ? "card-dark" : " card-light"
+                  } `}
+                >
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                       Pet Image
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th
+                      className={`px-6 py-3 text-left text-xs font-medium 00 uppercase tracking-wider`}
+                    >
                       Pet Name
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                       Donated Amount
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                       Date
                     </th>
 
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-center text-xs font-medium  uppercase tracking-wider">
                       Action
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {transactionDetails.map((transaction) => (
+                <tbody
+                  className={`${
+                    theme == "dark" ? "card-dark text-white" : "card-light "
+                  } divide-y divide-gray-200`}
+                >
+                  {transactionDetails?.map((transaction) => (
                     <tr
                       key={transaction._id}
-                      className="hover:bg-gray-50 transition-colors duration-200"
+                      className=" transition-colors duration-200"
                     >
                       {/* Pet Image */}
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -191,7 +214,7 @@ const MyDonations = () => {
 
                       {/* Pet Name */}
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900 mb-1">
+                        <div className="text-sm font-medium  mb-1">
                           {transaction.petName}
                         </div>
                       </td>
@@ -204,7 +227,7 @@ const MyDonations = () => {
                       </td>
 
                       {/* Date */}
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm ">
                         {new Date(
                           transaction.donationDate || transaction.donatedAt
                         ).toLocaleDateString("en-US", {

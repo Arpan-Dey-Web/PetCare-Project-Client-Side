@@ -255,7 +255,7 @@ const AlldonationCampaign = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {campaigns.map((campaign) => (
+              {campaigns?.map((campaign) => (
                 <tr key={campaign._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="h-16 w-16 rounded-lg overflow-hidden bg-gray-200">
