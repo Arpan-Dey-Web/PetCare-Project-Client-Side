@@ -11,13 +11,14 @@ import {
 
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import { AuthContext } from "../context/AuthContext";
+import { ThemeContext } from "../context/ThemeContext";
 
 const AdoptionRequests = () => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const axiosSecure = useAxiosSecure();
   const { user } = useContext(AuthContext);
   const queryClient = useQueryClient();
-
+  const { theme } = useContext(ThemeContext);
   // Fetch adoption requests using TanStack Query
   const {
     data: requests = [],
@@ -61,7 +62,7 @@ const AdoptionRequests = () => {
       alert("Adoption request accepted!");
     },
     onError: (error) => {
-      console.error("Error accepting request:", error);
+      // console.error("Error accepting request:", error);
       alert("Error accepting request. Please try again.");
     },
   });
@@ -87,14 +88,13 @@ const AdoptionRequests = () => {
       alert("Adoption request rejected!");
     },
     onError: (error) => {
-      console.error("Error rejecting request:", error);
+      // console.error("Error rejecting request:", error);
       alert("Error rejecting request. Please try again.");
     },
   });
 
   const handleAccept = (requestId) => {
     acceptRequestMutation.mutate(requestId);
-
   };
 
   const handleReject = (requestId) => {
@@ -254,43 +254,51 @@ const AdoptionRequests = () => {
   return (
     <div className="max-w-6xl mx-auto p-6 ">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        <h2
+          className={`text-2xl font-bold  mb-2 ${
+            theme == "dark" ? "text-dark" : "text-light"
+          }`}
+        >
           Adoption Requests
         </h2>
-        <p className="text-gray-600">Manage adoption requests for your pets</p>
+        <p
+          className={`text-sm ${theme == "dark" ? "text-dark" : "text-light"}`}
+        >
+          Manage adoption requests for your pets
+        </p>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+      <div className=" rounded-lg shadow-sm border border-gray-200">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-400">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Pet
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Requester
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Contact
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Location
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Date
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className={` divide-y divide-gray-200 ${theme=="dark" ? "card-dark" : "card-light"}`}>
               {requests.map((request) => (
-                <tr key={request._id} className="hover:bg-gray-50">
+                <tr key={request._id} className="">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <img
@@ -302,33 +310,32 @@ const AdoptionRequests = () => {
                         className="w-10 h-10 rounded-full object-cover"
                       />
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-medium ">
                           {request.petName || "N/A"}
                         </div>
-                       
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">
+                    <div className="text-sm font-medium ">
                       {request.requestedUserName || "N/A"}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
+                    <div className="text-sm ">
                       {request.requestedUserEmail || "N/A"}
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm ">
                       {request.requestedUserPhone || "N/A"}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
+                    <div className="text-sm ">
                       {request.requestedUserAddress || "N/A"}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
+                    <div className="text-sm ">
                       {new Date(
                         request.createdAt || request.requestDate || Date.now()
                       ).toLocaleDateString()}

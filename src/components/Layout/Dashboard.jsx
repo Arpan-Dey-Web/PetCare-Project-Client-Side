@@ -74,7 +74,7 @@ const Dashboard = () => {
 
   return (
     <div
-      className={`h-screen flex flex-col max-w-7xl mx-auto
+      className={`h-screen flex flex-col 
         ${theme === "dark" ? "bg-dark text-dark" : "bg-light text-light"}`}
     >
       {/* Top Navbar */}
@@ -86,7 +86,7 @@ const Dashboard = () => {
       </div>
 
       {/* Layout Wrapper */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden w-11/12 max-w-7xl mx-auto">
         {/* Sidebar */}
         <aside
           className={`${

@@ -20,9 +20,11 @@ const CallToActionSection = () => {
           Thousands of pets are waiting for a family. Your love could rewrite
           their story.
         </p>
-        <Link to="/adopt">
+        <Link to="/pets">
           <button
-            className={`${theme =="dark" ? "button-dark" : "button-light"} text-white px-8 py-3 rounded-full font-semibold text-lg shadow-md transition`}
+            className={`${
+              theme == "dark" ? "button-dark" : "button-light"
+            } text-white px-8 py-3 rounded-full font-semibold text-lg shadow-md transition`}
           >
             ❤️ Adopt Now
           </button>

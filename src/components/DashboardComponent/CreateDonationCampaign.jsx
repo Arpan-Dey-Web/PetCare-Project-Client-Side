@@ -3,6 +3,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { AuthContext } from "../context/AuthContext";
 import useAxiosSecure from "../hooks/useAxiosSecure";
+import { ThemeContext } from "../context/ThemeContext";
 
 const CreateDonationCampaign = () => {
   const [imageFile, setImageFile] = useState(null);
@@ -18,6 +19,7 @@ const CreateDonationCampaign = () => {
   const { user } = useContext(AuthContext);
 
   const axiosSecure = useAxiosSecure();
+  const { theme } = useContext(ThemeContext);
   const handleImageUpload = async () => {
     if (!imageFile) {
       setImageError("Please select an image before submitting.");
