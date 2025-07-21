@@ -137,17 +137,21 @@ const CreateDonationCampaign = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white shadow-md border border-gray-200 rounded-xl">
-      <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">
+    <div
+      className={`max-w-3xl mx-auto p-6  shadow-md border border-gray-200 rounded-xl  ${theme == "dark"? "card-dark"  :"card light "} `}
+    >
+      <h2
+        className={`  text-3xl font-semibold  mb-6 text-center  ${
+          theme == "dark" ? "text-dark" : "text-light"
+        }`}
+      >
         Create Donation Campaign
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Pet Name Field - Added */}
         <div>
-          <label className="block mb-1 font-medium text-gray-700">
-            Pet Name *
-          </label>
+          <label className="block mb-1 font-medium ">Pet Name *</label>
           <input
             type="text"
             value={petName}
@@ -163,9 +167,7 @@ const CreateDonationCampaign = () => {
 
         {/* Image Upload */}
         <div>
-          <label className="block mb-1 font-medium text-gray-700">
-            Pet Image *
-          </label>
+          <label className="block mb-1 font-medium ">Pet Image *</label>
           <input
             type="file"
             accept="image/*"
@@ -183,7 +185,7 @@ const CreateDonationCampaign = () => {
 
         {/* Max Donation */}
         <div>
-          <label className="block mb-1 font-medium text-gray-700">
+          <label className="block mb-1 font-medium ">
             Maximum Donation Amount *
           </label>
           <input
@@ -202,9 +204,7 @@ const CreateDonationCampaign = () => {
 
         {/* Last Date */}
         <div>
-          <label className="block mb-1 font-medium text-gray-700">
-            Last Date *
-          </label>
+          <label className="block mb-1 font-medium">Last Date *</label>
           <input
             type="date"
             value={lastDate}
@@ -220,9 +220,7 @@ const CreateDonationCampaign = () => {
 
         {/* Short Description */}
         <div>
-          <label className="block mb-1 font-medium text-gray-700">
-            Short Description *
-          </label>
+          <label className="block mb-1 font-medium ">Short Description *</label>
           <textarea
             value={shortDescription}
             onChange={(e) => setShortDescription(e.target.value)}
@@ -240,9 +238,7 @@ const CreateDonationCampaign = () => {
 
         {/* Long Description */}
         <div>
-          <label className="block mb-1 font-medium text-gray-700">
-            Long Description *
-          </label>
+          <label className="block mb-1 font-medium ">Long Description *</label>
           <textarea
             value={longDescription}
             onChange={(e) => setLongDescription(e.target.value)}
@@ -261,11 +257,9 @@ const CreateDonationCampaign = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`w-full py-2 px-4 rounded-lg transition ${
-            isSubmitting
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-600 hover:bg-blue-700"
-          } text-white`}
+          className={`w-full py-2 px-4 rounded-lg transition  ${
+            theme == "dark" ? "button-dark" : "button-light"
+          }`}
         >
           {isSubmitting ? "Creating Campaign..." : "Submit Campaign"}
         </button>

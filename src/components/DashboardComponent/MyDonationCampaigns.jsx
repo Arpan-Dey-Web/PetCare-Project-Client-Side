@@ -5,13 +5,14 @@ import useAxiosSecure from "../hooks/useAxiosSecure";
 import { AuthContext } from "../context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
+import { ThemeContext } from "../context/ThemeContext";
 
 const MyDonationCampaigns = () => {
   const [showDonatorsModal, setShowDonatorsModal] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const axiosSecure = useAxiosSecure();
   const { user } = useContext(AuthContext);
-
+const {theme} =useContext(ThemeContext)
   const {
     data: campaigns = [], // Default to empty array, not object
     isLoading,
@@ -142,15 +143,11 @@ const MyDonationCampaigns = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen  py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            My Donation Campaigns
-          </h1>
-          <p className="mt-2 text-gray-600">
-            Manage your pet donation campaigns
-          </p>
+          <h1 className="text-3xl font-bold ">My Donation Campaigns</h1>
+          <p className="mt-2 text-sm ">Manage your pet donation campaigns</p>
         </div>
 
         {campaigns.length === 0 ? (
@@ -178,50 +175,50 @@ const MyDonationCampaigns = () => {
             </div>
           </div>
         ) : (
-          <div className="bg-white shadow-sm rounded-lg overflow-hidden">
+          <div className=" shadow-sm rounded-lg overflow-hidden">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className="bg-gray-400">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                       Pet Name
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                       Maximum Donation Amount
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                       Donation Progress
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className={`${theme =="dark" ? "card-dark" :"card-light"} divide-y divide-gray-200`}>
                   {campaigns.map((campaign) => {
                     const progressPercentage = getProgressPercentage(
                       campaign.donatedAmount, // Use donatedAmount from your MongoDB data
                       campaign.maxDonation // Use maxDonation from your MongoDB data
                     );
                     return (
-                      <tr key={campaign._id} className="hover:bg-gray-50">
+                      <tr key={campaign._id} className="">
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium ">
                             {campaign.petName || "Pet Campaign"}{" "}
                             {/* Fallback if petName doesn't exist */}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">
+                          <div className="text-sm ">
                             {formatCurrency(campaign.maxDonation)}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="w-full">
-                            <div className="flex justify-between text-sm text-gray-600 mb-1">
+                            <div className="flex justify-between text-sm  mb-1">
                               <span>
                                 {formatCurrency(campaign.donatedAmount)}
                               </span>
