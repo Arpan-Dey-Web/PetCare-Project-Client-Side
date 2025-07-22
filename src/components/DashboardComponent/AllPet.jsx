@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast"; // or your toast library
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
+import Loading from "../SharedComponent/Loading";
 
 const AllPet = () => {
   const queryClient = useQueryClient();
@@ -172,9 +173,7 @@ const AllPet = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
+      <Loading/>
     );
   }
 
@@ -212,9 +211,7 @@ const AllPet = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Added By
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
+             
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
@@ -357,9 +354,6 @@ const AllPet = () => {
                   <option value="dog">Dog</option>
                   <option value="cat">Cat</option>
                   <option value="bird">Bird</option>
-                  <option value="rabbit">Rabbit</option>
-                  <option value="fish">Fish</option>
-                  <option value="other">Other</option>
                 </select>
               </div>
 

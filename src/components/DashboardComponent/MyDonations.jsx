@@ -4,6 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast, Toaster } from "react-hot-toast";
 import { ThemeContext } from "../context/ThemeContext";
+import Loading from "../SharedComponent/Loading";
 
 const MyDonations = () => {
   const axiosSecure = useAxiosSecure();
@@ -57,14 +58,7 @@ const MyDonations = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="flex items-center space-x-2">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <span className="text-lg text-gray-600">
-            Loading your donations...
-          </span>
-        </div>
-      </div>
+     <Loading/>
     );
   }
 

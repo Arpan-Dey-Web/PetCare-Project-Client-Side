@@ -6,6 +6,7 @@ import PetsCategorySection from "../SharedComponent/PetsCategorySection";
 import CallToActionSection from "../SharedComponent/CallToActionSection";
 import AboutUsSection from "../SharedComponent/AboutUsSection";
 import Footer from "../SharedComponent/Footer";
+import Loading from "../SharedComponent/Loading";
 
 const Home = () => {
   return (

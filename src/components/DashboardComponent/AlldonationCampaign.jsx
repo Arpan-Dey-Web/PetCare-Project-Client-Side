@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import UpdatePet from "./UpdatePet";
 import * as Yup from "yup";
 import { Form, Formik } from "formik";
+import Loading from "../SharedComponent/Loading";
 const AlldonationCampaign = () => {
   const queryClient = useQueryClient();
   const [editingCampaign, setEditingCampaign] = useState(null);
@@ -204,9 +205,7 @@ const AlldonationCampaign = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
+     <Loading/>
     );
   }
 

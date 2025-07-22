@@ -7,36 +7,7 @@ import toast, { Toaster } from "react-hot-toast";
 import Swal from "sweetalert2";
 
 import useAxiosPublic from "../hooks/useAxiosPublic";
-// createUser: (email, password) => {…}
-// loading
-// :
-// true
-// logInWithGithub
-// :
-// () => { return auth, githubProvider; }
-// logInWithGoogle
-// :
-// () => { return signInWithPopup(auth, googleProvider); }
-// setLoading
-// :
-// ƒ ()
-// setUser
-// :
-// ƒ ()
-// signInuser
-// :
-// (email, password) => {…}
-// signOutUser
-// :
-// () => { return signOut(auth); }
-// updataUserProfile
-// :
-// (profile) => {…}
-// user
-// :
-// null
 
-// import { useNavigate } from "react-router-dom"; // Optional: If you want redirection after
 const Register = () => {
   const { createUser, updataUserProfile, logInWithGoogle, logInWithGithub } =
     useContext(AuthContext);

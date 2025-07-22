@@ -1,13 +1,17 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-hot-toast"; 
+import { toast } from "react-hot-toast";
 import useAxiosSecure from "../hooks/useAxiosSecure";
+
 import Swal from "sweetalert2";
+import Loading from "../SharedComponent/Loading";
+import { ThemeContext } from "../context/ThemeContext";
 
 const UsersComponent = () => {
   const queryClient = useQueryClient();
   const axiosSecure = useAxiosSecure();
-  // Fetch all users
+  const { theme } = useContext(ThemeContext);
+  // Fetch all  users
   const {
     data: users = [],
     isLoading,
@@ -19,7 +23,6 @@ const UsersComponent = () => {
       return res.data;
     },
   });
-
 
   // Make Admin Mutation
   const makeAdminMutation = useMutation({
@@ -57,25 +60,21 @@ const UsersComponent = () => {
     },
   });
 
-    
-
-
- const handleMakeAdmin = (userId) => {
-   Swal.fire({
-     title: "Make Admin?",
-     text: "Are you sure you want to promote this user to admin?",
-     icon: "question",
-     showCancelButton: true,
-     confirmButtonColor: "#3085d6",
-     cancelButtonColor: "#d33",
-     confirmButtonText: "Yes, promote!",
-   }).then((result) => {
-     if (result.isConfirmed) {
-       makeAdminMutation.mutate(userId);
-     }
-   });
- };
-
+  const handleMakeAdmin = (userId) => {
+    Swal.fire({
+      title: "Make Admin?",
+      text: "Are you sure you want to promote this user to admin?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, promote!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        makeAdminMutation.mutate(userId);
+      }
+    });
+  };
 
   const handleBanUser = (userId, currentStatus) => {
     const action = currentStatus === "banned" ? "unban" : "ban";
@@ -90,11 +89,7 @@ const UsersComponent = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (error) {
@@ -107,39 +102,43 @@ const UsersComponent = () => {
 
   return (
     <div className="container mx-auto ">
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+      <div
+        className={` rounded-lg shadow-md overflow-hidden ${
+          theme == "dark" ? "card-dark" : "card-light"
+        }`}
+      >
         <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-800">Users Management</h2>
-          <p className="text-gray-600 mt-1">Total Users: {users.length}</p>
+          <h2 className="text-2xl font-bold ">Users Management</h2>
+          <p className=" mt-1">Total Users: {users.length}</p>
         </div>
 
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className={`bg-gray-400`}>
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                   Profile
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                   Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                   Email
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                   Role
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className={`${theme =="dark" ?"card-dark":"card-light"}`}>
               {users.map((user) => (
-                <tr key={user._id} className="hover:bg-gray-50">
+                <tr key={user._id} className="">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="h-12 w-12 rounded-full overflow-hidden bg-gray-200">
                       {user.image ? (
@@ -149,19 +148,19 @@ const UsersComponent = () => {
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <div className="h-full w-full flex items-center justify-center text-gray-500 font-medium">
+                        <div className="h-full w-full flex items-center justify-center font-medium">
                           {user.name?.charAt(0).toUpperCase() || "U"}
                         </div>
                       )}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">
+                    <div className="text-sm font-medium ">
                       {user.name}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{user.email}</div>
+                    <div className="text-sm ">{user.email}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
@@ -197,22 +196,6 @@ const UsersComponent = () => {
                           : "Make Admin"}
                       </button>
                     )}
-
-                    <button
-                    //   onClick={() => handleBanUser(user._id, user.status)}
-                      disabled={banUserMutation.isLoading}
-                      className={`px-3 py-1 rounded-md text-sm transition-colors ${
-                        user.status === "banned"
-                          ? "bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white"
-                          : "bg-red-600 hover:bg-red-700 disabled:bg-red-300 text-white"
-                      }`}
-                    >
-                      {banUserMutation.isLoading
-                        ? "Loading..."
-                        : user.status === "banned"
-                        ? "Unban"
-                        : "Ban"}
-                    </button>
                   </td>
                 </tr>
               ))}

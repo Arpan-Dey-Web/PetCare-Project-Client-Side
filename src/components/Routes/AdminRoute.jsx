@@ -1,10 +1,11 @@
 import { Navigate } from "react-router";
 import useRole from "../hooks/useRole";
+import Loading from "../SharedComponent/Loading";
 
 const AdminRoute = ({ children }) => {
   const [role, isLoading] = useRole();
 //   console.log(role);
-  if (isLoading) return <div>Checking admin access...</div>;
+  if (isLoading) return <Loading/>
   if (role !== "admin") return <Navigate to="/dashboard" />;
 
   return children;

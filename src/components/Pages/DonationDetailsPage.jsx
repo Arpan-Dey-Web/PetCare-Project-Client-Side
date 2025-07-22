@@ -15,6 +15,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import CheckoutForm from "../SharedComponent/CheckoutForm";
 import toast, { Toaster } from "react-hot-toast";
 import { ThemeContext } from "../context/ThemeContext";
+import Loading from "../SharedComponent/Loading";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -75,9 +76,7 @@ const PetDonationDetailsPage = () => {
 
   if (isLoading)
     return (
-      <div className="h-screen bg-light text-light:text-dark flex items-center justify-center">
-        Loading...
-      </div>
+     <Loading/>
     );
   if (error || !campaign._id)
     return (

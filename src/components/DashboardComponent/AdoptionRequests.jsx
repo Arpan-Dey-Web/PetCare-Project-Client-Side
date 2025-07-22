@@ -12,6 +12,7 @@ import {
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import { AuthContext } from "../context/AuthContext";
 import { ThemeContext } from "../context/ThemeContext";
+import Loading from "../SharedComponent/Loading";
 
 const AdoptionRequests = () => {
   const [selectedRequest, setSelectedRequest] = useState(null);
@@ -208,9 +209,7 @@ const AdoptionRequests = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
+      <Loading/>
     );
   }
 

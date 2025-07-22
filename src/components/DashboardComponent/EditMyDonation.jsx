@@ -4,6 +4,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { AuthContext } from "../context/AuthContext";
 import useAxiosSecure from "../hooks/useAxiosSecure";
+import Loading from "../SharedComponent/Loading";
 
 const EditMyDonation = () => {
   const { id } = useParams();
@@ -65,7 +66,6 @@ const EditMyDonation = () => {
     formData.append("image", imageFile);
 
     try {
-      console.log("🔄 Uploading new image to ImgBB...");
       const res = await axios.post(
         `https://api.imgbb.com/1/upload?key=${imgbbAPI}`,
         formData
@@ -160,12 +160,7 @@ const EditMyDonation = () => {
   // Show loading state
   if (isLoading) {
     return (
-      <div className="max-w-3xl mx-auto p-6 bg-white shadow-md border border-gray-200 rounded-xl">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading campaign data...</p>
-        </div>
-      </div>
+     <Loading/>
     );
   }
 

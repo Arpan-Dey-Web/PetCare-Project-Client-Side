@@ -4,6 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
 import { ThemeContext } from "../context/ThemeContext";
+import Loading from "../SharedComponent/Loading";
 
 const MyAddedPets = () => {
   const { user } = useContext(AuthContext);
@@ -174,16 +175,7 @@ const MyAddedPets = () => {
 
   if (isLoading) {
     return (
-      <div className="p-4" role="status" aria-live="polite" aria-busy="true">
-        <h1 className="text-2xl font-bold mb-4">My Added Pets</h1>
-        <div className="flex justify-center items-center py-12">
-          <div
-            className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"
-            aria-hidden="true"
-          ></div>
-          <span className="ml-4 text-gray-600">Loading your pets...</span>
-        </div>
-      </div>
+      <Loading/>
     );
   }
 
