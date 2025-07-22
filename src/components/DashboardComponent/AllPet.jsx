@@ -1,15 +1,18 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast"; // or your toast library
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
 import Loading from "../SharedComponent/Loading";
+import { ThemeContext } from "../context/ThemeContext";
 
 const AllPet = () => {
   const queryClient = useQueryClient();
   const [editingPet, setEditingPet] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const axiosSecure = useAxiosSecure();
+  const { theme } = useContext(ThemeContext);
+
   // Fetch all pets
   const {
     data: pets = [],
@@ -22,7 +25,7 @@ const AllPet = () => {
       return res.data;
     },
   });
-  console.log(pets);
+
   // Delete pet mutation
   const deletePetMutation = useMutation({
     mutationFn: async (petId) => {
@@ -172,9 +175,7 @@ const AllPet = () => {
   };
 
   if (isLoading) {
-    return (
-      <Loading/>
-    );
+    return <Loading />;
   }
 
   if (error) {
@@ -187,39 +188,39 @@ const AllPet = () => {
 
   return (
     <div className="container mx-auto ">
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+      <div className={` rounded-lg shadow-md overflow-hidden ${theme =="dark" ?"card-dark" :"card-light"} `}>
         <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-800">
+          <h2 className="text-2xl font-bold ">
             All Pets Management
           </h2>
-          <p className="text-gray-600 mt-1">Total Pets: {pets.length}</p>
+          <p className=" mt-1">Total Pets: {pets.length}</p>
         </div>
 
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className={`bg-gray-400`}>
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                   Image
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                   Pet Details
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                   Category
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                   Added By
                 </th>
-             
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+
+                <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className=" divide-y divide-gray-200">
               {pets.map((pet) => (
-                <tr key={pet._id} className="hover:bg-gray-50">
+                <tr key={pet._id} className="">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="h-16 w-16 rounded-lg overflow-hidden bg-gray-200">
                       {pet.image ? (
@@ -229,25 +230,24 @@ const AllPet = () => {
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <div className="h-full w-full flex items-center justify-center text-gray-500">
+                        <div className="h-full w-full flex items-center justify-center ">
                           No Image
                         </div>
                       )}
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm font-medium text-gray-900">
+                    <div className="text-sm font-medium ">
                       {pet.name}
                     </div>
-                    <div className="text-sm text-gray-500">Age: {pet.age}</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm ">Age: {pet.age}</div>
+                    <div className="text-sm ">
                       Location: {pet.location}
                     </div>
                   </td>
-                  
+
                   <td className="px-6 py-4 whitespace-nowrap">
-                   
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm ">
                       {pet?.owner || "No email"}
                     </div>
                   </td>
