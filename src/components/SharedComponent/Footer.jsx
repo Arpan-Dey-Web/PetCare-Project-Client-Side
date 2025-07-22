@@ -7,22 +7,19 @@ import Logo from "./Logo";
 const Footer = () => {
   const { theme } = useContext(ThemeContext);
 
-  const footerBgClass = theme === "dark" ? "footer-dark" : "footer-light";
-  const textColorClass = theme === "dark" ? "text-dark" : "text-light";
-  const borderColorClass =
-    theme === "dark" ? "border-gray-700" : "border-gray-200";
-  const iconHoverClass =
-    theme === "dark" ? "hover:text-white" : "hover:text-gray-900";
-
   return (
-    <footer className={`${footerBgClass} ${textColorClass} pt-12 pb-6 px-4`}>
+    <footer
+      className={` pt-12 pb-6 px-4  ${
+        theme == "dark" ? "text-white" : "text-black"
+      }`}
+    >
       <div
-        className={`max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 border-b ${borderColorClass} pb-8`}
+        className={`max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 border-b  pb-8`}
       >
         {/* Logo & Tagline */}
         <div>
-         <Logo/>
-          <p className="opacity-80">
+          <Logo />
+          <p className="">
             Bridging hearts, one paw at a time. Adopt. Love. Repeat.
           </p>
         </div>
@@ -60,26 +57,26 @@ const Footer = () => {
           <p className="mb-3">arpandey.web@gmail.com</p>
           <div className="flex space-x-4 text-xl">
             <a
-              href="https://github.com/your-github"
+              href="https://github.com/Arpan-Dey-Web"
               target="_blank"
               rel="noopener noreferrer"
-              className={iconHoverClass}
+              className={""}
             >
               <FaGithub />
             </a>
             <a
-              href="https://linkedin.com/in/your-linkedin"
+              href="www.linkedin.com/in/arpan-dey-web"
               target="_blank"
               rel="noopener noreferrer"
-              className={iconHoverClass}
+              className={""}
             >
               <FaLinkedin />
             </a>
             <a
-              href="https://facebook.com/your-facebook"
+              href="https://www.facebook.com/arpandey5000/"
               target="_blank"
               rel="noopener noreferrer"
-              className={iconHoverClass}
+              className={""}
             >
               <FaFacebook />
             </a>
@@ -88,7 +85,7 @@ const Footer = () => {
       </div>
 
       <div className="text-center text-sm opacity-70 mt-8">
-        © {new Date().getFullYear()} PawfectMatch. All rights reserved.
+        © {new Date().getFullYear()} PawHome. All rights reserved.
       </div>
     </footer>
   );

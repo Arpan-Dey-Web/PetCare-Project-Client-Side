@@ -21,9 +21,7 @@ const AboutUsSection = () => {
           About Us
         </h2>
         <p
-          className={`text-lg md:text-xl leading-relaxed  mb-6 ${
-            theme == "dark" ? "text-accent-dark" : "text-accent-light"
-          } `}
+          className={`text-base md:text-xl leading-relaxed  mb-6  `}
         >
           At <span className="font-semibold text-indigo-600">PawHome</span>, we
           believe every animal deserves a loving home and every person deserves
@@ -32,9 +30,7 @@ const AboutUsSection = () => {
           meaningfully.
         </p>
         <p
-          className={`text-lg md:text-xl leading-relaxed   ${
-            theme == "dark" ? "text-accent-dark" : "text-accent-light"
-          } `}
+          className={`text-base md:text-xl leading-relaxed  `}
         >
           Whether you're searching for a furry friend to brighten your days or
           hoping to rehome a pet responsibly, our adoption process is designed

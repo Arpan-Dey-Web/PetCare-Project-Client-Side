@@ -7,6 +7,8 @@ import CallToActionSection from "../SharedComponent/CallToActionSection";
 import AboutUsSection from "../SharedComponent/AboutUsSection";
 import Footer from "../SharedComponent/Footer";
 import Loading from "../SharedComponent/Loading";
+import WeprovideFeatures from "../SharedComponent/WeprovideFeatures";
+import FAQ from "../SharedComponent/FAQ";
 
 const Home = () => {
   return (
@@ -14,7 +16,9 @@ const Home = () => {
       <Banner></Banner>
       <PetsCategorySection></PetsCategorySection>
       <CallToActionSection></CallToActionSection>
+      <WeprovideFeatures/>
       <AboutUsSection></AboutUsSection>
+      <FAQ/>
     </div>
   );
 };
