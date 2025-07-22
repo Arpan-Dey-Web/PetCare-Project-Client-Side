@@ -101,7 +101,7 @@ const Pets = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-center mb-8">Adoptable Pets</h1>
+      <h1 className="text-3xl font-bold text-center mb-8 ">Adoptable Pets</h1>
       
       {/* Search and Filter Section */}
       <div className="mb-8 space-y-4 md:space-y-0 md:flex md:gap-4 md:items-center md:justify-center">
@@ -169,7 +169,7 @@ const Pets = () => {
               setSearchTerm("");
               setSelectedCategory("");
             }}
-            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors duration-200 whitespace-nowrap"
+            className="px-4 py-2 bg-gray-100 hover:bg-gray-200  rounded-lg transition-colors duration-200 whitespace-nowrap"
           >
             Clear Filters
           </button>
@@ -177,7 +177,7 @@ const Pets = () => {
       </div>
 
       {/* Results Summary */}
-      <div className="mb-6 text-center text-gray-600">
+      <div className="mb-6 text-center ">
         {searchTerm || selectedCategory ? (
           <p>
             Showing {filteredPets.length} of {allPets.length} pets

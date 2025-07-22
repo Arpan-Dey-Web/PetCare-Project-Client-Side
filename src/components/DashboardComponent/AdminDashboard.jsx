@@ -48,7 +48,7 @@ const AdminDashboard = () => {
         setAvailablePets(res.data);
       })
       .catch((err) => {
-        console.log(err);
+       
       });
     axiosSecure
       .get("/donation-campaigns")
@@ -56,7 +56,7 @@ const AdminDashboard = () => {
         setDonationCampaigns(res.data.campaigns);
       })
       .catch((err) => {
-        console.log(err);
+       
       });
   }, [user, adminRole]);
 

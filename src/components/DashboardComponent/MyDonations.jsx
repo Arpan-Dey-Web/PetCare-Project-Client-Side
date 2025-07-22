@@ -33,9 +33,9 @@ const MyDonations = () => {
     cacheTime: 10 * 60 * 1000,
   });
 
-  console.log(transactionDetails);
+
   const handleRefund = async (transaction) => {
-    // console.log(transaction);
+
     const mongoid = transaction._id;
     const transactionId = transaction.campaignId;
     const transectionAmount = transaction.amount;
@@ -47,7 +47,7 @@ const MyDonations = () => {
       transactionId,
       transectionAmount,
     });
-    console.log(deleteTransection, response);
+
 
     if ((await deleteTransection).status == 200 || response == 2000) {
       await queryClient.invalidateQueries(["donations"]); // Refresh donations list

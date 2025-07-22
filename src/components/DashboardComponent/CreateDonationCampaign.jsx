@@ -30,17 +30,17 @@ const CreateDonationCampaign = () => {
     formData.append("image", imageFile);
 
     try {
-      console.log("🔄 Uploading image to ImgBB...");
+    
       const res = await axios.post(
         `https://api.imgbb.com/1/upload?key=${imgbbAPI}`,
         formData
       );
       setImageError("");
       toast.success("Image uploaded!");
-      console.log("✅ Image uploaded successfully:", res.data.data.url);
+    ;
       return res.data.data.url;
     } catch (error) {
-      console.error("❌ Image upload error:", error);
+    
       setImageError("Image upload failed.");
       toast.error("Image upload failed.");
       return null;
@@ -77,7 +77,7 @@ const CreateDonationCampaign = () => {
     setIsSubmitting(true);
 
     try {
-      console.log("🔄 Starting form submission...");
+   
 
       // First upload image
       const uploadedImageUrl = await handleImageUpload();
@@ -99,11 +99,11 @@ const CreateDonationCampaign = () => {
         createdAt: new Date().toISOString(),
       };
 
-      console.log("📤 Sending campaign data:", campaignData);
+   ;
 
       const res = await axiosSecure.post("/donation-campaigns", campaignData);
 
-      console.log("✅ Campaign creation response:", res.data);
+    
 
       if (res.status === 201) {
         toast.success("Campaign created successfully!");

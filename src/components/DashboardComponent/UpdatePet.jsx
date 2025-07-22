@@ -107,7 +107,7 @@ const UpdatePet = () => {
       };
 
       const res = await axiosSecure.put(`/pets/${id}`, updatedPet);
-      // console.log(res);
+
       toast.success("Pet updated successfully!");
       // navigate("/dashboard/my-pets");
     } catch (err) {

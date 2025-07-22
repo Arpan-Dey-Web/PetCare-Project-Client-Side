@@ -22,7 +22,7 @@ const CheckoutForm = ({
     if (!stripe || !elements) return;
     setProcessing(true);
     setError(null);
-    console.log(amount);
+
     try {
       // 1. Create PaymentIntent from backend
       const { data } = await axiosSecure.post("/create-payment-intent", {
@@ -63,14 +63,13 @@ const CheckoutForm = ({
         };
 
         const postdonation = await axiosSecure.post("/donations", donation);
-        console.log(postdonation);
-        console.log(campaignId, amount);
+   
         // 4. Update campaign donated amount
         const result = await axiosSecure.put("/update-donation-amount", {
           campaignId,
           amount,
         });
-        console.log(result);
+ 
 
         // 4. Callback to parent
         onSuccess();
@@ -78,7 +77,7 @@ const CheckoutForm = ({
         // update donation value
       }
     } catch (err) {
-      console.log(err);
+
       setError(err.message);
     } finally {
       setProcessing(false);

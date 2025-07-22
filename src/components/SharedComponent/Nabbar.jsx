@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
 import { ThemeContext } from "../context/ThemeContext";
+import axios from "axios";
 
 const Navbar = () => {
   const { user, signOutUser } = useContext(AuthContext);
@@ -14,6 +15,7 @@ const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const toggleMenu = () => setIsOpen(!isOpen);
   const { theme } = useContext(ThemeContext);
+
   const handleLogout = () => {
     Swal.fire({
       title: "Are you sure?",
@@ -23,8 +25,14 @@ const Navbar = () => {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
+        const data = await axios.post(
+          `${import.meta.env.VITE_API}/logout`,
+          {},
+          { withCredentials: true }
+        );
+        console.log(data);
         signOutUser();
         setDropdownOpen(false);
         Swal.fire({
@@ -133,12 +141,12 @@ const Navbar = () => {
               )}
             </>
           ) : (
-            <NavLink
+            <Link
               to="/login"
               className="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition"
             >
               Login
-            </NavLink>
+            </Link>
           )}
         </div>
       </div>

@@ -72,10 +72,10 @@ const EditMyDonation = () => {
       );
       setImageError("");
       toast.success("Image uploaded!");
-      console.log("✅ Image uploaded successfully:", res.data.data.url);
+    
       return res.data.data.url;
     } catch (error) {
-      console.error("❌ Image upload error:", error);
+   
       setImageError("Image upload failed.");
       toast.error("Image upload failed.");
       return null;
@@ -130,14 +130,13 @@ const EditMyDonation = () => {
         updatedAt: new Date().toISOString(),
       };
 
-      console.log("📤 Sending updated campaign data:", campaignData);
+   
 
       const res = await axiosSecure.put(
         `/donation-campaigns/${id}`,
         campaignData
       );
 
-      console.log("✅ Campaign update response:", res.data);
 
       if (res.status === 200) {
         toast.success("Campaign updated successfully!");

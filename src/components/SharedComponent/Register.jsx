@@ -86,19 +86,29 @@ const Register = () => {
           });
         });
     } catch (err) {
-      console.log(err);
+    
       setError("Image upload failed. Please try again.");
     }
   };
   const handleGithubLogin = () => {
-    console.log("login with github");
+  
     logInWithGithub()
-      .then((res) => {
-        console.log(res);
-        navigate("/");
+      .then(async (res) => {
+        const userInfo = {
+          name: res?.user?.displayName,
+          email: res?.user?.email,
+          image: res?.user?.photoURL,
+          role: "user",
+        };
+        const response = await axiosPublic.post("/register", userInfo);
+        if (response.status == 201) {
+          toast.success(" Profile Updated Sucessfully");
+          navigate("/");
+        }
+
       })
       .catch((err) => {
-        console.log(err);
+         toast.error("Oops Something Wrong");
       });
   };
   const handleGoogleLogin = () => {
@@ -111,14 +121,15 @@ const Register = () => {
           role: "user",
         };
         const response = await axiosPublic.post("/register", userInfo);
-        // console.log(response);
+ 
         if (response.status == 201) {
           toast.success(" Profile Updated Sucessfully");
           navigate("/");
         }
       })
       .catch((err) => {
-        console.log(err);
+     
+        toast.error("Oops Something Wrong")
       });
   };
 

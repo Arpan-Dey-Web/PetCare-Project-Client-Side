@@ -184,10 +184,12 @@ const MyAddedPets = () => {
       <h1 className="text-2xl font-bold mb-4">My Added Pets</h1>
 
       {pets.length === 0 ? (
-        <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-200 rounded-full mb-4">
+        <div className={`text-center py-12 rounded-lg ${theme == 'dark' ? "card-dark" : 
+        "card-light"
+        }`}>
+          <div className="inline-flex items-center justify-center w-16 h-16 border rounded-full mb-4">
             <svg
-              className="w-8 h-8 text-gray-400"
+              className="w-8 h-8 "
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -200,10 +202,10 @@ const MyAddedPets = () => {
               />
             </svg>
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <h3 className="text-xl font-semibold  mb-2">
             No Pets Added Yet
           </h3>
-          <p className="text-gray-600 mb-6 max-w-md mx-auto">
+          <p className=" mb-6 max-w-md mx-auto">
             You haven't added any pets for adoption yet. Start by adding your
             first pet to help them find loving homes.
           </p>

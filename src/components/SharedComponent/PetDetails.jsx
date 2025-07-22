@@ -61,13 +61,13 @@ const PetDetails = () => {
         "/adoption-request",
         adoptRequestPetData
       );
-      console.log(res);
+;
       alert("Adoption request submitted!");
       setIsOpen(false);
       setPhone("");
       setAddress("");
     } catch (err) {
-      console.log("Submission failed:", err);
+     
       alert("Failed to submit adoption request. Try again.");
     }
   };

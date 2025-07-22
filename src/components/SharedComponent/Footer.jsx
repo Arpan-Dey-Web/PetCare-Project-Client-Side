@@ -2,6 +2,7 @@
 import { useContext } from "react";
 import { FaFacebook, FaGithub, FaLinkedin } from "react-icons/fa";
 import { ThemeContext } from "../context/ThemeContext";
+import Logo from "./Logo";
 
 const Footer = () => {
   const { theme } = useContext(ThemeContext);
@@ -20,9 +21,7 @@ const Footer = () => {
       >
         {/* Logo & Tagline */}
         <div>
-          <h2 className="text-2xl font-bold mb-2 text-accent-light dark:text-accent-dark">
-            PawfectMatch 🐾
-          </h2>
+         <Logo/>
           <p className="opacity-80">
             Bridging hearts, one paw at a time. Adopt. Love. Repeat.
           </p>

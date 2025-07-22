@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import useAxiosSecure from "../hooks/useAxiosSecure";
@@ -7,12 +7,13 @@ import UpdatePet from "./UpdatePet";
 import * as Yup from "yup";
 import { Form, Formik } from "formik";
 import Loading from "../SharedComponent/Loading";
+import { ThemeContext } from "../context/ThemeContext";
 const AlldonationCampaign = () => {
   const queryClient = useQueryClient();
   const [editingCampaign, setEditingCampaign] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const axiosSecure = useAxiosSecure();
-
+ const {theme} =useContext(ThemeContext)
   const campaignValidationSchema = Yup.object({
     name: Yup.string().required("Campaign name is required"),
     maxDonation: Yup.number()
@@ -35,7 +36,7 @@ const AlldonationCampaign = () => {
       return res.data.campaigns;
     },
   });
-  console.log(campaigns);
+
   // Delete campaign mutation
   const deleteCampaignMutation = useMutation({
     mutationFn: async (campaignId) => {
@@ -78,7 +79,7 @@ const AlldonationCampaign = () => {
         `/donation-campaigns/${campaignId}`,
         cleanCampaignData
       );
-      console.log(res);
+
       return res.data;
     },
     onSuccess: () => {
@@ -137,8 +138,6 @@ const AlldonationCampaign = () => {
       setSubmitting(false);
     });
   };
-
-
   const handleDeleteCampaign = (campaignId, campaignName) => {
     Swal.fire({
       title: `Delete ${campaignName}?`,
@@ -201,7 +200,7 @@ const AlldonationCampaign = () => {
       currency: "USD",
     }).format(amount);
   };
-  console.log(editingCampaign);
+  
 
   if (isLoading) {
     return (
@@ -219,43 +218,49 @@ const AlldonationCampaign = () => {
 
   return (
     <div className="container mx-auto">
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+      <div
+        className={`rounded-lg shadow-md overflow-hidden ${
+          theme == "dark" ? "card-dark" : "card-light"
+        } `}
+      >
         <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-800">
+          <h2 className="text-2xl font-bold ">
             All Donation Campaigns Management
           </h2>
-          <p className="text-gray-600 mt-1">
-            Total Campaigns: {campaigns.length}
-          </p>
+          <p className=" mt-1">Total Campaigns: {campaigns.length}</p>
         </div>
 
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-400">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                   Image
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                   Campaign Details
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                   Progress
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                   Created By
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody
+              className={` divide-y divide-gray-200  ${
+                theme == "dark" ? "card-dark" : "card-light"
+              }`}
+            >
               {campaigns?.map((campaign) => (
-                <tr key={campaign._id} className="hover:bg-gray-50">
+                <tr key={campaign._id} className="">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="h-16 w-16 rounded-lg overflow-hidden bg-gray-200">
                       {campaign.image ? (
@@ -265,26 +270,24 @@ const AlldonationCampaign = () => {
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <div className="h-full w-full flex items-center justify-center text-gray-500">
+                        <div className="h-full w-full flex items-center justify-center ">
                           No Image
                         </div>
                       )}
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm font-medium text-gray-900">
-                      {campaign.name}
-                    </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm font-medium ">{campaign.name}</div>
+                    <div className="text-sm ">
                       Goal: {formatCurrency(campaign.maxDonation)}
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm ">
                       Last Date:{" "}
                       {new Date(campaign.lastDate).toLocaleDateString()}
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm text-gray-900">
+                    <div className="text-sm ">
                       Raised: {formatCurrency(campaign.donatedAmount || 0)}
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
@@ -300,7 +303,7 @@ const AlldonationCampaign = () => {
                         }}
                       ></div>
                     </div>
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-xs  mt-1">
                       {Math.round(
                         ((campaign.donatedAmount || 0) / campaign.maxDonation) *
                           100
@@ -309,11 +312,9 @@ const AlldonationCampaign = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
+                 
+                    <div className="text-sm ">
                       {campaign?.owner || "Unknown"}
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      {campaign.createdBy?.email || "No email"}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
