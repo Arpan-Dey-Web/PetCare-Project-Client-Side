@@ -160,7 +160,7 @@ const {theme} =useContext(ThemeContext)
                   d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002 2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
                 />
               </svg>
-              <h3 className="mt-2 text-sm font-medium text-gray-900">
+              <h3 className="mt-2 text-sm font-medium">
                 No campaigns
               </h3>
               <p className="mt-1 text-sm text-gray-500">

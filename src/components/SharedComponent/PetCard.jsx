@@ -4,7 +4,7 @@ import { ThemeContext } from "../context/ThemeContext";
 
 const PetCard = ({ pet }) => {
   console.log(pet);
-  const { _id, name, age, image, location } = pet;
+  const { _id, name, age, image, location, category } = pet;
   const { theme } = useContext(ThemeContext);
 
   // Conditional classes based on theme
@@ -22,7 +22,11 @@ const PetCard = ({ pet }) => {
     >
       <img src={image} alt={name} className="w-full h-48 object-cover" />
       <div className="p-4">
-        <h2 className={`text-xl font-bold ${textColor}`}>{name}</h2>
+        <div className="flex justify-between">
+          <h2 className={`text-xl font-bold ${textColor}`}>{name}</h2>
+          <div className="border p-2 rounded-2xl text-sm bg-sky-200 px-4 py-1 ">{category}</div>
+        </div>
+
         <p className={`${secondaryText} mt-1`}>
           <span className="font-medium">Age:</span> {age} year
           {age > 1 ? "s" : ""}

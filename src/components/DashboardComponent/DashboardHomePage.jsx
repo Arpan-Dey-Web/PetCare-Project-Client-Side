@@ -1,10 +1,13 @@
 import React, { useContext } from "react";
 import { FaPaw, FaUser, FaDonate, FaPlusCircle } from "react-icons/fa";
 import { ThemeContext } from "../context/ThemeContext";
+import { Link } from "react-router";
+import { AuthContext } from "../context/AuthContext";
 
 const DashboardHomePage = () => {
   const { theme } = useContext(ThemeContext);
-
+  const { user } = useContext(AuthContext)
+  console.log(user);
   // Dynamic classes based on theme
   const bgClass = theme === "dark" ? "bg-dark" : "bg-light";
   const textPrimary = theme === "dark" ? "text-dark" : "text-light";
@@ -29,44 +32,52 @@ const DashboardHomePage = () => {
           <div
             className={`${cardBg} ${cardText} shadow-md rounded-lg p-6 hover:shadow-xl transition`}
           >
-            <FaPaw className="text-3xl text-indigo-500 mb-4 mx-auto" />
-            <h3 className="text-lg font-semibold mb-1">My Pets</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              View and manage pets you’ve added for adoption.
-            </p>
+            <Link to={"/dashboard/my-added-pets"}>
+              <FaPaw className="text-3xl text-indigo-500 mb-4 mx-auto" />
+              <h3 className="text-lg font-semibold mb-1">My Pets</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                View and manage pets you’ve added for adoption.
+              </p>
+            </Link>
           </div>
 
           {/* Card 2 */}
           <div
             className={`${cardBg} ${cardText} shadow-md rounded-lg p-6 hover:shadow-xl transition`}
           >
-            <FaPlusCircle className="text-3xl text-green-500 mb-4 mx-auto" />
-            <h3 className="text-lg font-semibold mb-1">Add a Pet</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Help more pets find homes by adding new listings.
-            </p>
+            <Link to={"/dashboard/add-pet"}>
+              <FaPlusCircle className="text-3xl text-green-500 mb-4 mx-auto" />
+              <h3 className="text-lg font-semibold mb-1">Add a Pet</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Help more pets find homes by adding new listings.
+              </p>
+            </Link>
           </div>
 
           {/* Card 3 */}
           <div
             className={`${cardBg} ${cardText} shadow-md rounded-lg p-6 hover:shadow-xl transition`}
           >
-            <FaDonate className="text-3xl text-pink-500 mb-4 mx-auto" />
-            <h3 className="text-lg font-semibold mb-1">Donations</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Create or view campaigns, and track donations.
-            </p>
+            <Link to={"/dashboard/my-donations"}>
+              <FaDonate className="text-3xl text-pink-500 mb-4 mx-auto" />
+              <h3 className="text-lg font-semibold mb-1">Donations</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Create or view campaigns, and track donations.
+              </p>
+            </Link>
           </div>
 
           {/* Card 4 */}
           <div
             className={`${cardBg} ${cardText} shadow-md rounded-lg p-6 hover:shadow-xl transition`}
           >
-            <FaUser className="text-3xl text-yellow-500 mb-4 mx-auto" />
-            <h3 className="text-lg font-semibold mb-1">Profile</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Manage your account and dashboard settings.
-            </p>
+            <Link to={"/dashboard/profile"}>
+              <FaUser className="text-3xl text-yellow-500 mb-4 mx-auto" />
+              <h3 className="text-lg font-semibold mb-1">Profile</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Manage your account and dashboard settings.
+              </p>
+            </Link>
           </div>
         </div>
       </div>

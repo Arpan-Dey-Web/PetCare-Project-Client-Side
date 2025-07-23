@@ -25,6 +25,7 @@ import AlldonationCampaign from "../DashboardComponent/AlldonationCampaign";
 import MyDonations from "../DashboardComponent/MyDonations";
 import DashboardHomePage from "../DashboardComponent/DashboardHomePage";
 import AdminDashboard from "../DashboardComponent/AdminDashboard";
+import UserProfile from "../DashboardComponent/UserProfile";
 
 const router = createBrowserRouter([
   {
@@ -74,6 +75,14 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <DashboardHomePage></DashboardHomePage>,
+      },
+      {
+        path: "profile",
+        element: (
+          <PrivateRoute>
+            <UserProfile></UserProfile>
+          </PrivateRoute>
+        ),
       },
       {
         path: "add-pet",

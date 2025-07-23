@@ -8,9 +8,11 @@ import {
   FaHandHoldingHeart,
   FaDonate,
   FaHeart,
+  FaUser,
   FaUsers,
   FaDog,
   FaUserShield,
+  FaHome,
 } from "react-icons/fa";
 import useRole from "../hooks/useRole";
 import Navbar from "../SharedComponent/Nabbar";
@@ -30,49 +32,48 @@ const Dashboard = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  const sidebarLinks = [
-    { to: "add-pet", icon: <FaPlusCircle />, label: "Add Pet" },
-    { to: "my-added-pets", icon: <FaPaw />, label: "My Added Pets" },
-    {
-      to: "adoption-requests",
-      icon: <FaClipboardList />,
-      label: "Adoption Request",
-    },
-    {
-      to: "create-donation-campaign",
-      icon: <FaDonate />,
-      label: "Create Donation Campaign",
-    },
-    {
-      to: "my-donation-campaigns",
-      icon: <FaHandHoldingHeart />,
-      label: "My Donation Campaigns",
-    },
-    { to: "my-donations", icon: <FaHeart />, label: "My Donations" },
-    ...(role === "admin"
-      ? [
-          {
-            to: "admin-dashboard",
-            icon: <FaUserShield />,
-            label: "Admin Dashboard",
-          },
-          {
-            to: "admin/allusers",
-            icon: <FaUsers />,
-            label: "Active Users (Admin)",
-          },
-          { to: "admin/allpets", icon: <FaDog />, label: "All Pets (Admin)" },
-          {
-            to: "admin/alldonation",
-            icon: <FaDonate />,
-            label: "All Donations (Admin)",
-          },
-          
-        ]
-      : []),
-  ];
-
+  // { to: "/dashboardHome", icon: <FaHome />, label: "DashboardHome" },
+ const sidebarLinks = [
+   { to: "profile", icon: <FaUser />, label: "Profile" },
+   { to: "add-pet", icon: <FaPlusCircle />, label: "Add Pet" },
+   { to: "my-added-pets", icon: <FaPaw />, label: "My Added Pets" },
+   {
+     to: "adoption-requests",
+     icon: <FaClipboardList />,
+     label: "Adoption Request",
+   },
+   {
+     to: "create-donation-campaign",
+     icon: <FaDonate />,
+     label: "Create Donation Campaign",
+   },
+   {
+     to: "my-donation-campaigns",
+     icon: <FaHandHoldingHeart />,
+     label: "My Donation Campaigns",
+   },
+   { to: "my-donations", icon: <FaHeart />, label: "My Donations" },
+   ...(role === "admin"
+     ? [
+         {
+           to: "admin-dashboard",
+           icon: <FaUserShield />,
+           label: "Admin Dashboard",
+         },
+         {
+           to: "admin/allusers",
+           icon: <FaUsers />,
+           label: "Active Users (Admin)",
+         },
+         { to: "admin/allpets", icon: <FaDog />, label: "All Pets (Admin)" },
+         {
+           to: "admin/alldonation",
+           icon: <FaDonate />,
+           label: "All Donations (Admin)",
+         },
+       ]
+     : []),
+ ];
   return (
     <div
       className={`h-screen flex flex-col 

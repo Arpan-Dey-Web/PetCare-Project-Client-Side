@@ -312,7 +312,6 @@ const AlldonationCampaign = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                 
                     <div className="text-sm ">
                       {campaign?.owner || "Unknown"}
                     </div>
@@ -419,7 +418,7 @@ const AlldonationCampaign = () => {
                       value={values.name}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      className="w-full p-2 border border-gray-300 rounded-md"
+                      className="w-full p-2 border border-gray-300 rounded-md text-black"
                     />
                     {touched.name && errors.name && (
                       <p className="text-sm text-red-500 mt-1">{errors.name}</p>
@@ -436,7 +435,7 @@ const AlldonationCampaign = () => {
                       value={values.maxDonation}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      className="w-full p-2 border border-gray-300 rounded-md"
+                      className="w-full p-2 border border-gray-300 rounded-md text-black"
                     />
                     {touched.maxDonation && errors.maxDonation && (
                       <p className="text-sm text-red-500 mt-1">
@@ -455,7 +454,7 @@ const AlldonationCampaign = () => {
                       value={values.lastDate}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      className="w-full p-2 border border-gray-300 rounded-md"
+                      className="w-full p-2 border border-gray-300 rounded-md text-black"
                     />
                     {touched.lastDate && errors.lastDate && (
                       <p className="text-sm text-red-500 mt-1">
@@ -474,7 +473,7 @@ const AlldonationCampaign = () => {
                       value={values.image}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      className="w-full p-2 border border-gray-300 rounded-md"
+                      className="w-full p-2 border border-gray-300 rounded-md text-black"
                     />
                     {touched.image && errors.image && (
                       <p className="text-sm text-red-500 mt-1">
@@ -493,7 +492,7 @@ const AlldonationCampaign = () => {
                       onChange={handleChange}
                       onBlur={handleBlur}
                       rows={3}
-                      className="w-full p-2 border border-gray-300 rounded-md"
+                      className="w-full p-2 border border-gray-300 rounded-md text-black"
                     />
                     {touched.shortDescription && errors.shortDescription && (
                       <p className="text-sm text-red-500 mt-1">
@@ -512,7 +511,7 @@ const AlldonationCampaign = () => {
                       onChange={handleChange}
                       onBlur={handleBlur}
                       rows={4}
-                      className="w-full p-2 border border-gray-300 rounded-md"
+                      className="w-full p-2 border border-gray-300 rounded-md text-black"
                     />
                     {touched.longDescription && errors.longDescription && (
                       <p className="text-sm text-red-500 mt-1">
