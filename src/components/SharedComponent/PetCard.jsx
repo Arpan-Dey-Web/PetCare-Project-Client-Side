@@ -3,6 +3,7 @@ import { Link } from "react-router"; // Fixed: useRouter should be from 'react-r
 import { ThemeContext } from "../context/ThemeContext";
 
 const PetCard = ({ pet }) => {
+  console.log(pet);
   const { _id, name, age, image, location } = pet;
   const { theme } = useContext(ThemeContext);
 

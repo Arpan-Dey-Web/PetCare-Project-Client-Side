@@ -1,16 +1,17 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useContext } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
 import axios from "axios";
 import Loading from "../SharedComponent/Loading";
 import PetCard from "../SharedComponent/PetCard";
+import { ThemeContext } from "../context/ThemeContext";
 
 const url = import.meta.env.VITE_API;
 
 const Pets = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-
+  const { theme } = useContext(ThemeContext);
   const { ref, inView } = useInView({
     threshold: 0,
     triggerOnce: false,
@@ -60,7 +61,9 @@ const Pets = () => {
 
   // Get unique categories for dropdown
   const categories = useMemo(() => {
-    const uniqueCategories = [...new Set(allPets.map(pet => pet.category || pet.type))];
+    const uniqueCategories = [
+      ...new Set(allPets.map((pet) => pet.category || pet.type)),
+    ];
     return uniqueCategories.filter(Boolean).sort();
   }, [allPets]);
 
@@ -70,15 +73,15 @@ const Pets = () => {
 
     // Filter by search term (name)
     if (searchTerm.trim()) {
-      filtered = filtered.filter(pet =>
+      filtered = filtered.filter((pet) =>
         pet.name?.toLowerCase().includes(searchTerm.toLowerCase().trim())
       );
     }
 
     // Filter by category
     if (selectedCategory) {
-      filtered = filtered.filter(pet =>
-        (pet.category || pet.type) === selectedCategory
+      filtered = filtered.filter(
+        (pet) => (pet.category || pet.type) === selectedCategory
       );
     }
 
@@ -101,8 +104,14 @@ const Pets = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-center mb-8 ">Adoptable Pets</h1>
-      
+      <h1
+        className={`text-3xl font-bold text-center mb-8 ${
+          theme == "dark" ? "text-white" : " text-black"
+        }`}
+      >
+        Adoptable Pets
+      </h1>
+
       {/* Search and Filter Section */}
       <div className="mb-8 space-y-4 md:space-y-0 md:flex md:gap-4 md:items-center md:justify-center">
         {/* Search Input */}
@@ -112,7 +121,7 @@ const Pets = () => {
             placeholder="Search pets by name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+            className={`w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors ${theme =="dark" ?"text-white":"text-black"}`}
           />
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <svg
@@ -176,19 +185,6 @@ const Pets = () => {
         )}
       </div>
 
-      {/* Results Summary */}
-      <div className="mb-6 text-center ">
-        {searchTerm || selectedCategory ? (
-          <p>
-            Showing {filteredPets.length} of {allPets.length} pets
-            {searchTerm && ` matching "${searchTerm}"`}
-            {selectedCategory && ` in ${selectedCategory}`}
-          </p>
-        ) : (
-          <p>Showing all {allPets.length} available pets</p>
-        )}
-      </div>
-
       {/* Pet Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredPets.map((pet, index) => (
@@ -214,7 +210,9 @@ const Pets = () => {
               />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No pets found</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            No pets found
+          </h3>
           <p className="text-gray-500">
             Try adjusting your search criteria or clearing the filters.
           </p>
@@ -230,10 +228,7 @@ const Pets = () => {
 
       {/* Sentinel element for intersection observer - only show if no filters active */}
       {!searchTerm && !selectedCategory && (
-        <div
-          ref={ref}
-          className="h-10 flex items-center justify-center"
-        >
+        <div ref={ref} className="h-10 flex items-center justify-center">
           {hasNextPage && !isFetchingNextPage && (
             <span className="text-gray-500">Loading more pets...</span>
           )}
@@ -241,11 +236,14 @@ const Pets = () => {
       )}
 
       {/* End of list indicator */}
-      {!hasNextPage && allPets.length > 0 && !searchTerm && !selectedCategory && (
-        <div className="text-center text-gray-500 p-4">
-          You've seen all available pets!
-        </div>
-      )}
+      {!hasNextPage &&
+        allPets.length > 0 &&
+        !searchTerm &&
+        !selectedCategory && (
+          <div className="text-center text-gray-500 p-4">
+            You've seen all available pets!
+          </div>
+        )}
     </div>
   );
 };

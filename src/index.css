@@ -1,5 +1,9 @@
+@import url("https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap");
 @import "tailwindcss";
 
+html {
+  font-family: "Inconsolata", monospace;
+}
 /* Hide scrollbar */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
@@ -43,9 +47,9 @@
   /* Text Colors */
   --textColorLight: #1f2937;
   --textColorDark: #f4f4f5;
-    /* New accent text colors */
-  --textAccentLight: #7c3aed;  /* Matches your primary */
-  --textAccentDark: #06b6d4;   /* Matches your accent */
+  /* New accent text colors */
+  --textAccentLight: #7c3aed; /* Matches your primary */
+  --textAccentDark: #06b6d4; /* Matches your accent */
 
   /* Card Background */
   --cardBackgroundLight: #ffffff;
@@ -73,7 +77,6 @@
   --buttonDarkBg: var(--accent);
   --buttonDarkText: var(--black);
 }
-
 
 /* ======== BUTTON LIGHT THEME ======== */
 .button-light {

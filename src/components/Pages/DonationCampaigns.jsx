@@ -18,7 +18,7 @@ const DonationCampaigns = () => {
 
   const cardClass = isLight ? "card-light text-light" : "card-dark text-dark";
   const bgClass = isLight ? "bg-light text-light" : "bg-dark text-dark";
-  const accentText = isLight ? "text-accent-light" : "text-accent-dark";
+  const accentText = isLight ? "text-black" : "text-white";
   const buttonClass = isLight ? "button-light" : "button-dark";
   const softText = isLight ? "text-gray-600" : "text-gray-300";
   const softBg = isLight ? "bg-gray-100" : "bg-gray-700";
@@ -127,9 +127,7 @@ const DonationCampaigns = () => {
           <p className={`text-lg ${softText}`}>
             Help save lives by supporting our pet rescue campaigns
           </p>
-          <div className={`mt-4 text-sm ${softText}`}>
-            Total campaigns loaded: {campaigns.length}
-          </div>
+        
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

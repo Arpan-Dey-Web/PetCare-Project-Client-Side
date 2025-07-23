@@ -6,7 +6,7 @@ import {
   FaTimes,
   FaPaw,
 } from "react-icons/fa";
-import { Link, NavLink, useParams } from "react-router";
+import { Link, NavLink, useNavigate, useParams } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../hooks/useAxiosSecure";
@@ -26,6 +26,7 @@ const PetDonationDetailsPage = () => {
   const { id } = useParams();
   const { user } = useContext(AuthContext);
   const axiosSecure = useAxiosSecure();
+  const navigate = useNavigate();
 
   const {
     data: campaign = {},
@@ -68,16 +69,20 @@ const PetDonationDetailsPage = () => {
       )
     : 0;
 
-  const handleDonateClick = () => setShowModal(true);
+  const handleDonateClick = () => {
+    if (!user) {
+      return navigate("/login");
+    }
+
+    return setShowModal(true);
+  };
+
   const handleCloseModal = () => {
     setShowModal(false);
     setDonationAmount("");
   };
 
-  if (isLoading)
-    return (
-     <Loading/>
-    );
+  if (isLoading) return <Loading />;
   if (error || !campaign._id)
     return (
       <div className="h-screen bg-light text-light:text-dark flex items-center justify-center">
