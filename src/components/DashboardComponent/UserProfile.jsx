@@ -53,7 +53,7 @@ const UserProfile = () => {
               <img
                 src={userData.photoURL}
                 alt={userData.displayName}
-                className="rounded-full border-4 border-white shadow-lg object-center"
+                className="rounded-full border-4 border-white shadow-lg w-15 h-16 object-center "
               />
               <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
             </div>
