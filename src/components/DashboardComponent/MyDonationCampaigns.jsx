@@ -63,7 +63,7 @@ const {theme} =useContext(ThemeContext)
         );
       } catch (error) {
         toast.error(`Failed to ${action} campaign`);
-        console.error(error);
+    
       }
     }
   };

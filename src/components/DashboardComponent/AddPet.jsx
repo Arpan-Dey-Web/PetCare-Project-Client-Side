@@ -152,7 +152,7 @@ const AddPet = () => {
       resetForm();
       editor?.commands.setContent("");
     } catch (err) {
-      console.error(err);
+     
       setFieldError("submit", "Failed to add pet. Please try again.");
     } finally {
       setUploading(false);

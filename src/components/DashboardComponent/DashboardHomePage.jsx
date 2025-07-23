@@ -7,7 +7,7 @@ import { AuthContext } from "../context/AuthContext";
 const DashboardHomePage = () => {
   const { theme } = useContext(ThemeContext);
   const { user } = useContext(AuthContext)
-  console.log(user);
+
   // Dynamic classes based on theme
   const bgClass = theme === "dark" ? "bg-dark" : "bg-light";
   const textPrimary = theme === "dark" ? "text-dark" : "text-light";

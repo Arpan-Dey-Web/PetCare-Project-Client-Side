@@ -143,8 +143,7 @@ const EditMyDonation = () => {
         navigate("/dashboard/my-donation-campaigns"); // Redirect to my donations page
       }
     } catch (err) {
-      console.error("❌ Campaign update error:", err);
-      console.error("Error response:", err.response?.data);
+   
 
       if (err.response?.data?.message) {
         toast.error(err.response.data.message);

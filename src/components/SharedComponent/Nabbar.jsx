@@ -32,7 +32,7 @@ const Navbar = () => {
           {},
           { withCredentials: true }
         );
-        console.log(data);
+   
         signOutUser();
         setDropdownOpen(false);
         Swal.fire({
@@ -81,7 +81,7 @@ const Navbar = () => {
         <div className="flex items-center gap-4">
           <button
             onClick={toggleMenu}
-            className="text-2xl text-gray-700 md:hidden"
+            className="text-2xl text-white md:hidden"
             aria-label="Toggle menu"
           >
             {isOpen ? <FiX /> : <FiMenu />}

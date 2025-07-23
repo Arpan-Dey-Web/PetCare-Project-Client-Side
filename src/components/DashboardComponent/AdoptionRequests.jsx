@@ -13,6 +13,7 @@ import useAxiosSecure from "../hooks/useAxiosSecure";
 import { AuthContext } from "../context/AuthContext";
 import { ThemeContext } from "../context/ThemeContext";
 import Loading from "../SharedComponent/Loading";
+import toast, { Toaster } from "react-hot-toast";
 
 const AdoptionRequests = () => {
   const [selectedRequest, setSelectedRequest] = useState(null);
@@ -60,11 +61,11 @@ const AdoptionRequests = () => {
             : request
         );
       });
-      alert("Adoption request accepted!");
+      toast.success("Adoption request accepted!");
     },
     onError: (error) => {
-      // console.error("Error accepting request:", error);
-      alert("Error accepting request. Please try again.");
+
+      toast.error("Error accepting request. Please try again.");
     },
   });
 
@@ -86,11 +87,11 @@ const AdoptionRequests = () => {
             : request
         );
       });
-      alert("Adoption request rejected!");
+     toast.error("Adoption request rejected!");
     },
     onError: (error) => {
-      // console.error("Error rejecting request:", error);
-      alert("Error rejecting request. Please try again.");
+  
+      toast.error("Error rejecting request. Please try again.");
     },
   });
 
@@ -394,6 +395,7 @@ const AdoptionRequests = () => {
           onClose={() => setSelectedRequest(null)}
         />
       )}
+       <Toaster position="top-right" reverseOrder={false} />
     </div>
   );
 };

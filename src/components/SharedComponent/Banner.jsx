@@ -103,16 +103,16 @@ const Banner = () => {
         {bannerImage.map((banner) => (
           <SwiperSlide key={banner.id}>
             <div
-              className="relative h-[70vh] mt-5 mb-10 rounded-2xl bg-cover bg-center"
+              className="relative h-[70vh]  mb-10 rounded-2xl bg-cover bg-center"
               style={{ backgroundImage: `url(${banner.image})` }}
             >
               <div className="absolute inset-0 bg-black/40 rounded-2xl"></div>{" "}
               {/* Dark overlay */}
               <div className="relative z-10 flex flex-col items-center justify-center h-full text-white text-center px-4">
-                <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                <h1 className=" text-3xl lg:text-5xl md:text-4xl font-bold mb-4">
                   {banner.text}
                 </h1>
-                <p className="max-w-2xl text-lg md:text-xl text-white/90">
+                <p className="max-w-2xl text-sm  md:text-xl text-white/90 text-center">
                   {banner.pargraph}
                 </p>
               </div>

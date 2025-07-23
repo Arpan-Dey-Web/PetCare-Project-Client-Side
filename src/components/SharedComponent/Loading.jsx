@@ -4,7 +4,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 
 const Loading = () => {
   return (
-    <div className="w-11/12 grid grid-cols-3 gap-4 mx-auto p-4 space-y-6">
+    <div className="w-11/12 grid grid-cols-1 md:grid-cols-3 gap-4 mx-auto p-4 space-y-6">
       {[...Array(16)].map((_, i) => (
         <div
           key={i}

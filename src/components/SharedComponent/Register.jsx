@@ -122,13 +122,12 @@ const Register = () => {
         };
         const response = await axiosPublic.post("/register", userInfo);
  
-        if (response.status == 201) {
+        if (response.status == 200) {
           toast.success(" Profile Updated Sucessfully");
           navigate("/");
         }
       })
       .catch((err) => {
-     
         toast.error("Oops Something Wrong")
       });
   };

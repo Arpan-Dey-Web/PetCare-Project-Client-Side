@@ -61,7 +61,7 @@ const UpdatePet = () => {
 
         if (editor) editor.commands.setContent(pet.longDescription || "");
       } catch (error) {
-        console.error("Failed to fetch pet:", error);
+    
         toast.error("Failed to load pet data.");
       }
     };
@@ -111,7 +111,7 @@ const UpdatePet = () => {
       toast.success("Pet updated successfully!");
       // navigate("/dashboard/my-pets");
     } catch (err) {
-      console.error(err);
+    
       setFieldError("submit", "Failed to update pet. Please try again.");
     } finally {
       setUploading(false);

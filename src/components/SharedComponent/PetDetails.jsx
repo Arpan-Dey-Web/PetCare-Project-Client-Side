@@ -6,6 +6,7 @@ import Modal from "react-modal";
 import { AuthContext } from "../context/AuthContext";
 import Loading from "./Loading";
 import { ThemeContext } from "../context/ThemeContext";
+import toast from "react-hot-toast";
 
 // Modal accessibility root
 Modal.setAppElement("#root");
@@ -62,13 +63,13 @@ const PetDetails = () => {
         adoptRequestPetData
       );
 ;
-      alert("Adoption request submitted!");
+      toast.success("Adoption request submitted!");
       setIsOpen(false);
       setPhone("");
       setAddress("");
     } catch (err) {
      
-      alert("Failed to submit adoption request. Try again.");
+      toast.error("Failed to submit adoption request. Try again.");
     }
   };
 

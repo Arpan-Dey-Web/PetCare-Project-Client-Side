@@ -14,7 +14,7 @@ import { AuthContext } from "../context/AuthContext";
 const UserProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const { user } = useContext(AuthContext);
-  console.log(user);
+ 
   const [userData, setUserData] = useState({
     uid: user?.uid,
     email: user?.email,

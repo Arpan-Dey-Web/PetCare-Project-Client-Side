@@ -123,8 +123,7 @@ const CreateDonationCampaign = () => {
         if (fileInput) fileInput.value = "";
       }
     } catch (err) {
-      console.error("❌ Campaign creation error:", err);
-      console.error("Error response:", err.response?.data);
+   
 
       if (err.response?.data?.message) {
         toast.error(err.response.data.message);

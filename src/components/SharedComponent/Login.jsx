@@ -4,7 +4,8 @@ import { motion } from "framer-motion"; // 🌀 Import motion
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import { AuthContext } from "../context/AuthContext";
 import Swal from "sweetalert2";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
+import useAxiosPublic from "../hooks/useAxiosPublic";
 
 const Login = () => {
   const { signInuser, logInWithGoogle, logInWithGithub } =
@@ -12,7 +13,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [passwordError, setPasswordError] = useState("");
   const [emailError, setEmailError] = useState("");
-
+  const axiosPublic = useAxiosPublic();
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
 
   const handleLogin = (e) => {
@@ -47,23 +48,24 @@ const Login = () => {
     signInuser(userEmail, userPassword);
     navigate("/");
   };
-
   const handleGithubLogin = () => {
     logInWithGithub()
-      .then((res) => {
-        Swal.fire({
-          title: "Logged In!",
-          icon: "success",
-          draggable: true,
-        });
-        navigate("/");
+      .then(async (res) => {
+        const userInfo = {
+          name: res?.user?.displayName,
+          email: res?.user?.email,
+          image: res?.user?.photoURL,
+          role: "user",
+        };
+        const response = await axiosPublic.post("/register", userInfo);
+
+        if (response.status == 200) {
+          toast.success(" Profile Updated Sucessfully");
+          navigate("/");
+        }
       })
       .catch((err) => {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Email already Exist!",
-        });
+        toast.error("Oops Something Wrong");
       });
   };
   const handleGoogleLogin = () => {
@@ -173,7 +175,7 @@ const Login = () => {
             <div>
               <button
                 onClick={handleGithubLogin}
-                className="flex items-center justify-center gap-3 w-full py-2 px-4 bg-black text-white border border-black rounded-md hover:shadow-lg transition duration-300"
+                className="flex items-center justify-center gap-1 md:gap-3 w-full py-2 px-4 bg-black text-white border border-black rounded-md hover:shadow-lg transition duration-300"
               >
                 <svg
                   aria-label="GitHub logo"
@@ -192,7 +194,7 @@ const Login = () => {
             <div>
               <button
                 onClick={handleGoogleLogin}
-                className="flex items-center justify-center gap-3 w-full py-2 px-4 bg-white text-black border border-gray-300 rounded-md hover:shadow-lg transition duration-300"
+                className="flex items-center justify-center gap-1 md:gap-3 w-full py-2 px-4 bg-white text-black border border-gray-300 rounded-md hover:shadow-lg transition duration-300"
               >
                 <svg
                   aria-label="Google logo"

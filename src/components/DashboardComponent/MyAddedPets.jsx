@@ -43,7 +43,7 @@ const MyAddedPets = () => {
           setPagination(res.data.pagination);
         }
       } catch (err) {
-        console.error("Failed to fetch pets:", err);
+  
         Swal.fire({
           title: "Error!",
           text: "Failed to fetch your pets. Please try again.",
@@ -91,7 +91,7 @@ const MyAddedPets = () => {
           text: "Failed to update adoption status. Please try again.",
           icon: "error",
         });
-        console.error("Adopt failed:", error);
+   
       }
     }
   };
@@ -135,7 +135,7 @@ const MyAddedPets = () => {
           text: "Failed to delete pet. Please try again.",
           icon: "error",
         });
-        console.error("Delete failed:", error);
+      
       }
     }
   };
