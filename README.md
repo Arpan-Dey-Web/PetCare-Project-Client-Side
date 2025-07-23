@@ -4,7 +4,7 @@ PetAdopt is a dynamic and responsive web application built with the MERN stack t
 
 ## 🌐 Live Site
 
-**Live:** [https://petadopt.netlify.app](https://petadopt.netlify.app)`
+**Live:** (https://pawhome.netlify.app)
 
 
 

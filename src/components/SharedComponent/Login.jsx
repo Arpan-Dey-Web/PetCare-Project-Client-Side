@@ -51,18 +51,13 @@ const Login = () => {
   const handleGithubLogin = () => {
     logInWithGithub()
       .then(async (res) => {
-        const userInfo = {
-          name: res?.user?.displayName,
-          email: res?.user?.email,
-          image: res?.user?.photoURL,
-          role: "user",
-        };
-        const response = await axiosPublic.post("/register", userInfo);
+        Swal.fire({
+          title: "Drag me!",
+          icon: "success",
+          draggable: true,
+        });
 
-        if (response.status == 200) {
-          toast.success(" Profile Updated Sucessfully");
-          navigate("/");
-        }
+        navigate("/");
       })
       .catch((err) => {
         toast.error("Oops Something Wrong");
