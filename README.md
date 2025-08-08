@@ -122,4 +122,34 @@ PetAdopt is a dynamic and responsive web application built with the MERN stack t
 
 ---
 
+⚙️ Installation Steps
+
+# 1. Clone the project
+git clone my repo link
+
+# 2. Go into the project folder
+cd event-explorer
+
+# 3. Install dependencies
+npm install
+
+# 4. Start the development server
+npm run dev
+🔑 Firebase Config Setup
+Root ফোল্ডারে একটি .env ফাইল তৈরি করুন
+
+নিচের কোড বসিয়ে আপনার Firebase থেকে তথ্য বসান:
+
+VITE_APIKEY=your_firebase_api_key
+VITE_AUTHDOMAIN=your_firebase_auth_domain
+VITE_PROJECTID=your_firebase_project_id
+VITE_STORAGEBUCKET=your_firebase_storage_bucket
+VITE_MESSAGINGSENDERID=your_firebase_sender_id
+VITE_APPID=your_firebase_app_id
+📌 Firebase config পাবেন: Firebase Console → Project Settings → General → SDK setup
+✅ Run Success
+লোকাল সার্ভার রান হলে এই লিংকে খুলবে:
+👉 http://localhost:5173
+
+
 
