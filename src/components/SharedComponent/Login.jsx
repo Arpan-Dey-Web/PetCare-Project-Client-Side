@@ -16,7 +16,7 @@ const Login = () => {
   const axiosPublic = useAxiosPublic();
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     const userEmail = e.target.email.value.trim();
     const userPassword = e.target.password.value.trim();
@@ -44,9 +44,18 @@ const Login = () => {
     }
 
     if (!valid) return;
+    const getUser = await axiosPublic(`/get/user/${userEmail}`);
+    console.log(getUser);
+    if (getUser) {
+      signInuser(userEmail, userPassword);
+      navigate("/");
+    }
 
-    signInuser(userEmail, userPassword);
-    navigate("/");
+    // Swal.fire({
+    //   icon: "error",
+    //   title: "Oops...",
+    //   text: "Something went wrong!",
+    // });
   };
   const handleGithubLogin = () => {
     logInWithGithub()
@@ -65,7 +74,14 @@ const Login = () => {
   };
   const handleGoogleLogin = () => {
     logInWithGoogle()
-      .then((res) => {
+      .then(async (res) => {
+        const userInfo = {
+          name: res?.user?.displayName,
+          email: res?.user?.email,
+          image: res?.user?.photoURL,
+          role: "user",
+        };
+        const getUser = await axiosPublic(`/get/user/${userInfo.email}`);
         Swal.fire({
           title: "Logged In!",
           icon: "success",

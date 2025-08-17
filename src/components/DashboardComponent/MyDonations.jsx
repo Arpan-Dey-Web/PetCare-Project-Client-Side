@@ -29,13 +29,12 @@ const MyDonations = () => {
       return res.data;
     },
     enabled: !!user.email,
-    staleTime: 5 * 60 * 1000,
-    cacheTime: 10 * 60 * 1000,
+   
   });
 
+  console.log(transactionDetails);
 
   const handleRefund = async (transaction) => {
-
     const mongoid = transaction._id;
     const transactionId = transaction.campaignId;
     const transectionAmount = transaction.amount;
@@ -48,7 +47,6 @@ const MyDonations = () => {
       transectionAmount,
     });
 
-
     if ((await deleteTransection).status == 200 || response == 2000) {
       await queryClient.invalidateQueries(["donations"]); // Refresh donations list
       await queryClient.invalidateQueries(["campaign", transactionId]); // Refresh campaign data
@@ -57,9 +55,7 @@ const MyDonations = () => {
   };
 
   if (isLoading) {
-    return (
-     <Loading/>
-    );
+    return <Loading />;
   }
 
   if (error) {

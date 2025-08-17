@@ -17,9 +17,14 @@ import {
 import useRole from "../hooks/useRole";
 import Navbar from "../SharedComponent/Nabbar";
 import { ThemeContext } from "../context/ThemeContext";
+import { AuthContext } from "../context/AuthContext";
+import Swal from "sweetalert2";
+import axios from "axios";
+import { Button } from "../ui/button";
 
 const Dashboard = () => {
   const { theme } = useContext(ThemeContext);
+  const { user, signOutUser } = useContext(AuthContext);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [role] = useRole();
 
@@ -32,48 +37,77 @@ const Dashboard = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-  // { to: "/dashboardHome", icon: <FaHome />, label: "DashboardHome" },
- const sidebarLinks = [
-   { to: "profile", icon: <FaUser />, label: "Profile" },
-   { to: "add-pet", icon: <FaPlusCircle />, label: "Add Pet" },
-   { to: "my-added-pets", icon: <FaPaw />, label: "My Added Pets" },
-   {
-     to: "adoption-requests",
-     icon: <FaClipboardList />,
-     label: "Adoption Request",
-   },
-   {
-     to: "create-donation-campaign",
-     icon: <FaDonate />,
-     label: "Create Donation Campaign",
-   },
-   {
-     to: "my-donation-campaigns",
-     icon: <FaHandHoldingHeart />,
-     label: "My Donation Campaigns",
-   },
-   { to: "my-donations", icon: <FaHeart />, label: "My Donations" },
-   ...(role === "admin"
-     ? [
-         {
-           to: "admin-dashboard",
-           icon: <FaUserShield />,
-           label: "Admin Dashboard",
-         },
-         {
-           to: "admin/allusers",
-           icon: <FaUsers />,
-           label: "Active Users (Admin)",
-         },
-         { to: "admin/allpets", icon: <FaDog />, label: "All Pets (Admin)" },
-         {
-           to: "admin/alldonation",
-           icon: <FaDonate />,
-           label: "All Donations (Admin)",
-         },
-       ]
-     : []),
- ];
+
+  const handleLogout = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You Want To Logout??",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const data = await axios.post(
+          `${import.meta.env.VITE_API}/logout`,
+          {},
+          { withCredentials: true }
+        );
+
+        signOutUser();
+
+        Swal.fire({
+          title: "Logged Out",
+          text: "Your Have Been Logout Sucessfully",
+          icon: "success",
+        });
+      }
+    });
+  };
+
+  const sidebarLinks = [
+    { to: "profile", icon: <FaUser />, label: "Profile" },
+    { to: "add-pet", icon: <FaPlusCircle />, label: "Add Pet" },
+    { to: "my-added-pets", icon: <FaPaw />, label: "My Added Pets" },
+    {
+      to: "adoption-requests",
+      icon: <FaClipboardList />,
+      label: "Adoption Request",
+    },
+    {
+      to: "create-donation-campaign",
+      icon: <FaDonate />,
+      label: "Create Donation Campaign",
+    },
+    {
+      to: "my-donation-campaigns",
+      icon: <FaHandHoldingHeart />,
+      label: "My Donation Campaigns",
+    },
+
+    { to: "my-donations", icon: <FaHeart />, label: "My Donations" },
+    ...(role === "admin"
+      ? [
+          {
+            to: "admin-dashboard",
+            icon: <FaUserShield />,
+            label: "Admin Dashboard",
+          },
+          {
+            to: "admin/allusers",
+            icon: <FaUsers />,
+            label: "Active Users (Admin)",
+          },
+          { to: "admin/allpets", icon: <FaDog />, label: "All Pets (Admin)" },
+          {
+            to: "admin/alldonation",
+            icon: <FaDonate />,
+            label: "All Donations (Admin)",
+          },
+        ]
+      : []),
+  ];
   return (
     <div
       className={`h-screen flex flex-col 
@@ -130,7 +164,7 @@ const Dashboard = () => {
             </button>
           </div>
 
-          <nav className="px-2 space-y-1">
+          <nav className="px-2 ">
             {sidebarLinks.map(({ to, icon, label }) => (
               <NavLink
                 key={to}
@@ -169,6 +203,8 @@ const Dashboard = () => {
                 )}
               </NavLink>
             ))}
+
+            <Button value={"Logout"} onClick={handleLogout}></Button>
           </nav>
         </aside>
 

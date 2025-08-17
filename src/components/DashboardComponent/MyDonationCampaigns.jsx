@@ -160,9 +160,7 @@ const {theme} =useContext(ThemeContext)
                   d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002 2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
                 />
               </svg>
-              <h3 className="mt-2 text-sm font-medium">
-                No campaigns
-              </h3>
+              <h3 className="mt-2 text-sm font-medium">No campaigns</h3>
               <p className="mt-1 text-sm text-gray-500">
                 You haven't created any donation campaigns yet.
               </p>
@@ -191,81 +189,86 @@ const {theme} =useContext(ThemeContext)
                     </th>
                   </tr>
                 </thead>
-                <tbody className={`${theme =="dark" ? "card-dark" :"card-light"} divide-y divide-gray-200`}>
-                  {campaigns.map((campaign) => {
-                    const progressPercentage = getProgressPercentage(
-                      campaign.donatedAmount, // Use donatedAmount from your MongoDB data
-                      campaign.maxDonation // Use maxDonation from your MongoDB data
-                    );
-                    return (
-                      <tr key={campaign._id} className="">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium ">
-                            {campaign.petName || "Pet Campaign"}{" "}
-                            {/* Fallback if petName doesn't exist */}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm ">
-                            {formatCurrency(campaign.maxDonation)}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="w-full">
-                            <div className="flex justify-between text-sm  mb-1">
-                              <span>
-                                {formatCurrency(campaign.donatedAmount)}
-                              </span>
-                              <span>{progressPercentage.toFixed(1)}%</span>
+                <tbody
+                  className={`${
+                    theme == "dark" ? "card-dark" : "card-light"
+                  } divide-y divide-gray-200`}
+                >
+                  {Array.isArray(campaigns) &&
+                    campaigns.map((campaign) => {
+                      const progressPercentage = getProgressPercentage(
+                        campaign.donatedAmount, // Use donatedAmount from your MongoDB data
+                        campaign.maxDonation // Use maxDonation from your MongoDB data
+                      );
+                      return (
+                        <tr key={campaign._id} className="">
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm font-medium ">
+                              {campaign.petName || "Pet Campaign"}{" "}
+                              {/* Fallback if petName doesn't exist */}
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
-                              <div
-                                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${progressPercentage}%` }}
-                              ></div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm ">
+                              {formatCurrency(campaign.maxDonation)}
                             </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span
-                            className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                              campaign.isPaused
-                                ? "bg-red-100 text-red-800"
-                                : "bg-green-100 text-green-800"
-                            }`}
-                          >
-                            {campaign.isPaused ? "Paused" : "Active"}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <div className="flex space-x-2">
-                            <button
-                              onClick={() => handlePauseToggle(campaign._id)}
-                              className={`px-3 py-1 rounded text-white text-xs font-medium transition-colors ${
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="w-full">
+                              <div className="flex justify-between text-sm  mb-1">
+                                <span>
+                                  {formatCurrency(campaign.donatedAmount)}
+                                </span>
+                                <span>{progressPercentage.toFixed(1)}%</span>
+                              </div>
+                              <div className="w-full bg-gray-200 rounded-full h-2">
+                                <div
+                                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                                  style={{ width: `${progressPercentage}%` }}
+                                ></div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span
+                              className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                                 campaign.isPaused
-                                  ? "bg-green-600 hover:bg-green-700"
-                                  : "bg-yellow-600 hover:bg-yellow-700"
+                                  ? "bg-red-100 text-red-800"
+                                  : "bg-green-100 text-green-800"
                               }`}
                             >
-                              {campaign.isPaused ? "Unpause" : "Pause"}
-                            </button>
-                            <Link
-                              to={`/dashboard/edit-donation/${campaign._id}`}
-                              className="px-3 py-1 bg-blue-600 text-white rounded text-xs font-medium hover:bg-blue-700 transition-colors"
-                            >
-                              Edit
-                            </Link>
-                            <button
-                              onClick={() => handleViewDonators(campaign)}
-                              className="px-3 py-1 bg-gray-600 text-white rounded text-xs font-medium hover:bg-gray-700 transition-colors"
-                            >
-                              View Donators
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                              {campaign.isPaused ? "Paused" : "Active"}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div className="flex space-x-2">
+                              <button
+                                onClick={() => handlePauseToggle(campaign._id)}
+                                className={`px-3 py-1 rounded text-white text-xs font-medium transition-colors ${
+                                  campaign.isPaused
+                                    ? "bg-green-600 hover:bg-green-700"
+                                    : "bg-yellow-600 hover:bg-yellow-700"
+                                }`}
+                              >
+                                {campaign.isPaused ? "Unpause" : "Pause"}
+                              </button>
+                              <Link
+                                to={`/dashboard/edit-donation/${campaign._id}`}
+                                className="px-3 py-1 bg-blue-600 text-white rounded text-xs font-medium hover:bg-blue-700 transition-colors"
+                              >
+                                Edit
+                              </Link>
+                              <button
+                                onClick={() => handleViewDonators(campaign)}
+                                className="px-3 py-1 bg-gray-600 text-white rounded text-xs font-medium hover:bg-gray-700 transition-colors"
+                              >
+                                View Donators
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
                 </tbody>
               </table>
             </div>

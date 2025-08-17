@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
-
 import { AuthContext } from "../context/AuthContext";
 import { Link, NavLink } from "react-router";
 import Swal from "sweetalert2";
@@ -8,7 +7,34 @@ import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
 import { ThemeContext } from "../context/ThemeContext";
 import axios from "axios";
+import { Button } from "@/components/ui/button";
+import {
+  FaHome,
+  FaPaw,
+  FaDonate,
+  FaTachometerAlt,
+  FaInfoCircle,
+} from "react-icons/fa";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuIndicator,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  NavigationMenuViewport,
+} from "@/components/ui/navigation-menu";
 const Navbar = () => {
   const { user, signOutUser } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
@@ -16,57 +42,26 @@ const Navbar = () => {
   const toggleMenu = () => setIsOpen(!isOpen);
   const { theme } = useContext(ThemeContext);
 
-  const handleLogout = () => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You Want To Logout??",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const data = await axios.post(
-          `${import.meta.env.VITE_API}/logout`,
-          {},
-          { withCredentials: true }
-        );
-   
-        signOutUser();
-        setDropdownOpen(false);
-        Swal.fire({
-          title: "Logged Out",
-          text: "Your Have Been Logout Sucessfully",
-          icon: "success",
-        });
-      }
-    });
-  };
-
   const navLinks = (
     <>
-      <NavLink
-        to="/"
-        className="p-1 font-bold"
-        onClick={() => setIsOpen(false)}
-      >
+      <NavLink to="/" className=" ">
         Home
       </NavLink>
-      <NavLink
-        className="p-1  font-bold"
-        to="/pets"
-        onClick={() => setIsOpen(false)}
-      >
+      <NavLink className="  " to="/pets">
         Pet Listing
       </NavLink>
-      <NavLink
-        className="p-1  font-bold"
-        to="/donations"
-        onClick={() => setIsOpen(false)}
-      >
+      <NavLink className="  " to="/donations">
         Donation campaigns
       </NavLink>
+
+      {user ? (
+        <NavLink
+          to="/dashboard"
+          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+        ></NavLink>
+      ) : (
+        ""
+      )}
     </>
   );
 
@@ -79,13 +74,57 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
         {/* Left Section: Hamburger + Logo */}
         <div className="flex items-center gap-4">
-          <button
-            onClick={toggleMenu}
-            className="text-2xl text-white md:hidden"
-            aria-label="Toggle menu"
-          >
-            {isOpen ? <FiX /> : <FiMenu />}
-          </button>
+          <span className="text-2xl text-white md:hidden">
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <FiMenu />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>Profile</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <NavLink
+                    to="/"
+                    className=" font-bold"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Home
+                  </NavLink>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <NavLink
+                    className="  font-bold"
+                    to="/pets"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Pet Listing
+                  </NavLink>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <NavLink
+                    className="  font-bold"
+                    to="/donations"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Donation campaigns
+                  </NavLink>
+                </DropdownMenuItem>
+                {user ? (
+                  <>
+                    <DropdownMenuItem>
+                      <NavLink to="/dashboard" className="">
+                        Dashboard
+                      </NavLink>
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <DropdownMenuItem>
+                    <NavLink to="/login">Log In</NavLink>
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </span>
           <Link to="/" className="">
             <div className="">
               <Logo />
@@ -94,7 +133,66 @@ const Navbar = () => {
         </div>
 
         {/* Center Section: NavLinks (only md+) */}
-        <div className="hidden md:flex gap-8">{navLinks}</div>
+        <div>
+          <NavigationMenu>
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <div className=" hidden md:flex gap-8">
+                  <span className="flex gap-2 items-center">
+                    <FaHome />
+                    <NavLink
+                      className="flex text-xl items-center gap-1 hover:border-b-2 hover:border-[#ec4899]"
+                      to="/"
+                    >
+                      Home
+                    </NavLink>
+                  </span>
+                  <span className="flex gap-2 items-center">
+                    <FaPaw />
+                    <NavLink
+                      className="flex text-xl items-center gap-1 hover:border-b-2 hover:border-[#ec4899]"
+                      to="/pets"
+                    >
+                      Adopt
+                    </NavLink>
+                  </span>
+
+                  <span className="flex gap-2 items-center">
+                    <FaDonate />
+                    <NavLink
+                      className="flex text-xl items-center gap-1 hover:border-b-2 hover:border-[#ec4899]"
+                      to="/donations"
+                    >
+                      Campaigns
+                    </NavLink>
+                  </span>
+
+                  {user && (
+                    <span className="flex gap-2 items-center">
+                      <FaTachometerAlt />
+                      <NavLink
+                        to="/dashboard"
+                        className="flex text-xl items-center gap-1 hover:border-b-2 hover:border-[#ec4899]"
+                      >
+                        Dashboard
+                      </NavLink>
+                    </span>
+                  )}
+
+                  <span className="flex gap-2 items-center">
+                    <FaInfoCircle />
+                    <NavLink
+                      className="flex text-xl items-center gap-1 hover:border-b-2 hover:border-[#ec4899]"
+                      to="/about-us"
+                    >
+                      About Us
+                    </NavLink>
+                  </span>
+                </div>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+        </div>
 
         {/* Right Section: User or Login Button */}
 
@@ -116,37 +214,12 @@ const Navbar = () => {
                     : "https://i.ibb.co/gFg6hq0Y/user-avatar-profile-businessman-with-office-suit-vector-45326233.webp"
                 }
                 alt="Profile"
-                onClick={() => setDropdownOpen(!dropdownOpen)}
                 className="w-12 h-12 object-cover rounded-full border-2 border-blue-500 shadow-md cursor-pointer transition duration-300"
                 title={user.displayName || "User"}
               />
-
-              {/* Dropdown Menu */}
-              {dropdownOpen && (
-                <div className="absolute right-0 top-12 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50">
-                  <NavLink
-                    to="/dashboard"
-                    onClick={() => setDropdownOpen(false)}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Dashboard
-                  </NavLink>
-                  <button
-                    onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
             </>
           ) : (
-            <Link
-              to="/login"
-              className="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition"
-            >
-              Login
-            </Link>
+            ""
           )}
         </div>
       </div>

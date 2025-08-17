@@ -14,7 +14,7 @@ const Logo = () => {
           transition-colors duration-300
         "
       >
-        PawHome
+        Pet Home
       </h1>
     </div>
   );

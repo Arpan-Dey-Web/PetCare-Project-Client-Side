@@ -9,16 +9,29 @@ import Footer from "../SharedComponent/Footer";
 import Loading from "../SharedComponent/Loading";
 import WeprovideFeatures from "../SharedComponent/WeprovideFeatures";
 import FAQ from "../SharedComponent/FAQ";
+import PetCare from "../SharedComponent/Petcare";
+import PetsHappinessSection from "../SharedComponent/PetsHappinessSection";
+import LimitedPetShow from "../SharedComponent/LimitedPetShow";
 
 const Home = () => {
   return (
-    <div className=" mx-auto max-w-7xl my-4">
+    <div className="">
       <Banner></Banner>
-      <PetsCategorySection></PetsCategorySection>
-      <CallToActionSection></CallToActionSection>
-      <WeprovideFeatures/>
-      <AboutUsSection></AboutUsSection>
-      <FAQ/>
+
+      <div>
+        {/* <CallToActionSection></CallToActionSection> */}
+
+        <div className=" mx-auto max-w-7xl mb-4">
+          <PetsCategorySection></PetsCategorySection>
+          <LimitedPetShow></LimitedPetShow>
+        </div>
+        <WeprovideFeatures />
+        <PetsHappinessSection />
+
+        {/* <PetCare/>  */}
+      </div>
+
+      {/* <FAQ /> */}
     </div>
   );
 };

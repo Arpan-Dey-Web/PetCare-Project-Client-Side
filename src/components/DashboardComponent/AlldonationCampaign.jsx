@@ -13,7 +13,7 @@ const AlldonationCampaign = () => {
   const [editingCampaign, setEditingCampaign] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const axiosSecure = useAxiosSecure();
- const {theme} =useContext(ThemeContext)
+  const { theme } = useContext(ThemeContext);
   const campaignValidationSchema = Yup.object({
     name: Yup.string().required("Campaign name is required"),
     maxDonation: Yup.number()
@@ -33,6 +33,7 @@ const AlldonationCampaign = () => {
     queryKey: ["donation-campaigns"],
     queryFn: async () => {
       const res = await axiosSecure.get("/donation-campaigns");
+      console.log(res);
       return res.data.campaigns;
     },
   });
@@ -92,7 +93,7 @@ const AlldonationCampaign = () => {
       toast.error(error.response?.data?.message || "Failed to update campaign");
     },
   });
-
+  // unused code
   const handleUpdateCampaign = (e) => {
     e.preventDefault();
     Swal.fire({
@@ -117,7 +118,6 @@ const AlldonationCampaign = () => {
       }
     });
   };
-
 
   const handleSubmitUpdateCampaign = (values, setSubmitting) => {
     Swal.fire({
@@ -200,12 +200,9 @@ const AlldonationCampaign = () => {
       currency: "USD",
     }).format(amount);
   };
-  
 
   if (isLoading) {
-    return (
-     <Loading/>
-    );
+    return <Loading />;
   }
 
   if (error) {
@@ -227,7 +224,9 @@ const AlldonationCampaign = () => {
           <h2 className="text-2xl font-bold ">
             All Donation Campaigns Management
           </h2>
-          <p className=" mt-1">Total Campaigns: {campaigns.length}</p>
+          <p className=" mt-1">
+            Total Campaigns: {Array.isArray(campaigns) && campaigns?.length}
+          </p>
         </div>
 
         <div className="overflow-x-auto">
@@ -259,117 +258,121 @@ const AlldonationCampaign = () => {
                 theme == "dark" ? "card-dark" : "card-light"
               }`}
             >
-              {campaigns?.map((campaign) => (
-                <tr key={campaign._id} className="">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="h-16 w-16 rounded-lg overflow-hidden bg-gray-200">
-                      {campaign.image ? (
-                        <img
-                          src={campaign.image}
-                          alt={campaign.name}
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        <div className="h-full w-full flex items-center justify-center ">
-                          No Image
-                        </div>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm font-medium ">{campaign.name}</div>
-                    <div className="text-sm ">
-                      Goal: {formatCurrency(campaign.maxDonation)}
-                    </div>
-                    <div className="text-sm ">
-                      Last Date:{" "}
-                      {new Date(campaign.lastDate).toLocaleDateString()}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm ">
-                      Raised: {formatCurrency(campaign.donatedAmount || 0)}
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
-                      <div
-                        className="bg-blue-600 h-2.5 rounded-full"
-                        style={{
-                          width: `${Math.min(
-                            ((campaign.donatedAmount || 0) /
-                              campaign.maxDonation) *
-                              100,
+              {Array.isArray(campaigns) &&
+                campaigns?.map((campaign) => (
+                  <tr key={campaign._id} className="">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="h-16 w-16 rounded-lg overflow-hidden bg-gray-200">
+                        {campaign.image ? (
+                          <img
+                            src={campaign.image}
+                            alt={campaign.name}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <div className="h-full w-full flex items-center justify-center ">
+                            No Image
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm font-medium ">
+                        {campaign.name}
+                      </div>
+                      <div className="text-sm ">
+                        Goal: {formatCurrency(campaign.maxDonation)}
+                      </div>
+                      <div className="text-sm ">
+                        Last Date:{" "}
+                        {new Date(campaign.lastDate).toLocaleDateString()}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm ">
+                        Raised: {formatCurrency(campaign.donatedAmount || 0)}
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                        <div
+                          className="bg-blue-600 h-2.5 rounded-full"
+                          style={{
+                            width: `${Math.min(
+                              ((campaign.donatedAmount || 0) /
+                                campaign.maxDonation) *
+                                100,
+                              100
+                            )}%`,
+                          }}
+                        ></div>
+                      </div>
+                      <div className="text-xs  mt-1">
+                        {Math.round(
+                          ((campaign.donatedAmount || 0) /
+                            campaign.maxDonation) *
                             100
-                          )}%`,
-                        }}
-                      ></div>
-                    </div>
-                    <div className="text-xs  mt-1">
-                      {Math.round(
-                        ((campaign.donatedAmount || 0) / campaign.maxDonation) *
-                          100
-                      )}
-                      % of goal
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm ">
-                      {campaign?.owner || "Unknown"}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        campaign.status === "paused"
-                          ? "bg-red-100 text-red-800"
-                          : "bg-green-100 text-green-800"
-                      }`}
-                    >
-                      {campaign.status === "paused" ? "Paused" : "Active"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                    <button
-                      onClick={() => handleEditCampaign(campaign)}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm transition-colors"
-                    >
-                      Edit
-                    </button>
+                        )}
+                        % of goal
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm ">
+                        {campaign?.owner || "Unknown"}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          campaign.status === "paused"
+                            ? "bg-red-100 text-red-800"
+                            : "bg-green-100 text-green-800"
+                        }`}
+                      >
+                        {campaign.status === "paused" ? "Paused" : "Active"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                      <button
+                        onClick={() => handleEditCampaign(campaign)}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm transition-colors"
+                      >
+                        Edit
+                      </button>
 
-                    <button
-                      onClick={() => handleStatusChange(campaign)}
-                      disabled={togglePauseMutation.isLoading}
-                      className={`px-3 py-1 rounded-md text-sm transition-colors ${
-                        campaign.status === "paused"
-                          ? "bg-green-600 hover:bg-green-700 text-white"
-                          : "bg-yellow-600 hover:bg-yellow-700 text-white"
-                      }`}
-                    >
-                      {togglePauseMutation.isLoading
-                        ? "Loading..."
-                        : campaign.isPaused || campaign.status === "paused"
-                        ? "Activate"
-                        : "Pause"}
-                    </button>
+                      <button
+                        onClick={() => handleStatusChange(campaign)}
+                        disabled={togglePauseMutation.isLoading}
+                        className={`px-3 py-1 rounded-md text-sm transition-colors ${
+                          campaign.status === "paused"
+                            ? "bg-green-600 hover:bg-green-700 text-white"
+                            : "bg-yellow-600 hover:bg-yellow-700 text-white"
+                        }`}
+                      >
+                        {togglePauseMutation.isLoading
+                          ? "Loading..."
+                          : campaign.isPaused || campaign.status === "paused"
+                          ? "Activate"
+                          : "Pause"}
+                      </button>
 
-                    <button
-                      onClick={() =>
-                        handleDeleteCampaign(campaign._id, campaign.name)
-                      }
-                      disabled={deleteCampaignMutation.isLoading}
-                      className="bg-red-600 hover:bg-red-700 disabled:bg-red-300 text-white px-3 py-1 rounded-md text-sm transition-colors"
-                    >
-                      {deleteCampaignMutation.isLoading
-                        ? "Deleting..."
-                        : "Delete"}
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                      <button
+                        onClick={() =>
+                          handleDeleteCampaign(campaign._id, campaign.name)
+                        }
+                        disabled={deleteCampaignMutation.isLoading}
+                        className="bg-red-600 hover:bg-red-700 disabled:bg-red-300 text-white px-3 py-1 rounded-md text-sm transition-colors"
+                      >
+                        {deleteCampaignMutation.isLoading
+                          ? "Deleting..."
+                          : "Delete"}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
 
-        {campaigns.length === 0 && (
+        {Array.isArray(campaigns) && campaigns.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-500">No donation campaigns found.</p>
           </div>

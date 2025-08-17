@@ -1,5 +1,4 @@
 import { createBrowserRouter } from "react-router";
-
 import Login from "../SharedComponent/Login";
 import Register from "../SharedComponent/Register";
 import Dashboard from "../Layout/Dashboard";
@@ -26,6 +25,7 @@ import MyDonations from "../DashboardComponent/MyDonations";
 import DashboardHomePage from "../DashboardComponent/DashboardHomePage";
 import AdminDashboard from "../DashboardComponent/AdminDashboard";
 import UserProfile from "../DashboardComponent/UserProfile";
+import AboutUsSection from "../SharedComponent/AboutUsSection";
 
 const router = createBrowserRouter([
   {
@@ -60,6 +60,11 @@ const router = createBrowserRouter([
       {
         path: "/pets/:id",
         Component: PetDetails,
+      },
+
+      {
+        path: "/about-us",
+        Component: AboutUsSection,
       },
     ],
   },

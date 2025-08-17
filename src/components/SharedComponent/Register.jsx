@@ -86,12 +86,10 @@ const Register = () => {
           });
         });
     } catch (err) {
-    
       setError("Image upload failed. Please try again.");
     }
   };
   const handleGithubLogin = () => {
-  
     logInWithGithub()
       .then(async (res) => {
         const userInfo = {
@@ -105,15 +103,15 @@ const Register = () => {
           toast.success(" Profile Updated Sucessfully");
           navigate("/");
         }
-
       })
       .catch((err) => {
-         toast.error("Oops Something Wrong");
+        toast.error("Oops Something Wrong");
       });
   };
   const handleGoogleLogin = () => {
     logInWithGoogle()
       .then(async (res) => {
+       
         const userInfo = {
           name: res?.user?.displayName,
           email: res?.user?.email,
@@ -121,14 +119,14 @@ const Register = () => {
           role: "user",
         };
         const response = await axiosPublic.post("/register", userInfo);
- 
+        
         if (response.status == 200) {
           toast.success(" Profile Updated Sucessfully");
           navigate("/");
         }
       })
       .catch((err) => {
-        toast.error("Oops Something Wrong")
+        toast.error("Oops Something Wrong");
       });
   };
 
