@@ -56,7 +56,7 @@ const PetsCategorySection = () => {
             />
             <span
               className={`text-lg font-medium ${
-                isDark ? "text-gray-300" : "text-gray-600"
+                theme == "dark" ? "text-dark" : "text-light"
               }`}
             >
               Pet Categories
@@ -69,12 +69,18 @@ const PetsCategorySection = () => {
           </div>
 
           <h2
-            className={`text-6xl font-bold mb-4 `}
+            className={`text-6xl font-bold mb-4  ${
+              theme == "dark" ? "text-dark" : "text-light"
+            }`}
           >
             Find Your Perfect
           </h2>
 
-          <h3 className="text-4xl font-bold  bg-clip-text ">
+          <h3
+            className={`text-4xl font-bold  bg-clip-text  ${
+              theme == "dark" ? "text-dark" : "text-light"
+            }`}
+          >
             Companion
           </h3>
 
@@ -91,11 +97,6 @@ const PetsCategorySection = () => {
               className="group relative"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              {/* Glow effect */}
-              {/* <div
-                className={`absolute -inset-1 bg-gradient-to-r ${pet.bgGradient} rounded-full opacity-0 group-hover:opacity-75 blur-sm transition-all duration-500`}
-              ></div> */}
-
               {/* Main container */}
               <div
                 className={`relative aspect-square rounded-full transition-all duration-500 cursor-pointer transform group-hover:scale-105  ${

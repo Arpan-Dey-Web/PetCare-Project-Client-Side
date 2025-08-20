@@ -342,7 +342,7 @@ const AboutUsSection = () => {
               {milestones.map((milestone, index) => (
                 <div
                   key={index}
-                  className={`flex flex-col lg:flex-row items-center gap-8 ${
+                  className={`flex flex-col lg:flex-row items-center gap-4 ${
                     index % 2 === 0 ? "lg:flex-row-reverse" : ""
                   }`}
                 >
@@ -353,7 +353,7 @@ const AboutUsSection = () => {
 
                   {/* Content */}
                   <div
-                    className={`flex-1 ${
+                    className={` ${
                       isDark ? "bg-gray-800" : "bg-white"
                     } rounded-2xl p-6 shadow-lg border ${
                       isDark ? "border-gray-700" : "border-gray-200"

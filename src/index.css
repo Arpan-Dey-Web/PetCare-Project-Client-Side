@@ -39,8 +39,8 @@ html {
 }
 :root {
   /* Backgrounds */
-  --lightBackground: #fef9f7;
-  --darkBackground: #222e50;
+  --lightBackground: #FAF3E0;
+  --darkBackground: #2F3E46;
 
   /* Primary & Accent */
   --primary: oklch(0.21 0.034 264.665);
@@ -48,7 +48,7 @@ html {
 
   /* Text Colors */
   --textColorLight: #1f2937;
-  --textColorDark: #f4f4f5;
+  --textColorDark: #F9FAFB;
   /* New accent text colors */
   --textAccentLight: #7c3aed; /* Matches your primary */
   --textAccentDark: #06b6d4; /* Matches your accent */

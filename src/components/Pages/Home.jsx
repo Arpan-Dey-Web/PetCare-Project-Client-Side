@@ -23,12 +23,13 @@ const Home = () => {
 
         <div className=" mx-auto max-w-7xl mb-4">
           <PetsCategorySection></PetsCategorySection>
-          <LimitedPetShow></LimitedPetShow>
         </div>
         <WeprovideFeatures />
+
+        <LimitedPetShow></LimitedPetShow>
         <PetsHappinessSection />
 
-        {/* <PetCare/>  */}
+        <PetCare/> 
       </div>
 
       {/* <FAQ /> */}

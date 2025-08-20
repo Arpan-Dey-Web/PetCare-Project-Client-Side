@@ -8,19 +8,21 @@ const ThemeProvider = ({ children }) => {
 
   useEffect(() => {
     const html = document.documentElement;
-    html.dataset.theme = mode;
 
-    if (mode === "dark") {
-      html.classList.add("dark");
+    if (mode === "system") {
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      html.classList.toggle("dark", prefersDark);
     } else {
-      html.classList.remove("dark");
+      html.classList.toggle("dark", mode === "dark");
     }
 
     localStorage.setItem("theme", mode);
   }, [mode]);
 
-  const changeTheme = () => {
-    setMode((prevMode) => (prevMode === "dark" ? "light" : "dark"));
+  const changeTheme = (newMode) => {
+    setMode(newMode); // accept direct value from <Select />
   };
 
   const themeContext = {

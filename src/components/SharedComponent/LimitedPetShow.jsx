@@ -13,7 +13,7 @@ import { MapPin, Calendar, Heart, Share2, PawPrint } from "lucide-react";
 import axios from "axios";
 import useAxiosPublic from "../hooks/useAxiosPublic";
 import { Link } from "react-router";
-
+import { FaLongArrowAltRight } from "react-icons/fa";
 const LimitedPetShow = () => {
   const [pets, setPets] = useState([]);
   const [likedPets, setLikedPets] = useState([]);
@@ -97,14 +97,16 @@ const LimitedPetShow = () => {
         ))}
       </div>
 
-      <div className="text-center mt-12">
+      <div className="text-center mt-12 ">
         <Link to="/pets">
           <Button
-            variant="outline"
+            
             size="lg"
             value={"View All Available Pets"}
-            className=""
-          ></Button>
+            className="cursor-pointer"
+          >
+            <FaLongArrowAltRight />
+          </Button>
         </Link>
       </div>
     </div>

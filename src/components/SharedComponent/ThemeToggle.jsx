@@ -1,21 +1,32 @@
 import React, { useContext } from "react";
-
-import { FaSun, FaMoon } from "react-icons/fa";
 import { ThemeContext } from "../context/ThemeContext";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import { FaSun, FaMoon, FaLaptop } from "react-icons/fa";
 
 const ThemeToggle = () => {
   const { theme, changeTheme } = useContext(ThemeContext);
 
   return (
-    <button
-      onClick={changeTheme}
-      className="flex items-center gap-2 px-4 py-2 rounded-md font-semibold 
-       bg-primary text-dark dark:bg-accent dark:text-light
-        transition duration-300"
-    >
-      {theme === "dark" ? <FaSun /> : <FaMoon />}
-      {theme === "dark" ? "Light" : "Dark"}
-    </button>
+    <Select value={theme} onValueChange={changeTheme}>
+      <SelectTrigger className="w-[120px] bg-transparent">
+        <SelectValue placeholder="Theme" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="light" className="flex items-center gap-2 ">
+          <FaSun className="text-yellow-500 " /> <span>Light</span>
+        </SelectItem>
+        <SelectItem value="dark" className="flex items-center gap-2 ">
+          <FaMoon className="text-indigo-500" />
+          <span className="">Dark</span>
+        </SelectItem>
+      </SelectContent>
+    </Select>
   );
 };
 

@@ -35,10 +35,17 @@ import {
   NavigationMenuTrigger,
   NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 const Navbar = () => {
   const { user, signOutUser } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+
   const toggleMenu = () => setIsOpen(!isOpen);
   const { theme } = useContext(ThemeContext);
 
@@ -68,7 +75,7 @@ const Navbar = () => {
   return (
     <nav
       className={` ${
-        theme == "dark" ? "text-dark bg-[#222e50] " : "text-light bg-[#FEF9F6]"
+        theme == "dark" ? "text-dark bg-gray-900 " : "text-light bg-[#FEF9F6]"
       } shadow-md sticky top-0 z-50 `}
     >
       <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
@@ -194,16 +201,9 @@ const Navbar = () => {
           </NavigationMenu>
         </div>
 
-        {/* Right Section: User or Login Button */}
-
         <div className="flex items-center gap-4 relative">
-          <span
-            className={` rounded-2xl ${
-              theme == "dark" ? "button-dark" : "button-light"
-            } `}
-          >
-            <ThemeToggle />
-          </span>
+          <ThemeToggle />
+
           {user ? (
             <>
               {/* Profile Image */}
@@ -219,7 +219,13 @@ const Navbar = () => {
               />
             </>
           ) : (
-            ""
+            <Link
+              to="/login"
+              className="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition"
+              onClick={() => setIsOpen(false)}
+            >
+              Login
+            </Link>
           )}
         </div>
       </div>

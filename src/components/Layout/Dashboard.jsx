@@ -209,7 +209,7 @@ const Dashboard = () => {
         </aside>
 
         {/* Scrollable Main Content */}
-        <main className="no-scrollbar flex-1 overflow-y-auto scrollbar-hide scroll-smooth">
+        <main className="no-scrollbar   flex-1 overflow-y-auto scroll-smooth">
           <div className="max-w-6xl mx-auto">
             <Outlet />
           </div>

@@ -99,9 +99,7 @@ const WeProvideFeatures = () => {
 
   return (
     <section
-      className={`py-16 px-4 relative overflow-hidden ${
-        isDark ? "bg-gray-900" : "bg-gray-50"
-      }`}
+      className={`py-16 px-4 relative overflow-hidden`}
     >
       {/* Background Decorations */}
       <div className="absolute inset-0 opacity-5">
@@ -191,9 +189,7 @@ const WeProvideFeatures = () => {
 
                 {/* Title */}
                 <h3
-                  className={`text-2xl font-bold mb-4 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:${
-                    service.gradient
-                  } group-hover:bg-clip-text transition-all duration-300 ${
+                  className={`text-2xl font-bold mb-4  transition-all duration-300 ${
                     isDark ? "text-white" : "text-gray-800"
                   }`}
                 >
@@ -263,7 +259,7 @@ const WeProvideFeatures = () => {
         </div>
 
         {/* Call to Action */}
-        <div className="text-center mt-16">
+        {/* <div className="text-center mt-16">
           <p
             className={`text-lg mb-6 ${
               isDark ? "text-gray-300" : "text-gray-600"
@@ -285,7 +281,7 @@ const WeProvideFeatures = () => {
               Become a Volunteer
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   );

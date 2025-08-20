@@ -112,7 +112,7 @@ const PetCare = () => {
               isDark ? "text-white" : "text-gray-800"
             }`}
           >
-            Essential Pet Care
+            Essential Care Guide For Your Pet
           </h2>
 
           <p

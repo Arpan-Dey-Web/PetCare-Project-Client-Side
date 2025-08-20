@@ -61,9 +61,9 @@ const Footer = () => {
 
   return (
     <footer
-      className={`relative ${isDark ? "bg-gray-900" : "bg-gray-50"} border-t ${
-        isDark ? "border-gray-800" : "border-gray-200"
-      }`}
+      className={`relative ${
+        isDark ? "bg-gray-900" : "bg-[#FEF9F6]"
+      } border-t ${isDark ? "border-gray-800" : "border-gray-200"}`}
     >
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
@@ -281,7 +281,8 @@ const Footer = () => {
                 isDark ? "text-gray-400" : "text-gray-500"
               }`}
             >
-              © {new Date().getFullYear()} Pet Home. All rights reserved. By Arpan
+              © {new Date().getFullYear()} Pet Home. All rights reserved. By
+              Arpan
             </div>
 
             {/* Links */}

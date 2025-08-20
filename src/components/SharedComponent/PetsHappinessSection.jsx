@@ -278,8 +278,6 @@ const PetsHappinessSection = () => {
             </div>
           </div>
         </div>
-
-      
       </div>
     </section>
   );
