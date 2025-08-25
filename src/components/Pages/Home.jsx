@@ -20,16 +20,14 @@ const Home = () => {
 
       <div>
         {/* <CallToActionSection></CallToActionSection> */}
-
         <div className=" mx-auto max-w-7xl mb-4">
           <PetsCategorySection></PetsCategorySection>
         </div>
         <WeprovideFeatures />
-
-        <LimitedPetShow></LimitedPetShow>
+        <LimitedPetShow />
         <PetsHappinessSection />
 
-        <PetCare/> 
+        <PetCare />
       </div>
 
       {/* <FAQ /> */}
