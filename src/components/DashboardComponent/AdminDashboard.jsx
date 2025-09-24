@@ -7,7 +7,7 @@ import {
   FaClipboardList,
 } from "react-icons/fa";
 import { ThemeContext } from "../context/ThemeContext";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import useRole from "../hooks/useRole";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import { AuthContext } from "../context/AuthContext";
@@ -19,13 +19,8 @@ const AdminDashboard = () => {
   const [totalUsers, setTotalUsers] = useState([]);
   const [availablePets, setAvailablePets] = useState([]);
   const [donationCampaigns, setDonationCampaigns] = useState([]);
-  const navigate = useNavigate();
-  // Static data - replace with dynamic data later
-  const stats = {
-    totalPets: 86,
-    totalDonations: 42,
-    recentAdoptions: 15,
-  };
+
+
   const { user } = useContext(AuthContext);
   const axiosSecure = useAxiosSecure();
   const role = useRole();

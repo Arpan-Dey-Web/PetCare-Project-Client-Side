@@ -10,13 +10,13 @@ const RootLayout = () => {
 
   return (
     <div className={`${theme == "light" ? "bg-light" : "bg-dark"}`}>
-      {/* <ScrollToTop /> auto scroll on route change */}
+      {/* <ScrollToTop /> */}
       <Navbar />
-      <div className=" ">
-        <div className=" mb-10">
+      <div>
+        <div className="mb-10">
           <Outlet />
         </div>
-        <Footer></Footer>
+        <Footer />
       </div>
     </div>
   );

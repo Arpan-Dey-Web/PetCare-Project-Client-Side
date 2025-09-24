@@ -315,7 +315,7 @@ const PetCare = () => {
         </div>
 
         {/* Bottom CTA */}
-        <div className="text-center mt-12">
+        {/* <div className="text-center mt-12">
           <p
             className={`text-lg ${isDark ? "text-gray-300" : "text-gray-600"}`}
           >
@@ -324,7 +324,7 @@ const PetCare = () => {
           <button className="mt-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-3 rounded-full font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105">
             Start Your Adoption Journey
           </button>
-        </div>
+        </div> */}
       </div>
     </section>
   );

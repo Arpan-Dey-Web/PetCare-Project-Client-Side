@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext";
 
@@ -53,12 +54,8 @@ const AuthProvider = ({ children }) => {
           .post("/jwt", userData, {
             withCredentials: true,
           })
-          .then((res) => {
-            
-          })
-          .catch((err) => {
-           
-          });
+          .then((res) => {})
+          .catch((err) => {});
       }
 
       setUser(currentUser);
@@ -85,4 +82,3 @@ const AuthProvider = ({ children }) => {
 };
 
 export default AuthProvider;
-

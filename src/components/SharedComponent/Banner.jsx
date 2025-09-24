@@ -4,6 +4,7 @@ import eagleImage from "@/assets/eagle.png";
 import dogImage from "@/assets/dogBanner.png";
 import catImage from "@/assets/catlying.png";
 import { Button } from "../ui/button";
+import { Link } from "react-router";
 
 const Banner = () => {
   const { theme } = useContext(ThemeContext);
@@ -16,7 +17,7 @@ const Banner = () => {
       {/* Content Wrapper */}
       <div className="relative flex justify-between  h-full z-20">
         {/* Left image */}
-        <div className="flex h-full items-end">
+        <div className=" h-full items-end hidden lg:flex">
           <img
             src={eagleImage}
             alt="Eagle"
@@ -27,25 +28,25 @@ const Banner = () => {
 
         {/* Center text */}
         <div className="flex flex-col mt-14 items-center text-white text-center px-6 max-w-3xl">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4  block bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 bg-clip-text text-transparent">
+          <h1 className="text-3xl md:text-4xl lg:text-7xl font-extrabold mb-4  block bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 bg-clip-text text-transparent">
             The Best Care for <br /> Your Best Friend
           </h1>
-
           {/* <span className="block bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 bg-clip-text text-transparent">
             The Best Care for <br /> Your Best Friend */}
           {/* </span> */}
-          <p className="text-sm md:text-lg text-white/90 max-w-xl leading-relaxed">
+          <p className="text-sm md:text-lg lg:text-2xl text-white/90 max-w-xl leading-relaxed">
             At <span className="font-semibold text-amber-400">PetPath</span>, we
             provide exceptional care and services for your pets, including
             grooming, boarding, and walking. Trust us to ensure your furry
             friends are happy.
           </p>
-
           {/* cat image show  cat one hand touch this button  */}
-          <Button
-            value={"View more"}
-            className="z-10  mt-5 px-8 py-3 rounded-full text-lg font-semibold bg-gradient-to-r from-amber-500 to-pink-500 shadow-lg hover:scale-105 hover:shadow-pink-400/50 transition-all overflow-hidden"
-          />
+          <Link to="/pets">
+            <Button
+              value={"View more"}
+              className="z-10  mt-5 px-8 lg:py-8 rounded-full text-lg font-semibold bg-gradient-to-r from-amber-500 to-pink-500 shadow-lg hover:scale-105 hover:shadow-pink-400/50 transition-all overflow-hidden lg:w-2xs  "
+            />
+          </Link>
 
           <div className=" w-full ">
             <img className="" src={catImage} alt="" />
@@ -53,7 +54,7 @@ const Banner = () => {
         </div>
 
         {/* Right image */}
-        <div className="flex h-full items-end">
+        <div className="hidden lg:flex h-full items-end">
           <img
             src={dogImage}
             alt="Dog"

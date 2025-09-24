@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import { useLocation } from "react-router";
 import { ThemeContext } from "../context/ThemeContext";
 import {
   FaHeart,
@@ -98,9 +97,7 @@ const WeProvideFeatures = () => {
   ];
 
   return (
-    <section
-      className={`py-16 px-4 relative overflow-hidden`}
-    >
+    <section className={`py-16 px-4 relative overflow-hidden`}>
       {/* Background Decorations */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-20 left-20 w-32 h-32 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur-3xl"></div>
@@ -227,7 +224,7 @@ const WeProvideFeatures = () => {
 
         {/* Bottom Stats Section */}
         <div
-          className={`mt-20 ${
+          className={`mt-20 max-w-7xl mx-auto ${
             isDark ? "bg-gray-800/50" : "bg-white/50"
           } backdrop-blur-sm rounded-3xl p-8 border ${
             isDark ? "border-gray-700" : "border-gray-200"

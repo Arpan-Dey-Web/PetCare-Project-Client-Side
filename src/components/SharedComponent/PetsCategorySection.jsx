@@ -4,6 +4,10 @@ import { FaCat, FaDog, FaFish, FaPaw } from "react-icons/fa";
 import { GiRabbit } from "react-icons/gi";
 import { useContext } from "react";
 import { ThemeContext } from "../context/ThemeContext";
+import dogImage from "../../assets/dog.png";
+import catImage from "../../assets/cat.png";
+import birdImage from "../../assets/bird.png";
+import rabbitImage from "../../assets/rabbit.png";
 
 const PetsCategorySection = () => {
   const { theme } = useContext(ThemeContext);
@@ -12,25 +16,25 @@ const PetsCategorySection = () => {
   const petCategories = [
     {
       name: "Dogs",
-      image: "/src/assets/dog.png",
+      image: dogImage,
       bgGradient: "from-orange-400 to-red-500",
       hoverGradient: "from-orange-500 to-red-600",
     },
     {
       name: "Cats",
-      image: "/src/assets/cat.png",
+      image: catImage,
       bgGradient: "from-purple-400 to-pink-500",
       hoverGradient: "from-orange-500 to-red-600",
     },
     {
       name: "Birds",
-      image: "/src/assets/bird.png",
+      image: birdImage,
       bgGradient: "from-blue-400 to-cyan-500",
       hoverGradient: "from-orange-500 to-red-600",
     },
     {
       name: "Rabbits",
-      image: "/src/assets/rabbit.png",
+      image: rabbitImage,
       bgGradient: "from-green-400 to-emerald-500",
       hoverGradient: "from-orange-500 to-red-600",
     },
@@ -90,7 +94,7 @@ const PetsCategorySection = () => {
         </div>
 
         {/* Enhanced Pet Categories Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-4  gap-8 w-6/12 md:w-full  md:max-w-5xl  mx-auto ">
           {petCategories.map((pet, index) => (
             <div
               key={pet.name}
@@ -115,7 +119,7 @@ const PetsCategorySection = () => {
                   <img
                     src={pet.image}
                     alt={pet.name}
-                    className="max-w-full max-h-full object-contain overflow-hidden transition-all duration-500 group-hover:scale-105 drop-shadow-lg "
+                    className=" max-h-full object-contain overflow-hidden transition-all duration-500 group-hover:scale-105 drop-shadow-lg  "
                   />
                 </div>
 

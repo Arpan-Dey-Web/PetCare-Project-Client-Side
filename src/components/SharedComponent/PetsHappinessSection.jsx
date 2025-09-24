@@ -1,7 +1,8 @@
 import React, { useContext } from "react";
 import { ThemeContext } from "../context/ThemeContext";
 import { FaUserMd, FaHeart, FaShieldAlt, FaStar, FaPaw } from "react-icons/fa";
-
+// src = "/src/assets/happypet.png";
+import happypetImage from "../../assets/happypet.png";
 const PetsHappinessSection = () => {
   const { theme } = useContext(ThemeContext);
   const isDark = theme === "dark";
@@ -184,7 +185,7 @@ const PetsHappinessSection = () => {
               >
                 <div className="relative">
                   <img
-                    src="/src/assets/happypet.png"
+                    src={happypetImage}
                     alt="Happy pets - dog and cat together"
                     className="w-full h-full object-cover rounded-full"
                     style={{
