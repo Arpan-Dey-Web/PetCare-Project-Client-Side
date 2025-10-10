@@ -14,7 +14,7 @@ const Logo = () => {
           transition-colors duration-300
         "
       >
-        Pet Home
+        PetCare
       </h1>
     </div>
   );

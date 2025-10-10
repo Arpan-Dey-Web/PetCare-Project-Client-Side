@@ -26,11 +26,10 @@ const Home = () => {
         <WeprovideFeatures />
         <LimitedPetShow />
         <PetsHappinessSection />
-
         <PetCare />
       </div>
 
-      {/* <FAQ /> */}
+    
     </div>
   );
 };

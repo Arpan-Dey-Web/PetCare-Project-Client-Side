@@ -108,7 +108,7 @@ const PetCare = () => {
           </div>
 
           <h2
-            className={`text-5xl font-bold mb-4 ${
+            className={`text-5xl font-extrabold mb-4 ${
               isDark ? "text-white" : "text-gray-800"
             }`}
           >
@@ -124,9 +124,7 @@ const PetCare = () => {
             happy, and thriving
           </p>
 
-          <div
-            className={`w-24 h-1 mx-auto mt-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full`}
-          ></div>
+        
         </div>
 
         {/* Main Care Categories */}

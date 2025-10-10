@@ -128,7 +128,7 @@ const WeProvideFeatures = () => {
           </div>
 
           <h2
-            className={`text-4xl md:text-6xl font-bold mb-6 leading-tight ${
+            className={`text-4xl md:text-6xl font-extrabold mb-6 leading-tight ${
               isDark ? "text-white" : "text-gray-800"
             }`}
           >
@@ -147,9 +147,7 @@ const WeProvideFeatures = () => {
             moments and build lasting bonds between pets and families.
           </p>
 
-          <div
-            className={`w-24 h-1 mx-auto mt-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full`}
-          ></div>
+    
         </div>
 
         {/* Services Grid */}

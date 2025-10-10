@@ -13,17 +13,14 @@ import {
   FaDog,
   FaUserShield,
   FaHome,
+  FaSignOutAlt,
 } from "react-icons/fa";
 import useRole from "../hooks/useRole";
-import Navbar from "../SharedComponent/Nabbar";
-import { ThemeContext } from "../context/ThemeContext";
 import { AuthContext } from "../context/AuthContext";
 import Swal from "sweetalert2";
 import axios from "axios";
-import { Button } from "../ui/button";
 
 const Dashboard = () => {
-  const { theme } = useContext(ThemeContext);
   const { user, signOutUser } = useContext(AuthContext);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [role] = useRole();
@@ -41,12 +38,13 @@ const Dashboard = () => {
   const handleLogout = () => {
     Swal.fire({
       title: "Are you sure?",
-      text: "You Want To Logout??",
+      text: "You want to logout?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes",
+      confirmButtonColor: "#d97706",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, logout",
+      cancelButtonText: "Cancel",
     }).then(async (result) => {
       if (result.isConfirmed) {
         const data = await axios.post(
@@ -59,14 +57,16 @@ const Dashboard = () => {
 
         Swal.fire({
           title: "Logged Out",
-          text: "Your Have Been Logout Sucessfully",
+          text: "You have been logged out successfully",
           icon: "success",
+          confirmButtonColor: "#d97706",
         });
       }
     });
   };
 
   const sidebarLinks = [
+    { to: "/", icon: <FaHome />, label: "Home" },
     { to: "profile", icon: <FaUser />, label: "Profile" },
     { to: "add-pet", icon: <FaPlusCircle />, label: "Add Pet" },
     { to: "my-added-pets", icon: <FaPaw />, label: "My Added Pets" },
@@ -85,7 +85,6 @@ const Dashboard = () => {
       icon: <FaHandHoldingHeart />,
       label: "My Donation Campaigns",
     },
-
     { to: "my-donations", icon: <FaHeart />, label: "My Donations" },
     ...(role === "admin"
       ? [
@@ -97,63 +96,35 @@ const Dashboard = () => {
           {
             to: "admin/allusers",
             icon: <FaUsers />,
-            label: "Active Users (Admin)",
+            label: "Active Users",
           },
-          { to: "admin/allpets", icon: <FaDog />, label: "All Pets (Admin)" },
+          { to: "admin/allpets", icon: <FaDog />, label: "All Pets" },
           {
             to: "admin/alldonation",
             icon: <FaDonate />,
-            label: "All Donations (Admin)",
+            label: "All Donations",
           },
         ]
       : []),
   ];
-  return (
-    <div
-      className={`h-screen flex flex-col 
-        ${theme === "dark" ? "bg-dark text-dark" : "bg-light text-light"}`}
-    >
-      {/* Top Navbar */}
-      <div
-        className={`sticky top-0 z-50 shadow
-          ${theme === "dark" ? "bg-navbar-dark" : "bg-navbar-light"}`}
-      >
-        <Navbar />
-      </div>
 
-      {/* Layout Wrapper */}
-      <div className="flex flex-1 overflow-hidden w-11/12 max-w-7xl mx-auto">
-        {/* Sidebar */}
+  return (
+    <div className="flex justify-center h-screen bg-light overflow-hidden">
+      <div className="flex w-full h-screen overflow-hidden">
+        {/* Fixed Sidebar */}
         <aside
           className={`${
-            sidebarOpen ? "w-64" : "w-16"
-          } sticky top-[64px] h-[calc(100vh-64px)] shadow-md transition-all duration-300 z-40
-          ${
-            theme === "dark"
-              ? "bg-sidebar-dark text-sidebar-text"
-              : "bg-sidebar-light text-sidebar-text-light"
-          }`}
+            sidebarOpen ? "w-64" : "w-20"
+          } h-screen bg-white border-r border-gray-200 shadow-sm transition-all duration-300 flex-shrink-0 flex flex-col`}
         >
-          <div className="flex py-2 px-4 items-center">
+          {/* Sidebar Header */}
+          <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
             {sidebarOpen && (
-              <h2
-                className={`text-xl font-bold tracking-wide ${
-                  theme === "dark"
-                    ? "text-textColorDark"
-                    : "text-textColorLight"
-                }`}
-              >
-                Dashboard
-              </h2>
+              <h2 className="text-xl font-bold text-gray-800">Dashboard</h2>
             )}
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className={`p-2 rounded-full transition-colors shadow ml-auto
-                ${
-                  theme === "dark"
-                    ? "bg-gray-700 hover:bg-blue-600 hover:text-white"
-                    : "bg-gray-200 hover:bg-blue-500 hover:text-white"
-                }`}
+              className="p-2 rounded-lg bg-gray-100 hover:bg-amber-100 hover:text-amber-700 transition-colors ml-auto"
               aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
             >
               {sidebarOpen ? (
@@ -164,53 +135,55 @@ const Dashboard = () => {
             </button>
           </div>
 
-          <nav className="px-2 ">
+          {/* Navigation Links - Scrollable if needed */}
+          <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
             {sidebarLinks.map(({ to, icon, label }) => (
               <NavLink
                 key={to}
                 to={to}
                 end
                 className={({ isActive }) =>
-                  `group flex items-center gap-4 px-4 py-2 rounded-lg font-medium transition-all duration-300
-                  ${
-                    theme === "dark"
-                      ? "text-gray-300 hover:bg-blue-700 hover:text-white"
-                      : "text-gray-700 hover:bg-blue-100 hover:text-blue-700"
-                  }
-                  ${
-                    isActive
-                      ? theme === "dark"
-                        ? "bg-blue-900 text-white font-semibold"
-                        : "bg-blue-200 text-blue-800 font-semibold"
-                      : ""
-                  }
-                  `
+                  `group flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-200
+                ${
+                  isActive
+                    ? "bg-amber-50 text-amber-700 font-semibold shadow-sm"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`
                 }
               >
                 <span
-                  className={`text-xl ${
-                    theme === "dark"
-                      ? "text-blue-400 group-hover:scale-110"
-                      : "text-blue-500 group-hover:scale-110"
-                  } transition-transform`}
+                  className={`text-xl transition-transform group-hover:scale-110`}
                 >
                   {icon}
                 </span>
                 {sidebarOpen && (
-                  <span className="transition-opacity duration-300">
+                  <span className="transition-opacity duration-300 text-sm">
                     {label}
                   </span>
                 )}
               </NavLink>
             ))}
 
-            <Button value={"Logout"} onClick={handleLogout}></Button>
+            {/* Logout Button */}
+            <button
+              onClick={handleLogout}
+              className={`w-full group flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-200 text-gray-700 hover:bg-red-50 hover:text-red-600 mt-4 border-t border-gray-200 pt-4`}
+            >
+              <span className="text-xl transition-transform group-hover:scale-110">
+                <FaSignOutAlt />
+              </span>
+              {sidebarOpen && (
+                <span className="transition-opacity duration-300 text-sm">
+                  Logout
+                </span>
+              )}
+            </button>
           </nav>
         </aside>
 
-        {/* Scrollable Main Content */}
-        <main className="no-scrollbar   flex-1 overflow-y-auto scroll-smooth">
-          <div className="max-w-6xl mx-auto">
+        {/* Main Content Area - Scrollable */}
+        <main className="flex-1 h-screen overflow-y-auto transition-all duration-300">
+          <div className="p-6">
             <Outlet />
           </div>
         </main>

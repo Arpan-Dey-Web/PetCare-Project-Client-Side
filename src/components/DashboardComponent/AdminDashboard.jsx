@@ -4,9 +4,9 @@ import {
   FaPaw,
   FaDonate,
   FaChartLine,
-  FaClipboardList,
+  FaArrowUp,
+  FaArrowRight,
 } from "react-icons/fa";
-import { ThemeContext } from "../context/ThemeContext";
 import { Link } from "react-router";
 import useRole from "../hooks/useRole";
 import useAxiosSecure from "../hooks/useAxiosSecure";
@@ -14,12 +14,10 @@ import { AuthContext } from "../context/AuthContext";
 import Loading from "../SharedComponent/Loading";
 
 const AdminDashboard = () => {
-  const { theme } = useContext(ThemeContext);
   const [loading, setLoading] = useState(true);
   const [totalUsers, setTotalUsers] = useState([]);
   const [availablePets, setAvailablePets] = useState([]);
   const [donationCampaigns, setDonationCampaigns] = useState([]);
-
 
   const { user } = useContext(AuthContext);
   const axiosSecure = useAxiosSecure();
@@ -27,145 +25,217 @@ const AdminDashboard = () => {
   const adminRole = role[0] === "admin";
 
   useEffect(() => {
-    axiosSecure
-      .get(`/users`)
-      .then((res) => {
-        setTotalUsers(res.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setLoading(false);
-      });
+    const fetchData = async () => {
+      try {
+        const [usersRes, petsRes, campaignsRes] = await Promise.all([
+          axiosSecure.get(`/users`),
+          axiosSecure.get("/available-pets"),
+          axiosSecure.get("/donation-campaigns"),
+        ]);
 
-    axiosSecure
-      .get("/available-pets")
-      .then((res) => {
-        setAvailablePets(res.data);
-      })
-      .catch((err) => {
-       
-      });
-    axiosSecure
-      .get("/donation-campaigns")
-      .then((res) => {
-        setDonationCampaigns(res.data.campaigns);
-      })
-      .catch((err) => {
-       
-      });
+        setTotalUsers(usersRes.data);
+        setAvailablePets(petsRes.data);
+        setDonationCampaigns(campaignsRes.data.campaigns);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user && adminRole) {
+      fetchData();
+    }
   }, [user, adminRole]);
 
   if (loading) {
-    return <Loading />;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loading />
+      </div>
+    );
   }
 
+  const statsCards = [
+    {
+      title: "Total Users",
+      value: totalUsers?.length || 0,
+      icon: <FaUsers className="text-3xl" />,
+      bgColor: "bg-blue-50",
+      iconColor: "text-blue-600",
+      borderColor: "border-blue-200",
+      link: "/dashboard/admin/allusers",
+    },
+    {
+      title: "Available Pets",
+      value: availablePets?.length || 0,
+      icon: <FaPaw className="text-3xl" />,
+      bgColor: "bg-green-50",
+      iconColor: "text-green-600",
+      borderColor: "border-green-200",
+      link: "/dashboard/admin/allpets",
+    },
+    {
+      title: "Donation Campaigns",
+      value: donationCampaigns?.length || 0,
+      icon: <FaDonate className="text-3xl" />,
+      bgColor: "bg-amber-50",
+      iconColor: "text-amber-600",
+      borderColor: "border-amber-200",
+      link: "/dashboard/admin/alldonation",
+    },
+  ];
+
+  const quickActions = [
+    {
+      title: "Manage Users",
+      description: "View and manage all registered users",
+      icon: <FaUsers className="text-2xl" />,
+      link: "/dashboard/admin/allusers",
+      color: "blue",
+    },
+    {
+      title: "Manage Pets",
+      description: "View and manage all pet listings",
+      icon: <FaPaw className="text-2xl" />,
+      link: "/dashboard/admin/allpets",
+      color: "green",
+    },
+    {
+      title: "Manage Campaigns",
+      description: "View and manage donation campaigns",
+      icon: <FaDonate className="text-2xl" />,
+      link: "/dashboard/admin/alldonation",
+      color: "amber",
+    },
+    {
+      title: "Create Campaign",
+      description: "Start a new donation campaign",
+      icon: <FaChartLine className="text-2xl" />,
+      link: "/dashboard/create-donation-campaign",
+      color: "purple",
+    },
+  ];
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold  mb-8">Admin Dashboard</h1>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        {/* Users Card */}
-        <div
-          className={` rounded-lg shadow p-6 flex items-center  ${
-            theme == "dark" ? "card-dark" : "card-light"
-          }`}
-        >
-          <div className="bg-blue-100 p-4 rounded-full mr-4">
-            <FaUsers className="text-blue-600 text-2xl" />
-          </div>
-          <div>
-            <h3 className=" text-sm font-medium">Total Users</h3>
-            <p className="text-2xl font-bold ">{totalUsers?.length}</p>
-          </div>
+    <div className="min-h-screen  py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            Admin Dashboard
+          </h1>
+          <p className="text-gray-600">
+            Welcome back! Here's what's happening with your platform today.
+          </p>
         </div>
 
-        {/* Donations Card */}
-        <div
-          className={` rounded-lg shadow p-6 flex items-center  ${
-            theme == "dark" ? "card-dark" : "card-light"
-          }`}
-        >
-          <div className="bg-purple-100 p-4 rounded-full mr-4">
-            <FaDonate className="text-purple-600 text-2xl" />
-          </div>
-          <div>
-            <h3 className=" text-sm font-medium">Unadopted Pets</h3>
-            <p className="text-2xl font-bold ">{availablePets.length}</p>
-          </div>
-        </div>
-
-        {/* Adoptions Card */}
-        <div
-          className={` rounded-lg shadow p-6 flex items-center  ${
-            theme == "dark" ? "card-dark" : "card-light"
-          }`}
-        >
-          <div className="bg-yellow-100 p-4 rounded-full mr-4">
-            <FaClipboardList className="text-yellow-600 text-2xl" />
-          </div>
-          <div>
-            <h3 className=" text-sm font-medium">Total Donation Campaigns</h3>
-            <p className="text-2xl font-bold ">{donationCampaigns.length}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Two Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Recent Activities */}
-        {/* <div className="lg:col-span-2 bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-            <FaChartLine className="mr-2 text-blue-600" /> Recent Activities
-          </h2>
-          <div className="space-y-4">
-            {recentActivities.map((activity) => (
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {statsCards.map((stat, index) => (
+            <Link key={index} to={stat.link}>
               <div
-                key={activity.id}
-                className="border-b border-gray-100 pb-3 last:border-0"
+                className={`${stat.bgColor} border-2 ${stat.borderColor} rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 p-6 cursor-pointer group`}
               >
-                <p className="text-gray-800">{activity.action}</p>
-                <p className="text-gray-500 text-sm">{activity.time}</p>
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-600 mb-1">
+                      {stat.title}
+                    </p>
+                    <p className="text-4xl font-bold text-gray-900 mb-2">
+                      {stat.value}
+                    </p>
+                    <div className="flex items-center text-green-600 text-sm font-semibold">
+                      <FaArrowUp className="mr-1" />
+                      <span>View Details</span>
+                    </div>
+                  </div>
+                  <div
+                    className={`${stat.iconColor} opacity-80 group-hover:opacity-100 transition-opacity`}
+                  >
+                    {stat.icon}
+                  </div>
+                </div>
               </div>
+            </Link>
+          ))}
+        </div>
+
+        {/* Quick Actions Section */}
+        <div className="bg-white rounded-xl shadow-md p-6 mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Quick Actions</h2>
+            <FaChartLine className="text-amber-600 text-2xl" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {quickActions.map((action, index) => (
+              <Link key={index} to={action.link}>
+                <div
+                  className={`bg-gradient-to-r ${
+                    action.color === "blue"
+                      ? "from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200"
+                      : action.color === "green"
+                      ? "from-green-50 to-green-100 hover:from-green-100 hover:to-green-200"
+                      : action.color === "amber"
+                      ? "from-amber-50 to-amber-100 hover:from-amber-100 hover:to-amber-200"
+                      : "from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200"
+                  } border-2 ${
+                    action.color === "blue"
+                      ? "border-blue-200"
+                      : action.color === "green"
+                      ? "border-green-200"
+                      : action.color === "amber"
+                      ? "border-amber-200"
+                      : "border-purple-200"
+                  } rounded-lg p-5 transition-all duration-300 cursor-pointer group`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div
+                          className={`${
+                            action.color === "blue"
+                              ? "text-blue-600"
+                              : action.color === "green"
+                              ? "text-green-600"
+                              : action.color === "amber"
+                              ? "text-amber-600"
+                              : "text-purple-600"
+                          }`}
+                        >
+                          {action.icon}
+                        </div>
+                        <h3 className="text-lg font-bold text-gray-900">
+                          {action.title}
+                        </h3>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-3">
+                        {action.description}
+                      </p>
+                      <div
+                        className={`flex items-center ${
+                          action.color === "blue"
+                            ? "text-blue-600"
+                            : action.color === "green"
+                            ? "text-green-600"
+                            : action.color === "amber"
+                            ? "text-amber-600"
+                            : "text-purple-600"
+                        } text-sm font-semibold group-hover:gap-2 transition-all`}
+                      >
+                        <span>Go to page</span>
+                        <FaArrowRight className="transition-transform group-hover:translate-x-1" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
             ))}
           </div>
-        </div> */}
-
-        {/* Quick Actions */}
-        <div
-          className={`rounded-lg shadow p-6 ${
-            theme == "dark" ? "card-dark" : "card-light"
-          }`}
-        >
-          <h2 className="text-xl font-bold  mb-4">Quick Actions</h2>
-          {/* /admin/allusers */}
-          <div className="space-y-3 flex flex-col gap-2">
-            <Link
-              to={"/dashboard/admin/allusers"}
-              className="w-full border-b-2 hover:bg-blue-200  py-2 px-4 rounded-md transition-colors"
-            >
-              <button>Manage Users</button>
-            </Link>
-            <Link
-              to={"/dashboard/admin/allpets"}
-              className="w-full border-b-2 hover:bg-blue-200  py-2 px-4 rounded-md transition-colors"
-            >
-              <button>Manage Pets</button>
-            </Link>
-            <Link
-              to={"/dashboard/admin/alldonation"}
-              className="w-full border-b-2 hover:bg-blue-200  py-2 px-4 rounded-md transition-colors"
-            >
-              <button>Manage Donation Campaigns</button>
-            </Link>
-            <Link
-              to={"/dashboard/create-donation-campaign"}
-              className="w-full border-b-2 hover:bg-blue-200  py-2 px-4 rounded-md transition-colors"
-            >
-              <button>Create Campaign</button>
-            </Link>
-          </div>
         </div>
+
+        
       </div>
     </div>
   );

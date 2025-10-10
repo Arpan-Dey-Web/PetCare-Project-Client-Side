@@ -11,18 +11,21 @@ import useAxiosSecure from "../hooks/useAxiosSecure";
 import { Link } from "react-router";
 import Loading from "../SharedComponent/Loading";
 import { ThemeContext } from "../context/ThemeContext";
-import { array } from "yup";
 
 const DonationCampaigns = () => {
   const { theme } = useContext(ThemeContext);
   const isLight = theme === "light";
 
-  const cardClass = isLight ? "card-light text-light" : "card-dark text-dark";
-  const bgClass = isLight ? "bg-light text-light" : "bg-dark text-dark";
-  const accentText = isLight ? "text-black" : "text-white";
-  const buttonClass = isLight ? "button-light" : "button-dark";
+  const cardClass = isLight
+    ? "bg-white text-gray-800"
+    : "bg-[#2A334C] text-white";
+  const bgClass = isLight ? "bg-gray-50" : "bg-gray-900";
+  const accentText = isLight ? "text-gray-900" : "text-white";
+  const buttonClass = isLight
+    ? "bg-blue-600 hover:bg-blue-700 text-white"
+    : "bg-blue-500 hover:bg-blue-600 text-white";
   const softText = isLight ? "text-gray-600" : "text-gray-300";
-  const softBg = isLight ? "bg-gray-100" : "bg-gray-700";
+  const softBg = isLight ? "bg-gray-100" : "bg-gray-700/50";
   const progressBg = isLight ? "bg-gray-200" : "bg-gray-600";
 
   const { ref, inView } = useInView({ threshold: 0, triggerOnce: false });
@@ -119,7 +122,7 @@ const DonationCampaigns = () => {
   }
 
   return (
-    <div className={`min-h-screen py-8 ${bgClass}`}>
+    <div className={`min-h-screen py-8 `}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`text-center mb-12`}>
           <h1 className={`text-4xl font-bold mb-4 ${accentText}`}>
@@ -152,7 +155,11 @@ const DonationCampaigns = () => {
                 </div>
 
                 <div className="p-6">
-                  <h3 className="text-xl font-semibold mb-2">
+                  <h3
+                    className={`text-xl font-semibold mb-2 ${
+                      isLight ? "text-gray-900" : "text-white"
+                    }`}
+                  >
                     {campaign.petName}
                   </h3>
 
@@ -211,7 +218,7 @@ const DonationCampaigns = () => {
 
                   <Link
                     to={`/donations-details/${campaign._id}`}
-                    className={`w-full py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center ${buttonClass}`}
+                    className={`w-full py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center font-medium ${buttonClass}`}
                   >
                     View Details
                   </Link>
@@ -241,8 +248,16 @@ const DonationCampaigns = () => {
 
         {!hasNextPage && campaigns.length > 0 && (
           <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
-              <AiOutlineHeart className="w-8 h-8 text-gray-400" />
+            <div
+              className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 ${
+                isLight ? "bg-gray-100" : "bg-gray-800"
+              }`}
+            >
+              <AiOutlineHeart
+                className={`w-8 h-8 ${
+                  isLight ? "text-gray-400" : "text-gray-500"
+                }`}
+              />
             </div>
             <h3 className={`text-xl font-semibold mb-2 ${accentText}`}>
               You've seen all campaigns!
@@ -257,8 +272,16 @@ const DonationCampaigns = () => {
           campaigns.length === 0 &&
           !isFetchingNextPage && (
             <div className="text-center py-12">
-              <div className="inline-flex items-center justify-center w-24 h-24 bg-gray-100 rounded-full mb-6">
-                <AiOutlineHeart className="w-12 h-12 text-gray-400" />
+              <div
+                className={`inline-flex items-center justify-center w-24 h-24 rounded-full mb-6 ${
+                  isLight ? "bg-gray-100" : "bg-gray-800"
+                }`}
+              >
+                <AiOutlineHeart
+                  className={`w-12 h-12 ${
+                    isLight ? "text-gray-400" : "text-gray-500"
+                  }`}
+                />
               </div>
               <h3 className={`text-2xl font-semibold mb-4 ${accentText}`}>
                 No Campaigns Found
@@ -269,7 +292,7 @@ const DonationCampaigns = () => {
               </p>
               <button
                 onClick={() => window.location.reload()}
-                className={`mt-6 px-6 py-3 rounded-lg transition-colors duration-200 ${buttonClass}`}
+                className={`mt-6 px-6 py-3 rounded-lg transition-colors duration-200 font-medium ${buttonClass}`}
               >
                 Refresh Page
               </button>

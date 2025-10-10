@@ -30,17 +30,14 @@ const CreateDonationCampaign = () => {
     formData.append("image", imageFile);
 
     try {
-    
       const res = await axios.post(
         `https://api.imgbb.com/1/upload?key=${imgbbAPI}`,
         formData
       );
       setImageError("");
       toast.success("Image uploaded!");
-    ;
       return res.data.data.url;
     } catch (error) {
-    
       setImageError("Image upload failed.");
       toast.error("Image upload failed.");
       return null;
@@ -77,8 +74,6 @@ const CreateDonationCampaign = () => {
     setIsSubmitting(true);
 
     try {
-   
-
       // First upload image
       const uploadedImageUrl = await handleImageUpload();
       if (!uploadedImageUrl) {
@@ -99,11 +94,7 @@ const CreateDonationCampaign = () => {
         createdAt: new Date().toISOString(),
       };
 
-   ;
-
       const res = await axiosSecure.post("/donation-campaigns", campaignData);
-
-    
 
       if (res.status === 201) {
         toast.success("Campaign created successfully!");
@@ -123,8 +114,6 @@ const CreateDonationCampaign = () => {
         if (fileInput) fileInput.value = "";
       }
     } catch (err) {
-   
-
       if (err.response?.data?.message) {
         toast.error(err.response.data.message);
       } else {
@@ -137,7 +126,7 @@ const CreateDonationCampaign = () => {
 
   return (
     <div
-      className={`max-w-3xl mx-auto p-6  shadow-md border border-gray-200 rounded-xl  ${theme == "dark"? "card-dark"  :"card light "} `}
+      className={`max-w-3xl mx-auto p-6  shadow-md border border-gray-200 rounded-xl  bg-white `}
     >
       <h2
         className={`  text-3xl font-semibold  mb-6 text-center  ${

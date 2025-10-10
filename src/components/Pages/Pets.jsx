@@ -31,14 +31,12 @@ const Pets = () => {
       const { data } = await axios.get(`${url}/available-pets`, {
         params: {
           page: pageParam,
-          limit: 12, // Adjust based on your API requirements
+          limit: 12,
         },
       });
       return data;
     },
     getNextPageParam: (lastPage, pages) => {
-      // Adjust this logic based on your API response structure
-      // Example assuming your API returns { pets: [], hasMore: boolean, currentPage: number }
       if (lastPage.hasMore) {
         return pages.length + 1;
       }
@@ -121,7 +119,9 @@ const Pets = () => {
             placeholder="Search pets by name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className={`w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors ${theme =="dark" ?"text-white":"text-black"}`}
+            className={`w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors ${
+              theme == "dark" ? "text-white" : "text-black"
+            }`}
           />
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <svg

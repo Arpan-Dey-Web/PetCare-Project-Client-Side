@@ -11,6 +11,8 @@ import {
   FaHandsHelping,
 } from "react-icons/fa";
 
+import happyfamilyimage from '../../assets/hero-banner.webp'
+import { Link } from "react-router";
 // AboutUsSection.jsx
 const AboutUsSection = () => {
   const { theme } = useContext(ThemeContext);
@@ -99,13 +101,7 @@ const AboutUsSection = () => {
   ];
 
   return (
-    <section
-      className={`py-20 px-4 relative overflow-hidden ${
-        isDark
-          ? "bg-gray-900"
-          : "bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50"
-      }`}
-    >
+    <section className={`py-20 px-4 relative overflow-hidden `}>
       {/* Background Decorations */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-20 left-20 w-40 h-40 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur-3xl"></div>
@@ -135,7 +131,7 @@ const AboutUsSection = () => {
           >
             About{" "}
             <span className="bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 bg-clip-text text-transparent">
-              PawHome
+              PetCare
             </span>
           </h2>
 
@@ -153,7 +149,7 @@ const AboutUsSection = () => {
             >
               At{" "}
               <span className="font-bold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
-                PawHome
+                PetCare
               </span>
               , we believe every animal deserves a loving home and every person
               deserves a loyal companion. That's why we built a platform that
@@ -197,11 +193,11 @@ const AboutUsSection = () => {
 
           {/* Image Section */}
           <div className="relative">
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-500">
+            <div className="relative rounded-full overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-500">
               <img
-                src="/api/placeholder/600/400"
+                src={happyfamilyimage}
                 alt="Happy families with their adopted pets"
-                className="w-full h-96 object-cover"
+                className="w-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
               <div className="absolute bottom-6 left-6 text-white">
@@ -407,12 +403,12 @@ const AboutUsSection = () => {
             there are many ways to make a difference in a pet's life.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-purple-600 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 transform hover:scale-105">
-              Start Adopting
-            </button>
-            <button className="border-2 border-white text-white px-8 py-4 rounded-full font-semibold hover:bg-white hover:text-purple-600 transition-all duration-300 transform hover:scale-105">
-              Become a Volunteer
-            </button>
+            <Link to={"/pets"}>
+              <button className="bg-white text-purple-600 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 transform hover:scale-105">
+                Start Adopting
+              </button>
+            </Link>
+       
           </div>
         </div>
       </div>
