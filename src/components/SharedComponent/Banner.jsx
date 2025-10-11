@@ -29,15 +29,8 @@ const Banner = () => {
           <h1 className="text-3xl md:text-4xl lg:text-7xl font-extrabold mb-4  block bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 bg-clip-text text-transparent">
             The Best Care for <br /> Your Best Friend
           </h1>
-          {/* <span className="block bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 bg-clip-text text-transparent">
-            The Best Care for <br /> Your Best Friend */}
-          {/* </span> */}
-          <p className="text-sm md:text-lg lg:text-2xl text-white/90 max-w-xl leading-relaxed">
-            At <span className="font-semibold text-amber-400">PetPath</span>, we
-            provide exceptional care and services for your pets, including
-            grooming, boarding, and walking. Trust us to ensure your furry
-            friends are happy.
-          </p>
+         
+        
           {/* cat image show  cat one hand touch this button  */}
           <Link to="/pets">
             <Button

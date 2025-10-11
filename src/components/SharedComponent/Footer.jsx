@@ -15,27 +15,22 @@ import {
 import Logo from "./Logo";
 
 const Footer = () => {
-
-
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const quickLinks = [
-    { name: "Home", href: "/" },
-    { name: "Adopt a Pet", href: "/pets" },
-    { name: "Pet Care Guide", href: "/care" },
-    { name: "Success Stories", href: "/stories" },
-    { name: "Volunteer", href: "/volunteer" },
-  ];
+
 
   const services = [
-    { name: "Pet Adoption", href: "/adoption" },
+    { name: "Home", href: "/" },
+    { name: "Pet Adoption", href: "/pets" },
     { name: "Donation Campaigns", href: "/donations" },
-    { name: "Pet Health Services", href: "/health" },
-    { name: "Lost & Found", href: "/lost-found" },
-    { name: "Emergency Rescue", href: "/rescue" },
+    { name: "Dashboard", href: "/dashboard" },
+
+    
   ];
+
+
 
   const socialLinks = [
     {
@@ -61,7 +56,7 @@ const Footer = () => {
   return (
     <footer
       className={`relative bg-[#FEF9F6]
-       border-t border-gray-200`}
+       border border-gray-200 `}
     >
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
@@ -79,7 +74,7 @@ const Footer = () => {
       {/* Main Footer Content */}
       <div className="relative z-10 max-w-7xl mx-auto pt-16 pb-8 px-4">
         {/* Top Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 mb-12">
           {/* Brand Section */}
           <div className="lg:col-span-1">
             <div className="mb-6">
@@ -138,31 +133,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h3
-              className={`text-lg font-bold mb-6 flex items-center gap-2 text-gray-800
-              `}
-            >
-              <FaPaw className="text-purple-500" />
-              Quick Links
-            </h3>
-            <ul className="space-y-3">
-              {quickLinks.map((link, index) => (
-                <li key={index}>
-                  <a
-                    href={link.href}
-                    className={`text-sm transition-all duration-300 hover:translate-x-1 inline-flex items-center gap-2 group text-gray-600 hover:text-gray-800
-                    `}
-                  >
-                    <span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                    {link.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
           {/* Services */}
           <div>
             <h3
@@ -170,7 +140,7 @@ const Footer = () => {
               `}
             >
               <FaHeart className="text-pink-500" />
-              Our Services
+              Quick Links
             </h3>
             <ul className="space-y-3">
               {services.map((service, index) => (
@@ -224,7 +194,6 @@ const Footer = () => {
                 className={`text-sm mb-4 text-gray-600
                 `}
               >
-                
                 Follow us on social media
               </p>
               <div className="flex gap-3">
