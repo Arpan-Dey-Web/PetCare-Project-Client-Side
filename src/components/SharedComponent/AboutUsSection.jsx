@@ -1,5 +1,5 @@
-import { useContext } from "react";
-import { ThemeContext } from "../context/ThemeContext";
+
+
 import {
   FaHeart,
   FaUsers,
@@ -11,12 +11,11 @@ import {
   FaHandsHelping,
 } from "react-icons/fa";
 
-import happyfamilyimage from '../../assets/hero-banner.webp'
+import happyfamilyimage from "../../assets/hero-banner.webp";
 import { Link } from "react-router";
 // AboutUsSection.jsx
 const AboutUsSection = () => {
-  const { theme } = useContext(ThemeContext);
-  const isDark = theme === "dark";
+
 
   const stats = [
     {
@@ -115,9 +114,8 @@ const AboutUsSection = () => {
           <div className="inline-flex items-center gap-2 mb-4">
             <FaPaw className="text-2xl text-purple-500" />
             <span
-              className={`text-lg font-medium ${
-                isDark ? "text-purple-300" : "text-purple-600"
-              }`}
+              className={`text-lg font-medium text-purple-600
+              `}
             >
               Our Story
             </span>
@@ -125,9 +123,8 @@ const AboutUsSection = () => {
           </div>
 
           <h2
-            className={`text-4xl md:text-6xl font-bold mb-6 leading-tight ${
-              isDark ? "text-white" : "text-gray-800"
-            }`}
+            className={`text-4xl md:text-6xl font-bold mb-6 leading-tight text-gray-800
+            `}
           >
             About{" "}
             <span className="bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 bg-clip-text text-transparent">
@@ -143,9 +140,8 @@ const AboutUsSection = () => {
           {/* Text Content */}
           <div className="space-y-6">
             <p
-              className={`text-lg md:text-xl leading-relaxed ${
-                isDark ? "text-gray-300" : "text-gray-700"
-              }`}
+              className={`text-lg md:text-xl leading-relaxed text-gray-700
+              `}
             >
               At{" "}
               <span className="font-bold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
@@ -158,9 +154,8 @@ const AboutUsSection = () => {
             </p>
 
             <p
-              className={`text-lg leading-relaxed ${
-                isDark ? "text-gray-300" : "text-gray-700"
-              }`}
+              className={`text-lg leading-relaxed text-gray-700
+              `}
             >
               Whether you're searching for a furry friend to brighten your days
               or hoping to rehome a pet responsibly, our adoption process is
@@ -172,16 +167,14 @@ const AboutUsSection = () => {
 
             <div className="pt-6">
               <h3
-                className={`text-2xl font-bold mb-4 ${
-                  isDark ? "text-white" : "text-gray-800"
-                }`}
+                className={`text-2xl font-bold mb-4 text-gray-800
+                `}
               >
                 Our Mission
               </h3>
               <p
-                className={`text-base leading-relaxed ${
-                  isDark ? "text-gray-300" : "text-gray-600"
-                }`}
+                className={`text-base leading-relaxed text-gray-600
+                `}
               >
                 To create a world where no pet is without a home and no family
                 is without the joy of unconditional love. We're committed to
@@ -212,20 +205,17 @@ const AboutUsSection = () => {
 
             {/* Floating Stats Card */}
             <div
-              className={`absolute -bottom-8 -left-8 ${
-                isDark ? "bg-gray-800" : "bg-white"
-              } rounded-2xl p-6 shadow-xl border ${
-                isDark ? "border-gray-700" : "border-gray-200"
-              }`}
+              className={`absolute -bottom-8 -left-8 bg-white
+               rounded-2xl p-6 shadow-xl border border-gray-200
+              `}
             >
               <div className="text-center">
                 <div className="text-3xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
                   98%
                 </div>
                 <div
-                  className={`text-sm font-medium ${
-                    isDark ? "text-gray-300" : "text-gray-600"
-                  }`}
+                  className={`text-sm font-medium text-gray-600
+                  `}
                 >
                   Success Rate
                 </div>
@@ -236,16 +226,13 @@ const AboutUsSection = () => {
 
         {/* Statistics Section */}
         <div
-          className={`${
-            isDark ? "bg-gray-800/50" : "bg-white/70"
-          } backdrop-blur-sm rounded-3xl p-8 mb-20 border ${
-            isDark ? "border-gray-700" : "border-gray-200"
-          }`}
+          className={`bg-white/70
+           backdrop-blur-sm rounded-3xl p-8 mb-20 border border-gray-200
+          `}
         >
           <h3
-            className={`text-3xl font-bold text-center mb-12 ${
-              isDark ? "text-white" : "text-gray-800"
-            }`}
+            className={`text-3xl font-bold text-center mb-12 text-gray-800
+            `}
           >
             Our Impact in Numbers
           </h3>
@@ -258,16 +245,14 @@ const AboutUsSection = () => {
                   {stat.icon}
                 </div>
                 <div
-                  className={`text-3xl md:text-4xl font-bold mb-2 ${
-                    isDark ? "text-white" : "text-gray-800"
-                  }`}
+                  className={`text-3xl md:text-4xl font-bold mb-2 text-gray-800
+                  `}
                 >
                   {stat.number}
                 </div>
                 <div
-                  className={`text-sm font-medium ${
-                    isDark ? "text-gray-300" : "text-gray-600"
-                  }`}
+                  className={`text-sm font-medium text-gray-600
+                  `}
                 >
                   {stat.label}
                 </div>
@@ -279,9 +264,8 @@ const AboutUsSection = () => {
         {/* Values Section */}
         <div className="mb-20">
           <h3
-            className={`text-3xl md:text-4xl font-bold text-center mb-12 ${
-              isDark ? "text-white" : "text-gray-800"
-            }`}
+            className={`text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800
+            `}
           >
             Our Core Values
           </h3>
@@ -289,11 +273,9 @@ const AboutUsSection = () => {
             {values.map((value, index) => (
               <div
                 key={index}
-                className={`${
-                  isDark ? "bg-gray-800" : "bg-white"
-                } rounded-2xl p-8 text-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border ${
-                  isDark ? "border-gray-700" : "border-gray-200"
-                }`}
+                className={`bg-white
+               rounded-2xl p-8 text-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200
+                `}
               >
                 <div
                   className={`w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-r ${value.gradient} flex items-center justify-center text-white shadow-lg`}
@@ -301,17 +283,15 @@ const AboutUsSection = () => {
                   {value.icon}
                 </div>
                 <h4
-                  className={`text-xl font-bold mb-4 ${
-                    isDark ? "text-white" : "text-gray-800"
-                  }`}
+                  className={`text-xl font-bold mb-4 text-gray-800
+                  `}
                 >
                   {value.title}
                 </h4>
                 <p
-                  className={`text-sm leading-relaxed ${
-                    isDark ? "text-gray-300" : "text-gray-600"
-                  }`}
-                >
+                  className={`text-sm leading-relaxed text-gray-600
+                  `}
+                > 
                   {value.description}
                 </p>
               </div>
@@ -322,9 +302,8 @@ const AboutUsSection = () => {
         {/* Timeline Section */}
         <div className="mb-20">
           <h3
-            className={`text-3xl md:text-4xl font-bold text-center mb-12 ${
-              isDark ? "text-white" : "text-gray-800"
-            }`}
+            className={`text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800
+            `}
           >
             Our Journey
           </h3>
@@ -349,11 +328,8 @@ const AboutUsSection = () => {
 
                   {/* Content */}
                   <div
-                    className={` ${
-                      isDark ? "bg-gray-800" : "bg-white"
-                    } rounded-2xl p-6 shadow-lg border ${
-                      isDark ? "border-gray-700" : "border-gray-200"
-                    }`}
+                    className={` bg-white rounded-2xl p-6 shadow-lg border border-gray-200
+                    `}
                   >
                     <div className="flex items-center gap-4 mb-3">
                       <span
@@ -362,16 +338,14 @@ const AboutUsSection = () => {
                         {milestone.year}
                       </span>
                       <h4
-                        className={`text-xl font-bold ${
-                          isDark ? "text-white" : "text-gray-800"
-                        }`}
+                        className={`text-xl font-bold text-gray-800
+                        `}
                       >
                         {milestone.title}
                       </h4>
                     </div>
                     <p
-                      className={`text-sm leading-relaxed ${
-                        isDark ? "text-gray-300" : "text-gray-600"
+                      className={`text-sm leading-relaxed text-gray-600
                       }`}
                     >
                       {milestone.description}
@@ -388,11 +362,10 @@ const AboutUsSection = () => {
 
         {/* CTA Section */}
         <div
-          className={`${
-            isDark
-              ? "bg-gradient-to-r from-gray-800 to-gray-900"
-              : "bg-gradient-to-r from-purple-500 to-pink-500"
-          } rounded-3xl p-12 text-center text-white`}
+          className={`
+          
+              bg-gradient-to-r from-purple-500 to-pink-500
+           rounded-3xl p-12 text-center text-white`}
         >
           <FaAward className="text-5xl mx-auto mb-6 opacity-80" />
           <h3 className="text-3xl md:text-4xl font-bold mb-4">
@@ -408,7 +381,6 @@ const AboutUsSection = () => {
                 Start Adopting
               </button>
             </Link>
-       
           </div>
         </div>
       </div>

@@ -1,17 +1,16 @@
-import React, { useState, useMemo, useContext } from "react";
+import React, { useState, useMemo } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
 import axios from "axios";
 import Loading from "../SharedComponent/Loading";
 import PetCard from "../SharedComponent/PetCard";
-import { ThemeContext } from "../context/ThemeContext";
 
 const url = import.meta.env.VITE_API;
 
 const Pets = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const { theme } = useContext(ThemeContext);
+
   const { ref, inView } = useInView({
     threshold: 0,
     triggerOnce: false,
@@ -103,9 +102,8 @@ const Pets = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <h1
-        className={`text-3xl font-bold text-center mb-8 ${
-          theme == "dark" ? "text-white" : " text-black"
-        }`}
+        className={`text-3xl font-bold text-center mb-8 text-black
+        `}
       >
         Adoptable Pets
       </h1>
@@ -119,9 +117,8 @@ const Pets = () => {
             placeholder="Search pets by name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className={`w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors ${
-              theme == "dark" ? "text-white" : "text-black"
-            }`}
+            className={`w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors text-black
+            `}
           />
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <svg

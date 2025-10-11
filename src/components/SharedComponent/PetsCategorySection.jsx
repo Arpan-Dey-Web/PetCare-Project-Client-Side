@@ -2,16 +2,14 @@
 import { Link } from "react-router";
 import { FaCat, FaDog, FaFish, FaPaw } from "react-icons/fa";
 import { GiRabbit } from "react-icons/gi";
-import { useContext } from "react";
-import { ThemeContext } from "../context/ThemeContext";
+
 import dogImage from "../../assets/dog.png";
 import catImage from "../../assets/cat.png";
 import birdImage from "../../assets/bird.png";
 import rabbitImage from "../../assets/rabbit.png";
 
 const PetsCategorySection = () => {
-  const { theme } = useContext(ThemeContext);
-  const isDark = theme === "dark";
+
 
   const petCategories = [
     {
@@ -54,41 +52,25 @@ const PetsCategorySection = () => {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 mb-4">
             <FaPaw
-              className={`text-2xl ${
-                isDark ? "text-amber-400" : "text-amber-600"
-              }`}
+              className={`text-2xl text-amber-600"
+              `}
             />
             <span
-              className={`text-lg font-medium ${
-                theme == "dark" ? "text-dark" : "text-light"
-              }`}
+              className={`text-lg font-medium text-light
+              `}
             >
               Pet Categories
             </span>
-            <FaPaw
-              className={`text-2xl ${
-                isDark ? "text-amber-400" : "text-amber-600"
-              }`}
-            />
+            <FaPaw className={`text-2xl text-amber-600`} />
           </div>
 
-          <h2
-            className={`text-6xl font-extrabold mb-4  ${
-              theme == "dark" ? "text-dark" : "text-light"
-            }`}
-          >
+          <h2 className={`text-6xl font-extrabold mb-4 text-light`}>
             Find Your Perfect
           </h2>
 
-          <h3
-            className={`text-4xl font-bold  bg-clip-text  ${
-              theme == "dark" ? "text-dark" : "text-light"
-            }`}
-          >
+          <h3 className={`text-4xl font-bold  bg-clip-text text-light`}>
             Companion
           </h3>
-
-        
         </div>
 
         {/* Enhanced Pet Categories Grid */}
@@ -101,11 +83,8 @@ const PetsCategorySection = () => {
             >
               {/* Main container */}
               <div
-                className={`relative aspect-square rounded-full transition-all duration-500 cursor-pointer transform group-hover:scale-105  ${
-                  isDark
-                    ? " bg-gray-800/50 backdrop-blur-sm group-hover:border-transparent "
-                    : " bg-white/80 backdrop-blur-sm group-hover:border-transparent"
-                }`}
+                className={`relative aspect-square rounded-full transition-all duration-500 cursor-pointer transform group-hover:scale-105  bg-white/80 backdrop-blur-sm group-hover:border-transparent
+                `}
               >
                 {/* Gradient background on hover */}
                 <div
@@ -138,9 +117,8 @@ const PetsCategorySection = () => {
               {/* Category name */}
               <div className="text-center mt-4">
                 <h3
-                  className={`text-xl font-semibold transition-all duration-300 group-hover:scale-110 ${
-                    isDark ? "text-white" : "text-gray-800"
-                  }`}
+                  className={`text-xl font-semibold transition-all duration-300 group-hover:scale-110 text-gray-800
+                  `}
                 >
                   {pet.name}
                 </h3>
@@ -155,17 +133,13 @@ const PetsCategorySection = () => {
         {/* Bottom decorative element */}
         <div className="flex justify-center mt-16">
           <div
-            className={`flex items-center gap-2 px-6 py-3 rounded-full ${
-              isDark
-                ? "bg-gray-800/30 border border-gray-700"
-                : "bg-white/30 border border-gray-300"
-            } backdrop-blur-sm`}
+            className={`flex items-center gap-2 px-6 py-3 rounded-full bg-white/30 border border-gray-300
+            backdrop-blur-sm`}
           >
             <FaPaw className="text-pink-500 animate-pulse" />
             <span
-              className={`text-sm font-medium ${
-                isDark ? "text-gray-300" : "text-gray-600"
-              }`}
+              className={`text-sm font-medium text-gray-600
+              `}
             >
               Choose your favorite pet category
             </span>

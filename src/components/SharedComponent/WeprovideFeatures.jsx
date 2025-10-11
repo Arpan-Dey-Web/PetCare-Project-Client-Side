@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { ThemeContext } from "../context/ThemeContext";
+
 import {
   FaHeart,
   FaHome,
@@ -12,8 +12,7 @@ import {
 } from "react-icons/fa";
 
 const WeProvideFeatures = () => {
-  const { theme } = useContext(ThemeContext);
-  const isDark = theme === "dark";
+
 
   const services = [
     {
@@ -27,7 +26,7 @@ const WeProvideFeatures = () => {
       icon: <FaHeart className="text-4xl" />,
       emoji: "🐕‍🦺",
       gradient: "from-red-400 to-pink-500",
-      bgAccent: isDark ? "bg-red-900/10" : "bg-red-50",
+      bgAccent: "bg-red-50",
     },
     {
       title: "Smart Adoption Matching",
@@ -40,7 +39,7 @@ const WeProvideFeatures = () => {
       icon: <FaHome className="text-4xl" />,
       emoji: "🏠",
       gradient: "from-blue-400 to-cyan-500",
-      bgAccent: isDark ? "bg-blue-900/10" : "bg-blue-50",
+      bgAccent:  "bg-blue-50",
     },
     {
       title: "Complete Health Services",
@@ -53,7 +52,7 @@ const WeProvideFeatures = () => {
       icon: <FaStethoscope className="text-4xl" />,
       emoji: "🏥",
       gradient: "from-green-400 to-emerald-500",
-      bgAccent: isDark ? "bg-green-900/10" : "bg-green-50",
+      bgAccent: "bg-green-50",
     },
     {
       title: "Community Volunteer Hub",
@@ -66,7 +65,7 @@ const WeProvideFeatures = () => {
       icon: <FaHandsHelping className="text-4xl" />,
       emoji: "🤝",
       gradient: "from-purple-400 to-indigo-500",
-      bgAccent: isDark ? "bg-purple-900/10" : "bg-purple-50",
+      bgAccent: "bg-purple-50",
     },
     {
       title: "Donation & Support Center",
@@ -79,7 +78,7 @@ const WeProvideFeatures = () => {
       icon: <FaGift className="text-4xl" />,
       emoji: "💝",
       gradient: "from-yellow-400 to-orange-500",
-      bgAccent: isDark ? "bg-yellow-900/10" : "bg-yellow-50",
+      bgAccent: "bg-yellow-50",
     },
     {
       title: "Lost Pet Recovery System",
@@ -92,7 +91,7 @@ const WeProvideFeatures = () => {
       icon: <FaSearch className="text-4xl" />,
       emoji: "🔍",
       gradient: "from-teal-400 to-green-500",
-      bgAccent: isDark ? "bg-teal-900/10" : "bg-teal-50",
+      bgAccent: "bg-teal-50",
     },
   ];
 
@@ -109,28 +108,17 @@ const WeProvideFeatures = () => {
         <div className="text-center mb-16 max-w-4xl mx-auto">
           <div className="inline-flex items-center gap-2 mb-4">
             <FaPaw
-              className={`text-2xl ${
-                isDark ? "text-purple-400" : "text-purple-600"
-              }`}
+              className={`text-2xl text-purple-600
+              `}
             />
-            <span
-              className={`text-lg font-medium ${
-                isDark ? "text-gray-300" : "text-gray-600"
-              }`}
-            >
+            <span className={`text-lg font-medium text-gray-600`}>
               Our Services
             </span>
-            <FaPaw
-              className={`text-2xl ${
-                isDark ? "text-purple-400" : "text-purple-600"
-              }`}
-            />
+            <FaPaw className={`text-2xl text-purple-600`} />
           </div>
 
           <h2
-            className={`text-4xl md:text-6xl font-extrabold mb-6 leading-tight ${
-              isDark ? "text-white" : "text-gray-800"
-            }`}
+            className={`text-4xl md:text-6xl font-extrabold mb-6 leading-tight text-gray-800`}
           >
             Empowering Love &
             <span className="block bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 bg-clip-text text-transparent">
@@ -138,16 +126,10 @@ const WeProvideFeatures = () => {
             </span>
           </h2>
 
-          <p
-            className={`text-xl leading-relaxed ${
-              isDark ? "text-gray-300" : "text-gray-600"
-            }`}
-          >
+          <p className={`text-xl leading-relaxed text-gray-600`}>
             Every tail deserves a happy ending. Here's how we create miracle
             moments and build lasting bonds between pets and families.
           </p>
-
-    
         </div>
 
         {/* Services Grid */}
@@ -155,13 +137,7 @@ const WeProvideFeatures = () => {
           {services.map((service, idx) => (
             <div
               key={idx}
-              className={`group relative ${
-                service.bgAccent
-              } rounded-3xl p-8 border transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 ${
-                isDark
-                  ? "border-gray-700 hover:border-gray-600"
-                  : "border-gray-200 hover:border-gray-300"
-              }`}
+              className={`group relative ${service.bgAccent} rounded-3xl p-8 border transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 border-gray-200 hover:border-gray-300`}
             >
               {/* Gradient Glow Effect */}
               <div
@@ -184,9 +160,8 @@ const WeProvideFeatures = () => {
 
                 {/* Title */}
                 <h3
-                  className={`text-2xl font-bold mb-4  transition-all duration-300 ${
-                    isDark ? "text-white" : "text-gray-800"
-                  }`}
+                  className={`text-2xl font-bold mb-4  transition-all duration-300 text-gray-800
+                  `}
                 >
                   {service.title}
                 </h3>
@@ -199,9 +174,8 @@ const WeProvideFeatures = () => {
                         className={`w-2 h-2 bg-gradient-to-r ${service.gradient} rounded-full mt-2 flex-shrink-0`}
                       ></div>
                       <p
-                        className={`text-sm leading-relaxed ${
-                          isDark ? "text-gray-300" : "text-gray-600"
-                        }`}
+                        className={`text-sm leading-relaxed text-gray-600
+                        `}
                       >
                         {line}
                       </p>
@@ -222,11 +196,9 @@ const WeProvideFeatures = () => {
 
         {/* Bottom Stats Section */}
         <div
-          className={`mt-20 max-w-7xl mx-auto ${
-            isDark ? "bg-gray-800/50" : "bg-white/50"
-          } backdrop-blur-sm rounded-3xl p-8 border ${
-            isDark ? "border-gray-700" : "border-gray-200"
-          }`}
+          className={`mt-20 max-w-7xl mx-auto bg-white/50"
+           backdrop-blur-sm rounded-3xl p-8 border border-gray-200
+          `}
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {[
@@ -242,9 +214,8 @@ const WeProvideFeatures = () => {
                   {stat.number}
                 </div>
                 <div
-                  className={`text-sm font-medium ${
-                    isDark ? "text-gray-300" : "text-gray-600"
-                  }`}
+                  className={`text-sm font-medium text-gray-600
+                 `}
                 >
                   {stat.label}
                 </div>
@@ -256,9 +227,8 @@ const WeProvideFeatures = () => {
         {/* Call to Action */}
         {/* <div className="text-center mt-16">
           <p
-            className={`text-lg mb-6 ${
-              isDark ? "text-gray-300" : "text-gray-600"
-            }`}
+            className={`text-lg mb-6 text-gray-600`
+            }
           >
             Ready to make a difference in a pet's life?
           </p>

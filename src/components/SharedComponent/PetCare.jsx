@@ -1,6 +1,5 @@
-// PetCareSection.jsx
-import { useContext } from "react";
-import { ThemeContext } from "../context/ThemeContext";
+
+
 import {
   FaHeartbeat,
   FaUtensils,
@@ -13,8 +12,7 @@ import {
 } from "react-icons/fa";
 
 const PetCare = () => {
-  const { theme } = useContext(ThemeContext);
-  const isDark = theme === "dark";
+
 
   const careCategories = [
     {
@@ -28,7 +26,7 @@ const PetCare = () => {
         "Dental care routine",
       ],
       color: "from-red-400 to-pink-500",
-      bgColor: isDark ? "bg-red-900/20" : "bg-red-50",
+      bgColor: "bg-red-50",
     },
     {
       icon: <FaUtensils className="text-3xl" />,
@@ -41,7 +39,7 @@ const PetCare = () => {
         "Fresh water daily",
       ],
       color: "from-green-400 to-emerald-500",
-      bgColor: isDark ? "bg-green-900/20" : "bg-green-50",
+      bgColor: "bg-green-50",
     },
     {
       icon: <FaDumbbell className="text-3xl" />,
@@ -50,7 +48,7 @@ const PetCare = () => {
         "Regular physical activity and mental stimulation for a happy pet",
       tips: ["Daily walks/playtime", "Interactive toys", "Mental challenges"],
       color: "from-blue-400 to-cyan-500",
-      bgColor: isDark ? "bg-blue-900/20" : "bg-blue-50",
+      bgColor: "bg-blue-50",
     },
     {
       icon: <FaCut className="text-3xl" />,
@@ -59,7 +57,7 @@ const PetCare = () => {
         "Regular grooming to maintain your pet's coat, nails, and overall hygiene",
       tips: ["Regular brushing", "Nail trimming", "Ear cleaning"],
       color: "from-purple-400 to-indigo-500",
-      bgColor: isDark ? "bg-purple-900/20" : "bg-purple-50",
+      bgColor: "bg-purple-50",
     },
   ];
 
@@ -89,42 +87,35 @@ const PetCare = () => {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 mb-4">
             <FaBone
-              className={`text-2xl ${
-                isDark ? "text-blue-400" : "text-blue-600"
-              }`}
+              className={`text-2xl text-blue-600
+              `}
             />
             <span
-              className={`text-lg font-medium ${
-                isDark ? "text-gray-300" : "text-gray-600"
-              }`}
+              className={`text-lg font-medium text-gray-600
+              `}
             >
               Pet Care Guide
             </span>
             <FaBone
-              className={`text-2xl ${
-                isDark ? "text-blue-400" : "text-blue-600"
-              }`}
+              className={`text-2xl text-blue-600
+              `}
             />
           </div>
 
           <h2
-            className={`text-5xl font-extrabold mb-4 ${
-              isDark ? "text-white" : "text-gray-800"
-            }`}
+            className={`text-5xl font-extrabold mb-4 text-gray-800
+            `}
           >
             Essential Care Guide For Your Pet
           </h2>
 
           <p
-            className={`text-xl max-w-3xl mx-auto ${
-              isDark ? "text-gray-300" : "text-gray-600"
-            }`}
+            className={`text-xl max-w-3xl mx-auto text-gray-600
+            `}    
           >
             Everything you need to know to keep your furry friend healthy,
             happy, and thriving
           </p>
-
-        
         </div>
 
         {/* Main Care Categories */}
@@ -134,11 +125,9 @@ const PetCare = () => {
               key={index}
               className={`${
                 category.bgColor
-              } rounded-2xl p-6 border transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${
-                isDark
-                  ? "border-gray-700 hover:border-gray-600"
-                  : "border-gray-200 hover:border-gray-300"
-              }`}
+              } rounded-2xl p-6 border transition-all duration-300 hover:shadow-lg hover:-translate-y-1 
+                  border-gray-200 hover:border-gray-300
+              `}
             >
               <div
                 className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r ${category.color} rounded-full text-white mb-4`}
@@ -147,17 +136,15 @@ const PetCare = () => {
               </div>
 
               <h3
-                className={`text-xl font-bold mb-3 ${
-                  isDark ? "text-white" : "text-gray-800"
-                }`}
+                className={`text-xl font-bold mb-3 text-gray-800
+                `}
               >
                 {category.title}
               </h3>
 
               <p
-                className={`text-sm mb-4 ${
-                  isDark ? "text-gray-300" : "text-gray-600"
-                }`}
+                className={`text-sm mb-4 text-gray-600
+                `}
               >
                 {category.description}
               </p>
@@ -166,8 +153,7 @@ const PetCare = () => {
                 {category.tips.map((tip, tipIndex) => (
                   <li
                     key={tipIndex}
-                    className={`text-sm flex items-center ${
-                      isDark ? "text-gray-400" : "text-gray-500"
+                    className={`text-sm flex items-center text-gray-500 
                     }`}
                   >
                     <span
@@ -186,7 +172,7 @@ const PetCare = () => {
           {/* Essential Supplies */}
           <div
             className={`${
-              isDark ? "bg-gray-800" : "bg-white"
+              "bg-white"
             } rounded-2xl p-8 shadow-lg`}
           >
             <div className="flex items-center gap-3 mb-6">
@@ -194,18 +180,16 @@ const PetCare = () => {
                 <FaHome className="text-white text-xl" />
               </div>
               <h3
-                className={`text-2xl font-bold ${
-                  isDark ? "text-white" : "text-gray-800"
-                }`}
+                className={`text-2xl font-bold text-gray-800
+                `}
               >
                 Essential Supplies
               </h3>
             </div>
 
             <p
-              className={`text-sm mb-6 ${
-                isDark ? "text-gray-300" : "text-gray-600"
-              }`}
+              className={`text-sm mb-6 text-gray-600
+              `}
             >
               Make sure you have these basic supplies before bringing your new
               pet home
@@ -215,15 +199,13 @@ const PetCare = () => {
               {essentialSupplies.map((supply, index) => (
                 <div
                   key={index}
-                  className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
-                    isDark ? "hover:bg-gray-700" : "hover:bg-gray-50"
-                  }`}
+                  className={`flex items-center gap-3 p-3 rounded-lg transition-colors hover:bg-gray-50
+                  `}
                 >
                   <span className="text-2xl">{supply.icon}</span>
                   <span
-                    className={`text-sm font-medium ${
-                      isDark ? "text-gray-200" : "text-gray-700"
-                    }`}
+                    className={`text-sm font-medium text-gray-700
+                    `}
                   >
                     {supply.item}
                   </span>
@@ -235,7 +217,7 @@ const PetCare = () => {
           {/* Emergency Preparedness */}
           <div
             className={`${
-              isDark ? "bg-gray-800" : "bg-white"
+              "bg-white"
             } rounded-2xl p-8 shadow-lg`}
           >
             <div className="flex items-center gap-3 mb-6">
@@ -243,18 +225,16 @@ const PetCare = () => {
                 <FaShieldAlt className="text-white text-xl" />
               </div>
               <h3
-                className={`text-2xl font-bold ${
-                  isDark ? "text-white" : "text-gray-800"
-                }`}
+                className={`text-2xl font-bold text-gray-800
+                `}
               >
                 Emergency Preparedness
               </h3>
             </div>
 
             <p
-              className={`text-sm mb-6 ${
-                isDark ? "text-gray-300" : "text-gray-600"
-              }`}
+              className={`text-sm mb-6 text-gray-600
+              `}
             >
               Be prepared for pet emergencies with these essential tips
             </p>
@@ -268,9 +248,8 @@ const PetCare = () => {
                     </span>
                   </div>
                   <p
-                    className={`text-sm ${
-                      isDark ? "text-gray-200" : "text-gray-700"
-                    }`}
+                    className={`text-sm text-gray-700
+                    `}
                   >
                     {tip}
                   </p>
@@ -282,11 +261,9 @@ const PetCare = () => {
 
         {/* Professional Care Banner */}
         <div
-          className={`${
-            isDark
-              ? "bg-gradient-to-r from-blue-900 to-purple-900"
-              : "bg-gradient-to-r from-blue-500 to-purple-600"
-          } rounded-2xl p-8 text-center text-white`}
+          className={`
+              bg-gradient-to-r from-blue-500 to-purple-600
+           rounded-2xl p-8 text-center text-white`}
         >
           <FaStethoscope className="text-4xl mx-auto mb-4 opacity-80" />
           <h3 className="text-2xl font-bold mb-3">
@@ -315,7 +292,8 @@ const PetCare = () => {
         {/* Bottom CTA */}
         {/* <div className="text-center mt-12">
           <p
-            className={`text-lg ${isDark ? "text-gray-300" : "text-gray-600"}`}
+            className={`text-lg text-gray-600
+            `}
           >
             Ready to provide the best care for your new companion?
           </p>

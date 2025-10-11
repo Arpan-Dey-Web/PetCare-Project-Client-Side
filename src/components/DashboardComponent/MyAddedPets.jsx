@@ -3,14 +3,14 @@ import { Link, useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
-import { ThemeContext } from "../context/ThemeContext";
+
 import Loading from "../SharedComponent/Loading";
 
 const MyAddedPets = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
-  const { theme } = useContext(ThemeContext);
+
   const [pets, setPets] = useState([]);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
@@ -43,7 +43,6 @@ const MyAddedPets = () => {
           setPagination(res.data.pagination);
         }
       } catch (err) {
-  
         Swal.fire({
           title: "Error!",
           text: "Failed to fetch your pets. Please try again.",
@@ -91,7 +90,6 @@ const MyAddedPets = () => {
           text: "Failed to update adoption status. Please try again.",
           icon: "error",
         });
-   
       }
     }
   };
@@ -135,7 +133,6 @@ const MyAddedPets = () => {
           text: "Failed to delete pet. Please try again.",
           icon: "error",
         });
-      
       }
     }
   };
@@ -174,9 +171,7 @@ const MyAddedPets = () => {
   };
 
   if (isLoading) {
-    return (
-      <Loading/>
-    );
+    return <Loading />;
   }
 
   return (
@@ -184,9 +179,10 @@ const MyAddedPets = () => {
       <h1 className="text-2xl font-bold mb-4">My Added Pets</h1>
 
       {pets.length === 0 ? (
-        <div className={`text-center py-12 rounded-lg ${theme == 'dark' ? "card-dark" : 
-        "card-light"
-        }`}>
+        <div
+          className={`text-center py-12 rounded-lg card-light
+          `}
+        >
           <div className="inline-flex items-center justify-center w-16 h-16 border rounded-full mb-4">
             <svg
               className="w-8 h-8 "
@@ -202,9 +198,7 @@ const MyAddedPets = () => {
               />
             </svg>
           </div>
-          <h3 className="text-xl font-semibold  mb-2">
-            No Pets Added Yet
-          </h3>
+          <h3 className="text-xl font-semibold  mb-2">No Pets Added Yet</h3>
           <p className=" mb-6 max-w-md mx-auto">
             You haven't added any pets for adoption yet. Start by adding your
             first pet to help them find loving homes.
@@ -256,8 +250,7 @@ const MyAddedPets = () => {
           </div>
 
           <div
-            className={`overflow-x-auto rounded-lg shadow ${
-              theme == "dark" ? "card-dark" : "card-light"
+            className={`overflow-x-auto rounded-lg shadow  card-light
             }`}
           >
             <table className="table w-full">
@@ -284,26 +277,22 @@ const MyAddedPets = () => {
                 </tr>
               </thead>
               <tbody
-                className={`divide-y divide-gray-200 ${
-                  theme == "dark"
-                    ? "card-dark text-light"
-                    : "card-light text-dark"
-                }`}
+                className={`divide-y divide-gray-200 
+                   card-light text-dark
+                `}
               >
                 {pets.map((pet, index) => (
                   <tr key={pet._id}>
                     <td
-                      className={`px-4 py-4 whitespace-nowrap text-sm ${
-                        theme == "dark" ? "text-dark" : "text-light"
-                      }`}
+                      className={`px-4 py-4 whitespace-nowrap text-sm  text-light
+                      `}
                     >
                       {(page - 1) * petsPerPage + index + 1}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap">
                       <div
-                        className={`text-sm font-medium ${
-                          theme == "dark" ? "text-dark" : "text-light"
-                        }`}
+                        className={`text-sm font-medium  text-light
+                        `}
                       >
                         {pet.name}
                       </div>

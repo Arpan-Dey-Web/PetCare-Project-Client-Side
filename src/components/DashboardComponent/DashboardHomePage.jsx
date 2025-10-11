@@ -1,20 +1,19 @@
 import React, { useContext } from "react";
 import { FaPaw, FaUser, FaDonate, FaPlusCircle } from "react-icons/fa";
-import { ThemeContext } from "../context/ThemeContext";
+
 import { Link } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 
 const DashboardHomePage = () => {
-  const { theme } = useContext(ThemeContext);
-  const { user } = useContext(AuthContext)
+  const { user } = useContext(AuthContext);
 
   // Dynamic classes based on theme
-  const bgClass = theme === "dark" ? "bg-dark" : "bg-light";
-  const textPrimary = theme === "dark" ? "text-dark" : "text-light";
+  const bgClass = "bg-light";
+  const textPrimary = "text-light";
   const textSecondary =
-    theme === "dark" ? "text-accent-dark" : "text-accent-light";
-  const cardBg = theme === "dark" ? "card-dark" : "card-light";
-  const cardText = theme === "dark" ? "text-dark" : "text-light";
+    "text-accent-light";
+  const cardBg = "card-light";
+  const cardText = "text-light";
 
   return (
     <div className={`${bgClass} p-6 min-h-[calc(100vh-80px)]`}>

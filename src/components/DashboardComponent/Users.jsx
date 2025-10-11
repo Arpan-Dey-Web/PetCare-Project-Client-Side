@@ -1,16 +1,15 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 
 import Swal from "sweetalert2";
 import Loading from "../SharedComponent/Loading";
-import { ThemeContext } from "../context/ThemeContext";
 
 const UsersComponent = () => {
   const queryClient = useQueryClient();
   const axiosSecure = useAxiosSecure();
-  const { theme } = useContext(ThemeContext);
+
   // Fetch all  users
   const {
     data: users = [],
@@ -103,9 +102,8 @@ const UsersComponent = () => {
   return (
     <div className="container mx-auto ">
       <div
-        className={` rounded-lg shadow-md overflow-hidden ${
-          theme == "dark" ? "card-dark" : "card-light"
-        }`}
+        className={` rounded-lg shadow-md overflow-hidden card-light
+        `}
       >
         <div className="px-6 py-4 border-b border-gray-200">
           <h2 className="text-2xl font-bold ">Users Management</h2>
@@ -136,7 +134,9 @@ const UsersComponent = () => {
                 </th>
               </tr>
             </thead>
-            <tbody className={`${theme =="dark" ?"card-dark":"card-light"}`}>
+            <tbody
+              className={`card-light`}
+            >
               {users.map((user) => (
                 <tr key={user._id} className="">
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -155,9 +155,7 @@ const UsersComponent = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium ">
-                      {user.name}
-                    </div>
+                    <div className="text-sm font-medium ">{user.name}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm ">{user.email}</div>

@@ -5,7 +5,7 @@ import useAxiosSecure from "../hooks/useAxiosSecure";
 import { AuthContext } from "../context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
-import { ThemeContext } from "../context/ThemeContext";
+
 import Loading from "../SharedComponent/Loading";
 
 const MyDonationCampaigns = () => {
@@ -13,7 +13,7 @@ const MyDonationCampaigns = () => {
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const axiosSecure = useAxiosSecure();
   const { user } = useContext(AuthContext);
-const {theme} =useContext(ThemeContext)
+
   const {
     data: campaigns = [], // Default to empty array, not object
     isLoading,
@@ -63,11 +63,9 @@ const {theme} =useContext(ThemeContext)
         );
       } catch (error) {
         toast.error(`Failed to ${action} campaign`);
-    
       }
     }
   };
-  
 
   const handleViewDonators = (campaign) => {
     setSelectedCampaign(campaign);
@@ -131,9 +129,7 @@ const {theme} =useContext(ThemeContext)
 
   // Handle loading state
   if (isLoading) {
-    return (
-     <Loading/>
-    );
+    return <Loading />;
   }
 
   return (

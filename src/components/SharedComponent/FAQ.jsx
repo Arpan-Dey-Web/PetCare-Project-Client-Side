@@ -1,9 +1,6 @@
 import React, { useContext } from "react";
-import { ThemeContext } from "../context/ThemeContext";
 
 const FAQ = () => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <div>
       <section
@@ -23,7 +20,7 @@ const FAQ = () => {
           <div className="space-y-4">
             <details className="w-full rounded-lg shadow-sm transition">
               <summary className="px-6 py-5 text-lg font-medium cursor-pointer">
-                 How can I adopt a pet from your platform?
+                How can I adopt a pet from your platform?
               </summary>
               <p className="px-6 pt-0 pb-5">
                 Simply browse available pets, click on their profile, and click
@@ -34,7 +31,7 @@ const FAQ = () => {
 
             <details className="w-full rounded-lg shadow-sm transition">
               <summary className="px-6 py-5 text-lg font-medium cursor-pointer">
-                 How do I donate food or items to animals in need?
+                How do I donate food or items to animals in need?
               </summary>
               <p className="px-6 pt-0 pb-5">
                 Visit our Donation page and select the items you wish to donate.
@@ -45,7 +42,7 @@ const FAQ = () => {
 
             <details className="w-full rounded-lg shadow-sm transition">
               <summary className="px-6 py-5 text-lg font-medium cursor-pointer">
-                 Can I volunteer even if I have no pet care experience?
+                Can I volunteer even if I have no pet care experience?
               </summary>
               <p className="px-6 pt-0 pb-5">
                 Absolutely! We welcome everyone with a kind heart. Whether

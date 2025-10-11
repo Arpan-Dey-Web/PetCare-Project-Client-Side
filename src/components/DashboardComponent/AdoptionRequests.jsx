@@ -11,7 +11,7 @@ import {
 
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import { AuthContext } from "../context/AuthContext";
-import { ThemeContext } from "../context/ThemeContext";
+
 import Loading from "../SharedComponent/Loading";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -20,7 +20,7 @@ const AdoptionRequests = () => {
   const axiosSecure = useAxiosSecure();
   const { user } = useContext(AuthContext);
   const queryClient = useQueryClient();
-  const { theme } = useContext(ThemeContext);
+
   // Fetch adoption requests using TanStack Query
   const {
     data: requests = [],
@@ -255,14 +255,12 @@ const AdoptionRequests = () => {
     <div className="max-w-6xl mx-auto p-6 ">
       <div className="mb-6">
         <h2
-          className={`text-2xl font-bold  mb-2 ${
-            theme == "dark" ? "text-dark" : "text-light"
-          }`}
+          className={`text-2xl font-bold  mb-2 `}
         >
           Adoption Requests
         </h2>
         <p
-          className={`text-sm ${theme == "dark" ? "text-dark" : "text-light"}`}
+          className={`text-sm text-light`}  
         >
           Manage adoption requests for your pets
         </p>
@@ -296,7 +294,7 @@ const AdoptionRequests = () => {
                 </th>
               </tr>
             </thead>
-            <tbody className={` divide-y divide-gray-200 ${theme=="dark" ? "card-dark" : "card-light"}`}>
+            <tbody className={` divide-y divide-gray-200 card-light`}>
               {requests.map((request) => (
                 <tr key={request._id} className="">
                   <td className="px-6 py-4 whitespace-nowrap">

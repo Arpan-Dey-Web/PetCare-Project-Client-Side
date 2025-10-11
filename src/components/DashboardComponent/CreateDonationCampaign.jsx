@@ -3,7 +3,6 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { AuthContext } from "../context/AuthContext";
 import useAxiosSecure from "../hooks/useAxiosSecure";
-import { ThemeContext } from "../context/ThemeContext";
 
 const CreateDonationCampaign = () => {
   const [imageFile, setImageFile] = useState(null);
@@ -19,7 +18,7 @@ const CreateDonationCampaign = () => {
   const { user } = useContext(AuthContext);
 
   const axiosSecure = useAxiosSecure();
-  const { theme } = useContext(ThemeContext);
+
   const handleImageUpload = async () => {
     if (!imageFile) {
       setImageError("Please select an image before submitting.");
@@ -129,9 +128,7 @@ const CreateDonationCampaign = () => {
       className={`max-w-3xl mx-auto p-6  shadow-md border border-gray-200 rounded-xl  bg-white `}
     >
       <h2
-        className={`  text-3xl font-semibold  mb-6 text-center  ${
-          theme == "dark" ? "text-dark" : "text-light"
-        }`}
+        className={`  text-3xl font-semibold  mb-6 text-center  text-light`}
       >
         Create Donation Campaign
       </h2>
@@ -245,9 +242,9 @@ const CreateDonationCampaign = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`w-full py-2 px-4 rounded-lg transition  ${
-            theme == "dark" ? "button-dark" : "button-light"
-          }`}
+          className={`w-full py-2 px-4 rounded-lg transition  
+            button-light
+          `}
         >
           {isSubmitting ? "Creating Campaign..." : "Submit Campaign"}
         </button>

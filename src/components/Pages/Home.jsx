@@ -17,19 +17,16 @@ const Home = () => {
   return (
     <div className="">
       <Banner></Banner>
-
       <div>
         {/* <CallToActionSection></CallToActionSection> */}
         <div className=" mx-auto max-w-7xl mb-4">
-          <PetsCategorySection></PetsCategorySection>
+          <PetsCategorySection />
         </div>
         <WeprovideFeatures />
         <LimitedPetShow />
         <PetsHappinessSection />
         <PetCare />
       </div>
-
-    
     </div>
   );
 };

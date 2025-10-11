@@ -4,8 +4,8 @@ import { AuthContext } from "../context/AuthContext";
 import { Link, NavLink } from "react-router";
 import Swal from "sweetalert2";
 import Logo from "./Logo";
-import ThemeToggle from "./ThemeToggle";
-import { ThemeContext } from "../context/ThemeContext";
+
+
 import { Button } from "@/components/ui/button";
 import {
   FaHome,
@@ -46,7 +46,6 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => setIsOpen(!isOpen);
-  const { theme } = useContext(ThemeContext);
 
   const navLinks = (
     <>
@@ -73,9 +72,8 @@ const Navbar = () => {
 
   return (
     <nav
-      className={` ${
-        theme == "dark" ? "text-dark bg-gray-900 " : "text-light bg-[#FEF9F6]"
-      } shadow-md sticky top-0 z-50 `}
+      className={` text-light bg-[#FEF9F6]
+       shadow-md sticky top-0 z-50 `}
     >
       <div className="max-w-7xl mx-auto  py-2 flex items-center justify-between">
         {/* Left Section: Hamburger + Logo */}
@@ -201,8 +199,6 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-4 relative">
-      
-
           {user ? (
             <>
               {/* Profile Image */}

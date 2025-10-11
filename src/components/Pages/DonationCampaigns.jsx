@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
 import {
@@ -10,23 +10,15 @@ import {
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import { Link } from "react-router";
 import Loading from "../SharedComponent/Loading";
-import { ThemeContext } from "../context/ThemeContext";
 
 const DonationCampaigns = () => {
-  const { theme } = useContext(ThemeContext);
-  const isLight = theme === "light";
-
-  const cardClass = isLight
-    ? "bg-white text-gray-800"
-    : "bg-[#2A334C] text-white";
-  const bgClass = isLight ? "bg-gray-50" : "bg-gray-900";
-  const accentText = isLight ? "text-gray-900" : "text-white";
-  const buttonClass = isLight
-    ? "bg-blue-600 hover:bg-blue-700 text-white"
-    : "bg-blue-500 hover:bg-blue-600 text-white";
-  const softText = isLight ? "text-gray-600" : "text-gray-300";
-  const softBg = isLight ? "bg-gray-100" : "bg-gray-700/50";
-  const progressBg = isLight ? "bg-gray-200" : "bg-gray-600";
+  const cardClass = "bg-[#2A334C] text-white";
+  const bgClass =  "bg-gray-900";
+  const accentText =  "text-black";
+  const buttonClass = "bg-blue-500 hover:bg-blue-600 text-white";
+  const softText = "text-gray-300";
+  const softBg = "bg-gray-700/50";
+  const progressBg = "bg-gray-600";
 
   const { ref, inView } = useInView({ threshold: 0, triggerOnce: false });
   const axiosSecure = useAxiosSecure();
@@ -128,7 +120,7 @@ const DonationCampaigns = () => {
           <h1 className={`text-4xl font-bold mb-4 ${accentText}`}>
             Donation Campaigns
           </h1>
-          <p className={`text-lg ${softText}`}>
+          <p className={`text-lg text-gray-700`}>
             Help save lives by supporting our pet rescue campaigns
           </p>
         </div>
@@ -156,9 +148,8 @@ const DonationCampaigns = () => {
 
                 <div className="p-6">
                   <h3
-                    className={`text-xl font-semibold mb-2 ${
-                      isLight ? "text-gray-900" : "text-white"
-                    }`}
+                    className={`text-xl font-semibold mb-2 text-white
+                    `}
                   >
                     {campaign.petName}
                   </h3>
@@ -249,14 +240,12 @@ const DonationCampaigns = () => {
         {!hasNextPage && campaigns.length > 0 && (
           <div className="text-center py-12">
             <div
-              className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 ${
-                isLight ? "bg-gray-100" : "bg-gray-800"
-              }`}
+              className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 bg-gray-800
+              `}
             >
               <AiOutlineHeart
-                className={`w-8 h-8 ${
-                  isLight ? "text-gray-400" : "text-gray-500"
-                }`}
+                className={`w-8 h-8 text-gray-500
+                `}
               />
             </div>
             <h3 className={`text-xl font-semibold mb-2 ${accentText}`}>
@@ -273,14 +262,12 @@ const DonationCampaigns = () => {
           !isFetchingNextPage && (
             <div className="text-center py-12">
               <div
-                className={`inline-flex items-center justify-center w-24 h-24 rounded-full mb-6 ${
-                  isLight ? "bg-gray-100" : "bg-gray-800"
-                }`}
+                className={`inline-flex items-center justify-center w-24 h-24 rounded-full mb-6 bg-gray-800
+                `}
               >
                 <AiOutlineHeart
-                  className={`w-12 h-12 ${
-                    isLight ? "text-gray-400" : "text-gray-500"
-                  }`}
+                  className={`w-12 h-12 text-gray-500
+                  `}
                 />
               </div>
               <h3 className={`text-2xl font-semibold mb-4 ${accentText}`}>

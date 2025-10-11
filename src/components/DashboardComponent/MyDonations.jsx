@@ -3,7 +3,7 @@ import useAxiosSecure from "../hooks/useAxiosSecure";
 import { AuthContext } from "../context/AuthContext";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast, Toaster } from "react-hot-toast";
-import { ThemeContext } from "../context/ThemeContext";
+
 import Loading from "../SharedComponent/Loading";
 
 const MyDonations = () => {
@@ -11,7 +11,6 @@ const MyDonations = () => {
   const { user } = useContext(AuthContext);
   const queryClient = useQueryClient();
   const [refundingId, setRefundingId] = useState(null);
-  const { theme } = useContext(ThemeContext);
 
   // Fetch donation transactions
   const {
@@ -29,10 +28,7 @@ const MyDonations = () => {
       return res.data;
     },
     enabled: !!user.email,
-   
   });
-
-
 
   const handleRefund = async (transaction) => {
     const mongoid = transaction._id;
@@ -102,13 +98,12 @@ const MyDonations = () => {
           <>
             {/* Summary */}
             <div
-              className={`px-6 py-4 border-b  ${
-                theme == "dark" ? "card-dark" : "card-light"
-              }`}
+              className={`px-6 py-4 border-b  card-light
+              `}
             >
               <div className="flex justify-between items-center">
                 <div
-                  className={`text-sm ${theme == "dark" ? "text-white" : ""}`}
+                  className={`text-sm `}
                 >
                   Total Donations:
                   <span className="font-semibold ml-1">
@@ -116,13 +111,11 @@ const MyDonations = () => {
                   </span>
                 </div>
                 <div
-                  className={`text-sm ${theme == "dark" ? "text-white" : ""}`}
+                  className={`text-sm `}
                 >
                   Total Amount:
                   <span
-                    className={`ml-1 text-lg font-semibold ${
-                      theme == "dark" ? "text-white" : ""
-                    }`}
+                    className={`ml-1 text-lg font-semibold `}
                   >
                     $
                     {transactionDetails.reduce(
@@ -140,9 +133,8 @@ const MyDonations = () => {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead
-                  className={`${
-                    theme == "dark" ? "card-dark" : " card-light"
-                  } `}
+                  className={`card-light
+                   `}
                 >
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
@@ -166,9 +158,8 @@ const MyDonations = () => {
                   </tr>
                 </thead>
                 <tbody
-                  className={`${
-                    theme == "dark" ? "card-dark text-white" : "card-light "
-                  } divide-y divide-gray-200`}
+                  className={`card-light 
+                   divide-y divide-gray-200`}
                 >
                   {transactionDetails?.map((transaction) => (
                     <tr

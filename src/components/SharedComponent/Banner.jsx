@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { ThemeContext } from "../context/ThemeContext";
+import React from "react";
+
 import eagleImage from "@/assets/eagle.png";
 import dogImage from "@/assets/dogBanner.png";
 import catImage from "@/assets/catlying.png";
@@ -7,8 +7,6 @@ import { Button } from "../ui/button";
 import { Link } from "react-router";
 
 const Banner = () => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <div className="relative h-[90vh] w-full mb-16 bg-cover bg-center overflow-hidden">
       {/* Dark overlay */}
@@ -70,7 +68,7 @@ const Banner = () => {
           preserveAspectRatio="none"
         >
           <path
-            fill={theme === "dark" ? "#020617" : "#f8fafc"}
+            fill={"#f8fafc"}
             fillOpacity="1"
             d="M0,64L48,85.3C96,107,192,149,288,170.7C384,192,480,192,576,202.7C672,213,768,235,864,229.3C960,224,1056,192,1152,170.7C1248,149,1344,139,1392,133.3L1440,128V320H0Z"
           ></path>

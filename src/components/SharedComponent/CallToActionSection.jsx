@@ -1,10 +1,8 @@
 // CallToActionSection.jsx
 import { useContext } from "react";
 import { Link } from "react-router";
-import { ThemeContext } from "../context/ThemeContext";
 
 const CallToActionSection = () => {
-  const {theme} = useContext(ThemeContext)
   return (
     <section className="relative my-10 h-[450px] rounded-2xl overflow-hidden shadow-lg">
       <img

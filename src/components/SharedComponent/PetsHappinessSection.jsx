@@ -1,12 +1,9 @@
-import React, { useContext } from "react";
-import { ThemeContext } from "../context/ThemeContext";
+import React from "react";
+
 import { FaUserMd, FaHeart, FaShieldAlt, FaStar, FaPaw } from "react-icons/fa";
 // src = "/src/assets/happypet.png";
 import happypetImage from "../../assets/happypet.png";
 const PetsHappinessSection = () => {
-  const { theme } = useContext(ThemeContext);
-  const isDark = theme === "dark";
-
   const features = [
     {
       title: "Experienced Professionals",
@@ -66,9 +63,8 @@ const PetsHappinessSection = () => {
           <div className="flex items-center justify-center gap-2 mb-3 sm:mb-4">
             <FaPaw className="text-orange-400 text-lg sm:text-xl" />
             <span
-              className={`text-xs sm:text-sm font-medium uppercase tracking-wide ${
-                isDark ? "text-orange-300" : "text-orange-600"
-              }`}
+              className={`text-xs sm:text-sm font-medium uppercase tracking-wide text-orange-600
+              `}
             >
               Why Choose Us
             </span>
@@ -76,18 +72,12 @@ const PetsHappinessSection = () => {
           </div>
 
           <h2
-            className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight px-4 ${
-              isDark ? "text-white" : "text-gray-800"
-            }`}
+            className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight px-4 text-gray-800
+            `}
           >
             Your Pets Will Be
             <br />
-            <span
-              className={`${isDark ? "text-purple-400" : "text-purple-600"}`}
-            >
-              Extremely Happy
-            </span>{" "}
-            With Us
+            <span className={`  text-purple-600`}>Extremely Happy</span> With Us
           </h2>
         </div>
 
@@ -96,11 +86,8 @@ const PetsHappinessSection = () => {
           {/* Central Image for Mobile */}
           <div className="flex justify-center mb-8 sm:mb-12">
             <div
-              className={`w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-full ${
-                isDark
-                  ? "bg-gradient-to-br from-gray-700 to-gray-800"
-                  : "bg-gradient-to-br from-orange-100 to-pink-100"
-              } flex items-center justify-center shadow-xl`}
+              className={`w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-full bg-gradient-to-br from-orange-100 to-pink-100
+              flex items-center justify-center shadow-xl`}
             >
               <div className="relative">
                 <img
@@ -136,11 +123,8 @@ const PetsHappinessSection = () => {
                 className="transform hover:scale-105 transition-all duration-300"
               >
                 <div
-                  className={`${
-                    isDark
-                      ? "bg-gray-800 border-gray-700"
-                      : "bg-white border-gray-200"
-                  } rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border backdrop-blur-sm`}
+                  className={`bg-white border-gray-200
+                   rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border backdrop-blur-sm`}
                 >
                   {/* Icon and Title */}
                   <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
@@ -150,17 +134,15 @@ const PetsHappinessSection = () => {
                       {feature.icon}
                     </div>
                     <h3
-                      className={`text-base sm:text-lg font-bold ${
-                        isDark ? "text-white" : "text-gray-800"
-                      }`}
+                      className={`text-base sm:text-lg font-bold text-gray-800
+                      `}
                     >
                       {feature.title}
                     </h3>
                   </div>
                   <p
-                    className={`text-sm leading-relaxed ${
-                      isDark ? "text-gray-300" : "text-gray-600"
-                    }`}
+                    className={`text-sm leading-relaxed text-gray-600
+                    `}
                   >
                     {feature.description}
                   </p>
@@ -177,11 +159,8 @@ const PetsHappinessSection = () => {
             <div className="relative">
               {/* Large Background Circle */}
               <div
-                className={`w-[500px] h-[500px] rounded-full ${
-                  isDark
-                    ? "bg-gradient-to-br from-gray-700 to-gray-800"
-                    : "bg-gradient-to-br from-orange-100 to-pink-100"
-                } flex items-center justify-center shadow-2xl`}
+                className={`w-[500px] h-[500px] rounded-full bg-gradient-to-br from-orange-100 to-pink-100
+                flex items-center justify-center shadow-2xl`}
               >
                 <div className="relative">
                   <img
@@ -225,11 +204,7 @@ const PetsHappinessSection = () => {
                     } w-72 transform hover:scale-105 transition-all duration-300`}
                   >
                     <div
-                      className={`${
-                        isDark
-                          ? "bg-gray-800 border-gray-700"
-                          : "bg-white border-gray-200"
-                      } rounded-2xl p-6 shadow-xl border backdrop-blur-sm`}
+                      className={`bg-white border-gray-200 rounded-2xl p-6 shadow-xl border backdrop-blur-sm`}
                     >
                       {/* Icon */}
                       <div className="flex items-start gap-4 mb-4">
@@ -240,18 +215,16 @@ const PetsHappinessSection = () => {
                         </div>
                         <div className="flex-1">
                           <h3
-                            className={`text-lg font-bold mb-2 ${
-                              isDark ? "text-white" : "text-gray-800"
-                            }`}
+                            className={`text-lg font-bold mb-2 text-gray-800
+                            `}
                           >
                             {feature.title}
                           </h3>
                         </div>
                       </div>
                       <p
-                        className={`text-sm leading-relaxed ${
-                          isDark ? "text-gray-300" : "text-gray-600"
-                        }`}
+                        className={`text-sm leading-relaxed text-gray-600
+                        `}
                       >
                         {feature.description}
                       </p>
