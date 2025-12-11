@@ -13,7 +13,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth } from "../utils/firebase.init";
-import axios from "axios";
+
 import useAxiosSecure from "../hooks/useAxiosSecure";
 
 // import axios from "axios";
@@ -54,8 +54,12 @@ const AuthProvider = ({ children }) => {
           .post("/jwt", userData, {
             withCredentials: true,
           })
-          .then((res) => {})
-          .catch((err) => {});
+          .then((res) => {
+            console.log(res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
 
       setUser(currentUser);

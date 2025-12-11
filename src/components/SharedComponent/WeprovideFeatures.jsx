@@ -24,7 +24,7 @@ const WeProvideFeatures = () => {
         "Behavioral training support",
       ],
       icon: <FaHeart className="text-4xl" />,
-      emoji: "🐕‍🦺",
+    
       gradient: "from-red-400 to-pink-500",
       bgAccent: "bg-red-50",
     },
@@ -37,7 +37,7 @@ const WeProvideFeatures = () => {
         "Lifetime support guarantee",
       ],
       icon: <FaHome className="text-4xl" />,
-      emoji: "🏠",
+     
       gradient: "from-blue-400 to-cyan-500",
       bgAccent:  "bg-blue-50",
     },
@@ -50,7 +50,7 @@ const WeProvideFeatures = () => {
         "Ongoing medical support",
       ],
       icon: <FaStethoscope className="text-4xl" />,
-      emoji: "🏥",
+      
       gradient: "from-green-400 to-emerald-500",
       bgAccent: "bg-green-50",
     },
@@ -63,7 +63,7 @@ const WeProvideFeatures = () => {
         "Training & education workshops",
       ],
       icon: <FaHandsHelping className="text-4xl" />,
-      emoji: "🤝",
+
       gradient: "from-purple-400 to-indigo-500",
       bgAccent: "bg-purple-50",
     },
@@ -76,7 +76,7 @@ const WeProvideFeatures = () => {
         "Transparent impact reporting",
       ],
       icon: <FaGift className="text-4xl" />,
-      emoji: "💝",
+
       gradient: "from-yellow-400 to-orange-500",
       bgAccent: "bg-yellow-50",
     },
@@ -89,7 +89,7 @@ const WeProvideFeatures = () => {
         "Prevention education programs",
       ],
       icon: <FaSearch className="text-4xl" />,
-      emoji: "🔍",
+
       gradient: "from-teal-400 to-green-500",
       bgAccent: "bg-teal-50",
     },
@@ -107,23 +107,15 @@ const WeProvideFeatures = () => {
         {/* Header Section */}
         <div className="text-center mb-16 max-w-4xl mx-auto">
           <div className="inline-flex items-center gap-2 mb-4">
-            <FaPaw
-              className={`text-2xl text-purple-600
-              `}
-            />
             <span className={`text-lg font-medium text-gray-600`}>
               Our Services
             </span>
-            <FaPaw className={`text-2xl text-purple-600`} />
           </div>
 
           <h2
             className={`text-4xl md:text-6xl font-extrabold mb-6 leading-tight text-gray-800`}
           >
-            Empowering Love &
-            <span className="block bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 bg-clip-text text-transparent">
-              Second Chances
-            </span>
+            Empowering Your Love
           </h2>
 
           <p className={`text-xl leading-relaxed text-gray-600`}>
@@ -209,7 +201,7 @@ const WeProvideFeatures = () => {
             ].map((stat, idx) => (
               <div key={idx}>
                 <div
-                  className={`text-3xl md:text-4xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent mb-2`}
+                  className={`text-3xl md:text-4xl font-bold bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 bg-clip-text text-transparent mb-2`}
                 >
                   {stat.number}
                 </div>

@@ -28,6 +28,7 @@ const validationSchema = Yup.object({
   location: Yup.string().required("Location is required"),
   shortDescription: Yup.string().required("Short description is required"),
   // image optional on update
+  
 });
 
 const UpdatePet = () => {

@@ -3,7 +3,6 @@ import Nabbar from "../SharedComponent/Nabbar";
 import { Outlet } from "react-router";
 import Banner from "../SharedComponent/Banner";
 import PetsCategorySection from "../SharedComponent/PetsCategorySection";
-import CallToActionSection from "../SharedComponent/CallToActionSection";
 import AboutUsSection from "../SharedComponent/AboutUsSection";
 import Footer from "../SharedComponent/Footer";
 import Loading from "../SharedComponent/Loading";
@@ -16,12 +15,13 @@ import LimitedPetShow from "../SharedComponent/LimitedPetShow";
 const Home = () => {
   return (
     <div className="">
-      <Banner></Banner>
       <div>
-        {/* <CallToActionSection></CallToActionSection> */}
+        <Banner />
+      
         <div className=" mx-auto max-w-7xl mb-4">
           <PetsCategorySection />
         </div>
+        
         <WeprovideFeatures />
         <LimitedPetShow />
         <PetsHappinessSection />

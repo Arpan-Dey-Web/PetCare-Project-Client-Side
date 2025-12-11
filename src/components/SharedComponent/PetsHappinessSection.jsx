@@ -41,43 +41,25 @@ const PetsHappinessSection = () => {
 
   return (
     <section className="py-12 sm:py-16 lg:py-20 px-4 relative overflow-hidden">
-      {/* Background Decorative Elements - Hidden on mobile */}
-      <div className="absolute inset-0 opacity-10 hidden sm:block">
-        <div className="absolute top-20 left-10 text-4xl sm:text-6xl text-blue-400 transform rotate-12">
-          🐾
-        </div>
-        <div className="absolute top-32 right-20 text-3xl sm:text-4xl text-pink-400 transform -rotate-12">
-          ⭐
-        </div>
-        <div className="absolute bottom-40 left-20 text-4xl sm:text-5xl text-purple-400 transform rotate-45">
-          🌟
-        </div>
-        <div className="absolute bottom-20 right-10 text-4xl sm:text-6xl text-amber-400 transform -rotate-12">
-          🐾
-        </div>
-      </div>
-
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
         <div className="text-center mb-8 sm:mb-12 lg:mb-16">
           <div className="flex items-center justify-center gap-2 mb-3 sm:mb-4">
-            <FaPaw className="text-orange-400 text-lg sm:text-xl" />
             <span
               className={`text-xs sm:text-sm font-medium uppercase tracking-wide text-orange-600
               `}
             >
               Why Choose Us
             </span>
-            <FaPaw className="text-orange-400 text-lg sm:text-xl" />
           </div>
 
           <h2
             className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight px-4 text-gray-800
             `}
           >
-            Your Pets Will Be
+            Your Pets Will Be Extremely
             <br />
-            <span className={`  text-purple-600`}>Extremely Happy</span> With Us
+            Happy With Us
           </h2>
         </div>
 

@@ -1,5 +1,3 @@
-
-
 import {
   FaHeartbeat,
   FaUtensils,
@@ -12,8 +10,6 @@ import {
 } from "react-icons/fa";
 
 const PetCare = () => {
-
-
   const careCategories = [
     {
       icon: <FaHeartbeat className="text-3xl" />,

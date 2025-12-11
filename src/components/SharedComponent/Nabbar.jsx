@@ -73,7 +73,7 @@ const Navbar = () => {
   return (
     <nav
       className={` text-light bg-[#FEF9F6]
-       shadow-md sticky top-0 z-50 `}
+       shadow-md sticky top-0 z-50  py-2`}
     >
       <div className="max-w-7xl mx-auto  py-2 flex items-center justify-between">
         {/* Left Section: Hamburger + Logo */}

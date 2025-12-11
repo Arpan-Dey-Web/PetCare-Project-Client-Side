@@ -51,17 +51,14 @@ const PetsCategorySection = () => {
         {/* Enhanced Title Section */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 mb-4">
-            <FaPaw
-              className={`text-2xl text-amber-600"
-              `}
-            />
+            
             <span
               className={`text-lg font-medium text-light
               `}
             >
               Pet Categories
             </span>
-            <FaPaw className={`text-2xl text-amber-600`} />
+          
           </div>
 
           <h2 className={`text-6xl font-extrabold mb-4 text-light`}>
@@ -136,17 +133,14 @@ const PetsCategorySection = () => {
             className={`flex items-center gap-2 px-6 py-3 rounded-full bg-white/30 border border-gray-300
             backdrop-blur-sm`}
           >
-            <FaPaw className="text-pink-500 animate-pulse" />
+        
             <span
               className={`text-sm font-medium text-gray-600
               `}
             >
               Choose your favorite pet category
             </span>
-            <FaPaw
-              className="text-purple-500 animate-pulse"
-              style={{ animationDelay: "0.5s" }}
-            />
+           
           </div>
         </div>
       </div>

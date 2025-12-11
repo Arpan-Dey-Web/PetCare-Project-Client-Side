@@ -15,16 +15,16 @@ const LimitedPetShow = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
       {/* Header Section */}
+      {/* text-4xl md:text-6xl font-extrabold mb-6 leading-tight text-gray-800 */}
+      {/* className="text-3xl md:text-5xl font-extrabold mb-4 flex items-center justify-center gap- */}
       <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-5xl font-extrabold mb-4 text-gray-900 flex items-center justify-center gap-3">
+        <h2 className="text-4xl md:text-6xl font-extrabold mb-4 text-gray-800 flex items-center justify-center gap-3">
           Our Featured Pets
-          <PawPrint className="w-10 h-10 text-amber-600" />
         </h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           Meet these adorable friends looking for their forever homes
         </p>
       </div>
-
       {/* Pet Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {pets.map((pet) => (
@@ -91,7 +91,6 @@ const LimitedPetShow = () => {
           </div>
         ))}
       </div>
-
       {/* View All Button */}
       <div className="text-center mt-12">
         <Link to="/pets">
