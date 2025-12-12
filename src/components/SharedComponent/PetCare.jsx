@@ -82,20 +82,15 @@ const PetCare = () => {
         {/* Header Section */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 mb-4">
-            <FaBone
-              className={`text-2xl text-blue-600
-              `}
-            />
+           
+            
             <span
               className={`text-lg font-medium text-gray-600
               `}
             >
               Pet Care Guide
             </span>
-            <FaBone
-              className={`text-2xl text-blue-600
-              `}
-            />
+           
           </div>
 
           <h2

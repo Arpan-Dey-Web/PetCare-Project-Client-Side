@@ -5,7 +5,7 @@ import dogImage from "@/assets/dogBanner.png";
 import catImage from "@/assets/catlying.png";
 import { Button } from "../ui/button";
 import { Link } from "react-router";
-
+//banner section need to upgrader
 const Banner = () => {
   return (
     <div className="relative h-[90vh] w-full mb-16 bg-cover bg-center overflow-hidden">
