@@ -1,106 +1,147 @@
 import React, { useEffect, useState } from "react";
-import { MapPin, Calendar, PawPrint } from "lucide-react";
-import { FaLongArrowAltRight } from "react-icons/fa";
+import { motion } from "framer-motion";
+import { MapPin, Calendar, PawPrint, ArrowRight, Heart } from "lucide-react";
 import useAxiosPublic from "../hooks/useAxiosPublic";
 import { Link } from "react-router";
 
 const LimitedPetShow = () => {
   const [pets, setPets] = useState([]);
+  const [loading, setLoading] = useState(true);
   const axiosPublic = useAxiosPublic();
 
   useEffect(() => {
-    axiosPublic.get("/limitedPets").then((res) => setPets(res.data));
-  }, []);
+    axiosPublic
+      .get("/limitedPets")
+      .then((res) => {
+        setPets(res.data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [axiosPublic]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
-      {/* Header Section */}
-      {/* text-4xl md:text-6xl font-extrabold mb-6 leading-tight text-gray-800 */}
-      {/* className="text-3xl md:text-5xl font-extrabold mb-4 flex items-center justify-center gap- */}
-      <div className="text-center mb-12">
-        <h2 className="text-4xl md:text-6xl font-extrabold mb-4 text-gray-800 flex items-center justify-center gap-3">
-          Our Featured Pets
-        </h2>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Meet these adorable friends looking for their forever homes
-        </p>
-      </div>
-      {/* Pet Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {pets.map((pet) => (
-          <div
-            key={pet._id}
-            className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border border-gray-200 group"
-          >
-            {/* Image Container */}
-            <div className="relative h-64 overflow-hidden">
-              <img
-                src={pet.image}
-                alt={pet.name}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              />
+    <section className="py-24 bg-white relative overflow-hidden">
+      {/* Decorative background paw */}
+      <PawPrint className="absolute -top-10 -right-10 w-64 h-64 text-slate-50 rotate-12 pointer-events-none" />
 
-              {/* Category Badge */}
-              <div className="absolute top-3 right-3">
-                <span className="bg-amber-100 text-amber-800 px-4 py-1.5 rounded-full text-xs font-semibold shadow-md backdrop-blur-sm">
-                  {pet.category}
-                </span>
-              </div>
-
-              {/* Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </div>
-
-            {/* Content */}
-            <div className="p-6">
-              {/* Pet Name & Breed */}
-              <h3 className="text-2xl font-bold text-gray-900 mb-1 line-clamp-1">
-                {pet.name}
-              </h3>
-              <p className="text-green-600 font-semibold mb-4 text-sm">
-                {pet.breed}
-              </p>
-
-              {/* Pet Info */}
-              <div className="space-y-3 mb-5">
-                <div className="flex items-center gap-3">
-                  <Calendar className="w-5 h-5 text-pink-500" />
-                  <span className="text-gray-700 text-sm">
-                    {pet.age} year{pet.age > 1 ? "s" : ""} old
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <MapPin className="w-5 h-5 text-blue-500" />
-                  <span className="text-gray-700 text-sm line-clamp-1">
-                    {pet.location}
-                  </span>
-                </div>
-              </div>
-
-              {/* Divider */}
-              <div className="border-t border-gray-200 my-4"></div>
-
-              {/* View More Button */}
-              <Link to={`/pets/${pet._id}`}>
-                <button className="w-full bg-amber-600 hover:bg-amber-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 shadow-md hover:shadow-lg">
-                  View Details
-                </button>
-              </Link>
-            </div>
+      <div className="max-w-7xl mx-auto px-4 relative z-10">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+          <div className="max-w-2xl">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              className="flex items-center gap-2 text-pink-600 font-bold tracking-widest uppercase text-sm mb-4"
+            >
+              <Heart className="w-4 h-4 fill-pink-600" />
+              Adoptable Friends
+            </motion.div>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="text-4xl md:text-6xl font-black text-slate-900 leading-tight"
+            >
+              Our Featured <span className="text-amber-500">Pets</span>
+            </motion.h2>
           </div>
-        ))}
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            className="text-slate-500 text-lg md:max-w-xs border-l-4 border-amber-200 pl-4"
+          >
+            Meet these adorable friends looking for their forever homes.
+          </motion.p>
+        </div>
+
+        {/* Pet Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+          {pets.map((pet, idx) => (
+            <motion.div
+              key={pet._id}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.1 }}
+              viewport={{ once: true }}
+              className="group bg-white rounded-[2rem] border border-slate-100 overflow-hidden hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] transition-all duration-500"
+            >
+              {/* Image Container */}
+              <div className="relative h-72 overflow-hidden">
+                <img
+                  src={pet.image}
+                  alt={pet.name}
+                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                />
+
+                {/* Status/Category Badge */}
+                <div className="absolute top-4 left-4">
+                  <span className="bg-white/90 backdrop-blur-md text-slate-900 px-4 py-1.5 rounded-full text-xs font-bold shadow-sm uppercase tracking-wider">
+                    {pet.category}
+                  </span>
+                </div>
+
+                {/* Floating Heart Overlay */}
+                <button className="absolute top-4 right-4 p-3 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-pink-500 transition-colors duration-300">
+                  <Heart className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Card Content */}
+              <div className="p-8">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-3xl font-black text-slate-900 group-hover:text-amber-600 transition-colors">
+                      {pet.name}
+                    </h3>
+                    <p className="text-amber-600 font-bold text-sm tracking-wide uppercase mt-1">
+                      {pet.breed}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Horizontal Info Bar */}
+                <div className="flex gap-4 py-4 border-y border-slate-50 mb-6">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-slate-400" />
+                    <span className="text-sm font-semibold text-slate-600">
+                      {pet.age} Years
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-slate-400" />
+                    <span className="text-sm font-semibold text-slate-600 line-clamp-1">
+                      {pet.location}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Action Button */}
+                <Link to={`/pets/${pet._id}`}>
+                  <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-bold group-hover:bg-amber-600 transition-all duration-300 flex items-center justify-center gap-2">
+                    View Adoption Profile
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </Link>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* View All Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          className="mt-20 text-center"
+        >
+          <Link to="/pets">
+            <button className="px-10 py-5 rounded-full bg-amber-100 text-amber-800 font-black text-lg hover:bg-amber-500 hover:text-white transition-all duration-300 shadow-xl shadow-amber-100 hover:shadow-amber-200 flex items-center gap-3 mx-auto border-2 border-amber-200 group">
+              Browse All Available Friends
+              <PawPrint className="w-6 h-6 group-hover:rotate-12 transition-transform" />
+            </button>
+          </Link>
+        </motion.div>
       </div>
-      {/* View All Button */}
-      <div className="text-center mt-12">
-        <Link to="/pets">
-          <button className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 rounded-lg text-base font-semibold transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-3 mx-auto">
-            View All Available Pets
-            <FaLongArrowAltRight className="w-5 h-5" />
-          </button>
-        </Link>
-      </div>
-    </div>
+    </section>
   );
 };
 

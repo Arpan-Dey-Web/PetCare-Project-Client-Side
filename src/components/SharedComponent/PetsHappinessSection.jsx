@@ -1,8 +1,9 @@
 import React from "react";
-
+import { motion } from "framer-motion";
 import { FaUserMd, FaHeart, FaShieldAlt, FaStar, FaPaw } from "react-icons/fa";
 // src = "/src/assets/happypet.png";
 import happypetImage from "../../assets/happypet.png";
+import { Sparkles } from "lucide-react";
 const PetsHappinessSection = () => {
   const features = [
     {
@@ -43,23 +44,20 @@ const PetsHappinessSection = () => {
     <section className="py-12 sm:py-16 lg:py-20 px-4 relative overflow-hidden">
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
-        <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-          <div className="flex items-center justify-center gap-2 mb-3 sm:mb-4">
-            <span
-              className={`text-xs sm:text-sm font-medium uppercase tracking-wide text-orange-600
-              `}
-            >
-              Why Choose Us
-            </span>
-          </div>
-
-          <h2
-            className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight px-4 text-gray-800
-            `}
+        <div className="text-center mb-20">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 text-orange-600 text-xs font-bold uppercase tracking-widest mb-4"
           >
-            Your Pets Will Be Extremely
-            <br />
-            Happy With Us
+            <Sparkles className="w-3 h-3" />
+            Happiness Guaranteed
+          </motion.div>
+          <h2 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tight leading-tight">
+            Your Pets Will Be Extremely <br />
+            <span className="text-orange-500 italic font-serif">
+              Happy With Us
+            </span>
           </h2>
         </div>
 

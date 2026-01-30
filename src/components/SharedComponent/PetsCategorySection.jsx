@@ -2,7 +2,7 @@
 import { Link } from "react-router";
 import { FaCat, FaDog, FaFish, FaPaw } from "react-icons/fa";
 import { GiRabbit } from "react-icons/gi";
-
+import { motion } from "framer-motion";
 import dogImage from "../../assets/dog.png";
 import catImage from "../../assets/cat.png";
 import birdImage from "../../assets/bird.png";
@@ -50,20 +50,19 @@ const PetsCategorySection = () => {
       <div className="relative z-10">
         {/* Enhanced Title Section */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 mb-4">
-            
-            <span
-              className={`text-lg font-medium text-light
-              `}
-            >
-              Pet Categories
+        
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            viewport={{ once: true }}
+            className="text-5xl md:text-7xl font-black text-slate-900 mb-4 tracking-tight"
+          >
+            Find Your Perfect <br />
+            <span className="bg-gradient-to-r from-pink-500 to-orange-500 bg-clip-text text-transparent">
+              Companion
             </span>
-          
-          </div>
-
-          <h2 className={`text-6xl font-extrabold mb-4 text-light`}>
-            Find Your Perfect
-          </h2>
+          </motion.h2>
 
           <h3 className={`text-4xl font-bold  bg-clip-text text-light`}>
             Companion
@@ -133,14 +132,12 @@ const PetsCategorySection = () => {
             className={`flex items-center gap-2 px-6 py-3 rounded-full bg-white/30 border border-gray-300
             backdrop-blur-sm`}
           >
-        
             <span
               className={`text-sm font-medium text-gray-600
               `}
             >
               Choose your favorite pet category
             </span>
-           
           </div>
         </div>
       </div>

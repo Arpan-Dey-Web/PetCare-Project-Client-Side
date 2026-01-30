@@ -4,24 +4,23 @@ import { Outlet } from "react-router";
 import Banner from "../SharedComponent/Banner";
 import PetsCategorySection from "../SharedComponent/PetsCategorySection";
 import AboutUsSection from "../SharedComponent/AboutUsSection";
-import Footer from "../SharedComponent/Footer";
-import Loading from "../SharedComponent/Loading";
+
+
 import WeprovideFeatures from "../SharedComponent/WeprovideFeatures";
 import FAQ from "../SharedComponent/FAQ";
-import PetCare from "../SharedComponent/Petcare";
+
 import PetsHappinessSection from "../SharedComponent/PetsHappinessSection";
 import LimitedPetShow from "../SharedComponent/LimitedPetShow";
+import PetCare from "../SharedComponent/PetCare";
 
 const Home = () => {
   return (
-    <div className="">
+    <div>
       <div>
         <Banner />
-      
         <div className=" mx-auto max-w-7xl mb-4">
           <PetsCategorySection />
         </div>
-        
         <WeprovideFeatures />
         <LimitedPetShow />
         <PetsHappinessSection />

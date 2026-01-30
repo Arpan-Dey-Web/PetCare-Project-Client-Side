@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-
+import { motion } from "framer-motion";
 import {
   FaHeart,
   FaHome,
@@ -10,10 +10,9 @@ import {
   FaPaw,
   FaShieldAlt,
 } from "react-icons/fa";
+import { Sparkles } from "lucide-react";
 
 const WeProvideFeatures = () => {
-
-
   const services = [
     {
       title: "Pet Rescue & Rehabilitation",
@@ -24,7 +23,7 @@ const WeProvideFeatures = () => {
         "Behavioral training support",
       ],
       icon: <FaHeart className="text-4xl" />,
-    
+
       gradient: "from-red-400 to-pink-500",
       bgAccent: "bg-red-50",
     },
@@ -37,9 +36,9 @@ const WeProvideFeatures = () => {
         "Lifetime support guarantee",
       ],
       icon: <FaHome className="text-4xl" />,
-     
+
       gradient: "from-blue-400 to-cyan-500",
-      bgAccent:  "bg-blue-50",
+      bgAccent: "bg-blue-50",
     },
     {
       title: "Complete Health Services",
@@ -50,7 +49,7 @@ const WeProvideFeatures = () => {
         "Ongoing medical support",
       ],
       icon: <FaStethoscope className="text-4xl" />,
-      
+
       gradient: "from-green-400 to-emerald-500",
       bgAccent: "bg-green-50",
     },
@@ -96,7 +95,7 @@ const WeProvideFeatures = () => {
   ];
 
   return (
-    <section className={`py-16 px-4 relative overflow-hidden`}>
+    <section className="py-16 px-4 relative overflow-hidden">
       {/* Background Decorations */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-20 left-20 w-32 h-32 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur-3xl"></div>
@@ -105,23 +104,32 @@ const WeProvideFeatures = () => {
 
       <div className="container mx-auto relative z-10">
         {/* Header Section */}
-        <div className="text-center mb-16 max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <span className={`text-lg font-medium text-gray-600`}>
-              Our Services
-            </span>
-          </div>
-
-          <h2
-            className={`text-4xl md:text-6xl font-extrabold mb-6 leading-tight text-gray-800`}
+        <div className="text-center mb-20 max-w-3xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-100 text-slate-600 text-sm font-bold mb-6"
+          >
+            <Sparkles className="w-4 h-4 text-amber-500" />
+            WHAT WE DO
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight"
           >
             Empowering Your Love
-          </h2>
-
-          <p className={`text-xl leading-relaxed text-gray-600`}>
-            Every tail deserves a happy ending. Here's how we create miracle
-            moments and build lasting bonds between pets and families.
-          </p>
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-lg text-slate-600 leading-relaxed"
+          >
+            Every tail deserves a happy ending. We build lasting bonds between
+            pets and families through specialized care systems.
+          </motion.p>
         </div>
 
         {/* Services Grid */}
@@ -174,71 +182,38 @@ const WeProvideFeatures = () => {
                     </div>
                   ))}
                 </div>
-
-                {/* Hover Effect Badge */}
-                <div
-                  className={`absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-to-r ${service.gradient} rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center`}
-                >
-                  <FaShieldAlt className="text-white text-sm" />
-                </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Bottom Stats Section */}
-        <div
-          className={`mt-20 max-w-7xl mx-auto bg-white/50"
-           backdrop-blur-sm rounded-3xl p-8 border border-gray-200
-          `}
+        {/* Stats Glassmorphism Bar */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          className="mt-20 p-1 bg-gradient-to-r from-pink-100 via-blue-100 to-amber-100 rounded-[3rem]"
         >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          <div className="bg-white/80 backdrop-blur-xl rounded-[2.9rem] py-12 px-8 grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
               { number: "2,500+", label: "Pets Rescued" },
               { number: "1,800+", label: "Happy Families" },
               { number: "50+", label: "Partner Shelters" },
-              { number: "24/7", label: "Emergency Support" },
+              { number: "24/7", label: "Active Support" },
             ].map((stat, idx) => (
-              <div key={idx}>
-                <div
-                  className={`text-3xl md:text-4xl font-bold bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 bg-clip-text text-transparent mb-2`}
-                >
+              <div
+                key={idx}
+                className="text-center border-r last:border-none border-slate-200/50"
+              >
+                <div className="text-3xl md:text-5xl font-black bg-gradient-to-br from-slate-900 to-slate-500 bg-clip-text text-transparent mb-2 tracking-tighter">
                   {stat.number}
                 </div>
-                <div
-                  className={`text-sm font-medium text-gray-600
-                 `}
-                >
+                <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                   {stat.label}
                 </div>
               </div>
             ))}
           </div>
-        </div>
-
-        {/* Call to Action */}
-        {/* <div className="text-center mt-16">
-          <p
-            className={`text-lg mb-6 text-gray-600`
-            }
-          >
-            Ready to make a difference in a pet's life?
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-full font-semibold hover:from-purple-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105 shadow-lg">
-              Start Adoption Process
-            </button>
-            <button
-              className={`px-8 py-4 rounded-full font-semibold border-2 transition-all duration-300 transform hover:scale-105 ${
-                isDark
-                  ? "border-gray-600 text-gray-300 hover:border-gray-500 hover:text-white"
-                  : "border-gray-300 text-gray-700 hover:border-gray-400 hover:text-gray-800"
-              }`}
-            >
-              Become a Volunteer
-            </button>
-          </div>
-        </div> */}
+        </motion.div>
       </div>
     </section>
   );
