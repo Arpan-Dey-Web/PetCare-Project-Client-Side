@@ -144,17 +144,16 @@ const Dashboard = () => {
                 </h2>
               </motion.div>
             ) : (
-              <div className="w-10 h-10 rounded-full border border-primary/30 flex items-center justify-center">
-                <span className="text-primary font-serif italic text-xl">
-                  P.
-                </span>
-              </div>
+              ""
             )}
           </div>
         </div>
 
-        {/* Navigation Content */}
-        <nav className="flex-1 overflow-y-auto p-6 space-y-10 custom-scrollbar">
+        {/* Navigation Content - ADDED: data-lenis-prevent */}
+        <nav
+          data-lenis-prevent
+          className="flex-1 overflow-y-auto p-6 space-y-10 custom-scrollbar"
+        >
           {menuGroups.map((group, idx) => (
             <div key={idx} className="space-y-4">
               {sidebarOpen && (
@@ -258,7 +257,11 @@ const Dashboard = () => {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto bg-background boutique-scroll">
+        {/* MAIN: ADDED: data-lenis-prevent */}
+        <main
+          data-lenis-prevent
+          className="flex-1 overflow-y-auto bg-background boutique-scroll"
+        >
           <div className="max-w-7xl mx-auto p-8 md:p-16 lg:p-20">
             <motion.div
               key={location.pathname}
