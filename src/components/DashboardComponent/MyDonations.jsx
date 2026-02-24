@@ -1,10 +1,12 @@
 import React, { useContext, useState } from "react";
-import useAxiosSecure from "../hooks/useAxiosSecure";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "@/context/AuthContext";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast, Toaster } from "react-hot-toast";
-
+import { motion, AnimatePresence } from "framer-motion";
+import { FiArrowUpRight, FiX } from "react-icons/fi";
+import Swal from "sweetalert2";
 import Loading from "../SharedComponent/Loading";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
 
 const MyDonations = () => {
   const axiosSecure = useAxiosSecure();
@@ -12,296 +14,176 @@ const MyDonations = () => {
   const queryClient = useQueryClient();
   const [refundingId, setRefundingId] = useState(null);
 
-  // Fetch donation transactions
-  const {
-    data: transactionDetails = [],
-    isLoading,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ["transaction-details", user.email],
+  const { data: transactionDetails = [], isLoading } = useQuery({
+    queryKey: ["transaction-details", user?.email],
     queryFn: async () => {
       const res = await axiosSecure.get(
-        `/donation-transations-details/${user.email}`
+        `/donation-transations-details/${user.email}`,
       );
-
       return res.data;
     },
-    enabled: !!user.email,
+    enabled: !!user?.email,
   });
 
   const handleRefund = async (transaction) => {
-    const mongoid = transaction._id;
-    const transactionId = transaction.campaignId;
-    const transectionAmount = transaction.amount;
-    const deleteTransection = axiosSecure.delete(
-      `/delete-my-donation/${mongoid}`
-    );
-
-    const response = await axiosSecure.put("/update-campaign-amount", {
-      transactionId,
-      transectionAmount,
+    const result = await Swal.fire({
+      title: "Request Return?",
+      text: "This contribution will be removed from the companion's fund.",
+      confirmButtonText: "Confirm Refund",
+      confirmButtonColor: "#ef4444",
+      showCancelButton: true,
+      customClass: { popup: "rounded-[3rem] font-serif" },
     });
 
-    if ((await deleteTransection).status == 200 || response == 2000) {
-      await queryClient.invalidateQueries(["donations"]); // Refresh donations list
-      await queryClient.invalidateQueries(["campaign", transactionId]); // Refresh campaign data
-      await queryClient.invalidateQueries(["my-donations"]); // Refresh user's donations
+    if (result.isConfirmed) {
+      setRefundingId(transaction._id);
+      try {
+        await axiosSecure.delete(`/delete-my-donation/${transaction._id}`);
+        await axiosSecure.put("/update-campaign-amount", {
+          transactionId: transaction.campaignId,
+          transectionAmount: transaction.amount || transaction.donatedAmount,
+        });
+        queryClient.invalidateQueries(["transaction-details", user?.email]);
+        toast.success("Contribution returned.");
+      } catch (err) {
+        toast.error("Refund failed.");
+      } finally {
+        setRefundingId(null);
+      }
     }
   };
 
-  if (isLoading) {
-    return <Loading />;
-  }
+  const totalImpact = transactionDetails.reduce(
+    (sum, t) => sum + (t.donatedAmount || t.amount || 0),
+    0,
+  );
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-500 text-xl mb-4">
-            Error loading donations
-          </div>
-          <button
-            onClick={() => refetch()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
+  if (isLoading) return <Loading />;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className=" rounded-lg shadow-md overflow-hidden">
-        {/* Header */}
-        <div className="px-6 py-4 bg-gray-400 text-wh border-b">
-          <h1 className="text-2xl font-bold text-white">My Donations</h1>
-          <p className="text-white mt-1">
-            Track your donation history and manage refunds
+    <div className="max-w-7xl mx-auto py-12 px-4 space-y-20">
+      {/* 1. EDITORIAL HEADER & IMPACT */}
+      <header className="border-b-4 border-foreground pb-12 flex flex-col lg:flex-row justify-between items-start lg:items-end gap-12">
+        <div className="space-y-4 max-w-2xl">
+          <span className="text-[12px] font-black uppercase tracking-[0.4em] text-primary">
+            Guardian Ledger
+          </span>
+          <h1 className="text-6xl md:text-8xl font-serif italic tracking-tighter text-foreground leading-[0.8]">
+            My <span className="text-primary italic">Donations.</span>
+          </h1>
+          <p className="text-[11px] font-black uppercase tracking-widest text-stone-400 leading-relaxed">
+            A verified history of your patronage and contributions toward
+            companion sanctuary.
           </p>
         </div>
 
-        {transactionDetails.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-gray-400 text-6xl mb-4">💝</div>
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">
-              No donations yet
-            </h3>
-            <p className="text-gray-500">
-              You haven't made any donations yet. Start making a difference
-              today!
-            </p>
+        <div className="flex flex-col items-start lg:items-end">
+          <span className="text-[10px] font-black uppercase tracking-widest text-stone-400 mb-2">
+            Lifetime Impact
+          </span>
+          <div className="text-5xl md:text-7xl font-serif italic text-foreground tracking-tighter">
+            BDT {totalImpact.toLocaleString()}
           </div>
-        ) : (
-          <>
-            {/* Summary */}
-            <div
-              className={`px-6 py-4 border-b  card-light
-              `}
-            >
-              <div className="flex justify-between items-center">
-                <div
-                  className={`text-sm `}
-                >
-                  Total Donations:
-                  <span className="font-semibold ml-1">
-                    {transactionDetails.length}
-                  </span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-primary mt-2">
+            Across {transactionDetails.length} Initiatives
+          </span>
+        </div>
+      </header>
+
+      {/* 2. CONTRIBUTION GRID */}
+      {transactionDetails.length === 0 ? (
+        <div className="py-40 text-center border-2 border-dashed border-stone-200 rounded-[4rem]">
+          <p className="text-3xl font-serif italic text-stone-300">
+            No records found in the ledger.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-10 gap-y-20">
+          <AnimatePresence mode="popLayout">
+            {transactionDetails.map((transaction) => (
+              <motion.div
+                layout
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                key={transaction._id}
+                className="group flex flex-col space-y-6"
+              >
+                {/* Visual Identity Frame */}
+                <div className="relative aspect-[4/5] rounded-[3.5rem] overflow-hidden bg-stone-100">
+                  <img
+                    src={transaction.image}
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
+                    alt=""
+                  />
+
+                  {/* Amount Overlay */}
+                  <div className="absolute top-6 left-6">
+                    <div className="bg-white/90 backdrop-blur-md px-5 py-3 rounded-2xl shadow-xl">
+                      <p className="text-[8px] font-black uppercase text-stone-400 tracking-widest">
+                        Donated
+                      </p>
+                      <p className="text-xl font-serif italic text-black">
+                        BDT{" "}
+                        {(
+                          transaction.donatedAmount || transaction.amount
+                        ).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div
-                  className={`text-sm `}
-                >
-                  Total Amount:
-                  <span
-                    className={`ml-1 text-lg font-semibold `}
+
+                {/* Content Area */}
+                <div className="space-y-2 px-2">
+                  <div className="flex justify-between items-start">
+                    <h4 className="text-3xl font-serif italic text-foreground tracking-tight leading-none">
+                      {transaction.petName}
+                    </h4>
+                    <p className="text-[9px] font-black uppercase tracking-widest text-stone-300">
+                      {new Date(
+                        transaction.donationDate || transaction.donatedAt,
+                      ).toLocaleDateString("en-US", {
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </p>
+                  </div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">
+                    Sanctuary Beneficiary
+                  </p>
+                </div>
+
+                {/* Action - Text Based */}
+                <div className="pt-4 px-2">
+                  <button
+                    disabled={refundingId === transaction._id}
+                    onClick={() => handleRefund(transaction)}
+                    className="group flex items-center justify-between w-full border-b-2 border-stone-100 pb-4 hover:border-red-500 transition-all cursor-pointer disabled:opacity-20"
                   >
-                    $
-                    {transactionDetails.reduce(
-                      (sum, transaction) =>
-                        sum +
-                        (transaction.donatedAmount || transaction.amount || 0),
-                      0
-                    )}
-                  </span>
+                    <span className="text-[11px] font-black uppercase tracking-widest text-stone-400 group-hover:text-red-500 transition-colors">
+                      {refundingId === transaction._id
+                        ? "Processing..."
+                        : "Request Refund"}
+                    </span>
+                    <FiX className="text-stone-300 group-hover:text-red-500 transition-colors" />
+                  </button>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+      )}
 
-            {/* Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead
-                  className={`card-light
-                   `}
-                >
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                      Pet Image
-                    </th>
-                    <th
-                      className={`px-6 py-3 text-left text-xs font-medium 00 uppercase tracking-wider`}
-                    >
-                      Pet Name
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
-                      Donated Amount
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
-                      Date
-                    </th>
+      {/* 3. VERIFIED FOOTER */}
+      <footer className="pt-20 border-t border-stone-100 flex flex-col md:flex-row justify-between items-center gap-4">
+        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-stone-300">
+          Boutique Ledger System
+        </span>
+        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-stone-300 underline underline-offset-8 decoration-primary">
+          End of Records
+        </span>
+      </footer>
 
-                    <th className="px-6 py-3 text-center text-xs font-medium  uppercase tracking-wider">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-                <tbody
-                  className={`card-light 
-                   divide-y divide-gray-200`}
-                >
-                  {transactionDetails?.map((transaction) => (
-                    <tr
-                      key={transaction._id}
-                      className=" transition-colors duration-200"
-                    >
-                      {/* Pet Image */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex-shrink-0 h-16 w-16">
-                          {transaction.image ? (
-                            <img
-                              className="h-16 w-16 rounded-lg object-cover border-2 border-gray-200 shadow-sm"
-                              src={transaction.image}
-                              alt={transaction.petName}
-                            />
-                          ) : (
-                            <div className="h-16 w-16 rounded-lg bg-gray-100 border-2 border-gray-200 flex items-center justify-center">
-                              <svg
-                                className="w-8 h-8 text-gray-400"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
-                            </div>
-                          )}
-                        </div>
-                      </td>
-
-                      {/* Pet Name */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium  mb-1">
-                          {transaction.petName}
-                        </div>
-                      </td>
-
-                      {/* Donated Amount */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-lg font-bold text-green-600">
-                          ${transaction.donatedAmount || transaction.amount}
-                        </div>
-                      </td>
-
-                      {/* Date */}
-                      <td className="px-6 py-4 whitespace-nowrap text-sm ">
-                        {new Date(
-                          transaction.donationDate || transaction.donatedAt
-                        ).toLocaleDateString("en-US", {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        })}
-                      </td>
-
-                      {/* Refund Button */}
-                      <td className="px-6 py-4 whitespace-nowrap text-center">
-                        <button
-                          onClick={() => handleRefund(transaction)}
-                          className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md transition-colors duration-200 ${
-                            refundingId === transaction._id
-                              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                              : "text-red-600 bg-red-50 hover:bg-red-100 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                          }`}
-                        >
-                          {refundingId === transaction._id ? (
-                            <>
-                              <svg
-                                className="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-400"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                              >
-                                <circle
-                                  className="opacity-25"
-                                  cx="12"
-                                  cy="12"
-                                  r="10"
-                                  stroke="currentColor"
-                                  strokeWidth="4"
-                                ></circle>
-                                <path
-                                  className="opacity-75"
-                                  fill="currentColor"
-                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                ></path>
-                              </svg>
-                              Processing...
-                            </>
-                          ) : (
-                            <>
-                              <svg
-                                className="w-4 h-4 mr-2"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m5 14.25c0 2.485-2.015 4.5-4.5 4.5s-4.5-2.015-4.5-4.5 2.015-4.5 4.5-4.5 4.5 2.015 4.5 4.5z"
-                                />
-                              </svg>
-                              Request Refund
-                            </>
-                          )}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Footer Summary */}
-            <div className="px-6 py-4 bg-gray-50 border-t">
-              <div className="flex justify-between items-center">
-                <div className="text-sm text-gray-600">
-                  Total Amount Donated:
-                  <span className="ml-2 text-lg font-semibold text-green-600">
-                    $
-                    {transactionDetails.reduce(
-                      (sum, transaction) =>
-                        sum +
-                        (transaction.donatedAmount || transaction.amount || 0),
-                      0
-                    )}
-                  </span>
-                </div>
-                <div className="text-sm text-gray-500">
-                  Last updated: {new Date().toLocaleDateString()}
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
-      <Toaster position="top-right" reverseOrder={false}></Toaster>
+      <Toaster position="bottom-center" />
     </div>
   );
 };

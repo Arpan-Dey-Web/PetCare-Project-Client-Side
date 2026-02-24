@@ -1,432 +1,313 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router";
-import { AuthContext } from "../context/AuthContext";
-import useAxiosSecure from "../hooks/useAxiosSecure";
-import Swal from "sweetalert2";
-
+import { Link } from "react-router";
+import { AuthContext } from "@/context/AuthContext";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FiChevronLeft,
+  FiChevronRight,
+  FiPlus,
+  FiArrowUpRight,
+  FiAlertTriangle,
+  FiX,
+} from "react-icons/fi";
 import Loading from "../SharedComponent/Loading";
+import { toast } from "react-hot-toast";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
 
 const MyAddedPets = () => {
   const { user } = useContext(AuthContext);
-  const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
 
+  // States
   const [pets, setPets] = useState([]);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [confirmModal, setConfirmModal] = useState(null); // { type: 'adopt' | 'delete', petId: string, name: string }
   const [pagination, setPagination] = useState({
-    currentPage: 1,
     totalPages: 0,
     totalCount: 0,
-    pageSize: 10,
     hasNextPage: false,
     hasPrevPage: false,
   });
 
-  const petsPerPage = 10;
+  const petsPerPage = 6;
 
-  // Fetch pets with pagination
   useEffect(() => {
     let mounted = true;
     const fetchPets = async () => {
       try {
         setIsLoading(true);
         const res = await axiosSecure.get(`/pets/${user?.email}`, {
-          params: {
-            page: page,
-            size: petsPerPage,
-          },
+          params: { page, size: petsPerPage },
         });
-
         if (mounted) {
           setPets(res.data.pets);
           setPagination(res.data.pagination);
         }
       } catch (err) {
-        Swal.fire({
-          title: "Error!",
-          text: "Failed to fetch your pets. Please try again.",
-          icon: "error",
-        });
+        toast.error("Registry connection interrupted.");
       } finally {
         if (mounted) setIsLoading(false);
       }
     };
-
     if (user?.email) fetchPets();
-
     return () => {
       mounted = false;
     };
   }, [user?.email, axiosSecure, page]);
 
-  const handleAdopt = async (id) => {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "Mark this pet as adopted?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, Mark as Adopted",
-    });
-
-    if (result.isConfirmed) {
-      try {
-        await axiosSecure.patch(`/pets/adopt/${id}`);
-        // Update local state
-        setPets((prev) =>
-          prev.map((pet) => (pet._id === id ? { ...pet, adopted: true } : pet))
-        );
-
-        Swal.fire({
-          title: "Congratulations!",
-          text: "Your pet has been marked as adopted",
-          icon: "success",
-        });
-      } catch (error) {
-        Swal.fire({
-          title: "Error!",
-          text: "Failed to update adoption status. Please try again.",
-          icon: "error",
-        });
-      }
+  // Action Handlers
+  const handleAdoptAction = async (id) => {
+    try {
+      await axiosSecure.patch(`/pets/adopt/${id}`);
+      setPets((prev) =>
+        prev.map((pet) => (pet._id === id ? { ...pet, adopted: true } : pet)),
+      );
+      toast.success("Companion status updated.");
+      setConfirmModal(null);
+    } catch (error) {
+      toast.error("Update failed.");
     }
   };
 
-  const handleDelete = async (pet) => {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    });
-
-    if (result.isConfirmed) {
-      try {
-        await axiosSecure.delete(`/pets/${pet._id}`);
-
-        // Check if current page will be empty after deletion
-        const remainingPets = pets.length - 1;
-        if (remainingPets === 0 && page > 1) {
-          setPage(page - 1);
-        } else {
-          // Refetch current page data
-          const res = await axiosSecure.get(`/pets/${user?.email}`, {
-            params: { page: page, size: petsPerPage },
-          });
-          setPets(res.data.pets);
-          setPagination(res.data.pagination);
-        }
-
-        Swal.fire({
-          title: "Deleted!",
-          text: "Your pet has been deleted",
-          icon: "success",
-        });
-      } catch (error) {
-        Swal.fire({
-          title: "Error!",
-          text: "Failed to delete pet. Please try again.",
-          icon: "error",
-        });
-      }
+  const handleDeleteAction = async (id) => {
+    try {
+      await axiosSecure.delete(`/pets/${id}`);
+      setPets((prev) => prev.filter((pet) => pet._id !== id));
+      toast.success("Entry removed from registry.");
+      setConfirmModal(null);
+    } catch (error) {
+      toast.error("Removal failed.");
     }
   };
 
-  // Generate page numbers with ellipsis
-  const getPageNumbers = () => {
-    const pages = [];
-    const maxVisiblePages = 5;
-    const totalPages = pagination.totalPages;
-
-    if (totalPages <= maxVisiblePages) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i);
-    } else {
-      let startPage = Math.max(1, page - 2);
-      let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-      if (startPage > 1) {
-        pages.push(1);
-        if (startPage > 2) pages.push("...");
-      }
-
-      for (let i = startPage; i <= endPage; i++) pages.push(i);
-
-      if (endPage < totalPages) {
-        if (endPage < totalPages - 1) pages.push("...");
-        pages.push(totalPages);
-      }
-    }
-    return pages;
-  };
-
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= pagination.totalPages) {
-      setPage(newPage);
-    }
-  };
-
-  if (isLoading) {
-    return <Loading />;
-  }
+  if (isLoading) return <Loading />;
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">My Added Pets</h1>
-
-      {pets.length === 0 ? (
-        <div
-          className={`text-center py-12 rounded-lg card-light
-          `}
-        >
-          <div className="inline-flex items-center justify-center w-16 h-16 border rounded-full mb-4">
-            <svg
-              className="w-8 h-8 "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              />
-            </svg>
+    <div className="max-w-7xl mx-auto py-20 px-6 space-y-20">
+      {/* Editorial Header */}
+      <header className="border-b border-border pb-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+            <span className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground">
+              Personal Collection
+            </span>
           </div>
-          <h3 className="text-xl font-semibold  mb-2">No Pets Added Yet</h3>
-          <p className=" mb-6 max-w-md mx-auto">
-            You haven't added any pets for adoption yet. Start by adding your
-            first pet to help them find loving homes.
+          <h1 className="text-6xl md:text-8xl font-serif italic tracking-tighter text-foreground leading-[0.8]">
+            Your <span className="text-primary italic">Registry.</span>
+          </h1>
+        </div>
+        <Link
+          to="/dashboard/add-pet"
+          className="group flex items-center gap-6 bg-foreground text-background px-12 py-6 rounded-full hover:bg-primary transition-all duration-700 shadow-xl shadow-foreground/5"
+        >
+          <span className="text-[11px] font-black uppercase tracking-[0.3em]">
+            Add New Resident
+          </span>
+          <FiPlus className="group-hover:rotate-90 transition-transform duration-500" />
+        </Link>
+      </header>
+
+      {/* Boutique Grid */}
+      {pets.length === 0 ? (
+        <div className="py-48 text-center border border-dashed border-border rounded-[4rem] bg-surface-alt/30">
+          <p className="text-2xl font-serif italic text-muted-foreground">
+            The registry is currently vacant.
           </p>
-          <Link
-            to="/dashboard/add-pet"
-            className="inline-flex items-center px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200"
-            aria-label="Add your first pet"
-          >
-            <svg
-              className="w-5 h-5 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              />
-            </svg>
-            Add Your First Pet
-          </Link>
         </div>
       ) : (
-        <>
-          <div className="mb-4 flex justify-between items-center">
-            <Link
-              to="/dashboard/add-pet"
-              className="inline-flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 text-sm"
-              aria-label="Add new pet"
-            >
-              <svg
-                className="w-4 h-4 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-24">
+          <AnimatePresence mode="popLayout">
+            {pets.map((pet) => (
+              <motion.div
+                layout
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                key={pet._id}
+                className="group flex flex-col space-y-8"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                />
-              </svg>
-              Add New Pet
-            </Link>
-          </div>
+                {/* Visual Frame */}
+                <div className="relative aspect-[4/5] rounded-[4rem] overflow-hidden bg-surface-alt group-hover:shadow-2xl transition-all duration-700">
+                  <img
+                    src={pet.image}
+                    alt={pet.name}
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1.5s] ease-out"
+                  />
 
-          <div
-            className={`overflow-x-auto rounded-lg shadow  card-light
-            }`}
-          >
-            <table className="table w-full">
-              <thead className="bg-gray-400">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                    #
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                    Pet Name
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                    Category
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                    Image
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody
-                className={`divide-y divide-gray-200 
-                   card-light text-dark
-                `}
-              >
-                {pets.map((pet, index) => (
-                  <tr key={pet._id}>
-                    <td
-                      className={`px-4 py-4 whitespace-nowrap text-sm  text-light
-                      `}
+                  {/* Glassmorphism Badge */}
+                  <div className="absolute top-8 left-8">
+                    <span
+                      className={`px-6 py-2.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em] backdrop-blur-xl border border-white/20 shadow-lg ${pet.adopted ? "bg-emerald-500/80 text-white" : "bg-white/90 text-stone-900"}`}
                     >
-                      {(page - 1) * petsPerPage + index + 1}
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap">
-                      <div
-                        className={`text-sm font-medium  text-light
-                        `}
-                      >
-                        {pet.name}
-                      </div>
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap">
-                      <span className="inline-flex px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
-                        {pet.category}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap">
-                      <img
-                        src={pet.image}
-                        alt={pet.name}
-                        className="w-16 h-16 object-cover rounded-lg border-2 border-gray-200"
-                      />
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap">
-                      <span
-                        className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                          pet.adopted
-                            ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
-                        }`}
-                      >
-                        {pet.adopted ? "Adopted" : "Available"}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                      <Link to={`/dashboard/update-pet/${pet._id}`}>
-                        <button
-                          aria-label={`Update ${pet.name}`}
-                          className="bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded-lg text-white text-xs transition-colors duration-200"
-                        >
-                          Update
-                        </button>
-                      </Link>
+                      {pet.adopted ? "Rehomed" : "Available"}
+                    </span>
+                  </div>
 
-                      <button
-                        onClick={() => handleDelete(pet)}
-                        aria-label={`Delete ${pet.name}`}
-                        className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded-lg text-white text-xs transition-colors duration-200"
-                      >
-                        Delete
-                      </button>
-
-                      {!pet.adopted && (
-                        <button
-                          onClick={() => handleAdopt(pet._id)}
-                          aria-label={`Mark ${pet.name} as adopted`}
-                          className="bg-green-500 hover:bg-green-600 px-3 py-1 rounded-lg text-white text-xs transition-colors duration-200"
-                        >
-                          Mark Adopted
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {pagination.totalPages > 1 && (
-            <div className="mt-6 flex items-center justify-between">
-              <div className="text-sm text-gray-700">
-                Showing{" "}
-                <span className="font-medium">
-                  {(page - 1) * petsPerPage + 1}
-                </span>{" "}
-                to{" "}
-                <span className="font-medium">
-                  {Math.min(page * petsPerPage, pagination.totalCount)}
-                </span>{" "}
-                of <span className="font-medium">{pagination.totalCount}</span>{" "}
-                results
-              </div>
-
-              <div
-                className="flex items-center space-x-2"
-                role="navigation"
-                aria-label="Pagination Navigation"
-              >
-                <button
-                  onClick={() => handlePageChange(page - 1)}
-                  disabled={!pagination.hasPrevPage}
-                  aria-label="Previous Page"
-                  className={`px-3 py-2 text-sm font-medium rounded-md ${
-                    !pagination.hasPrevPage
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
-                  }`}
-                >
-                  Previous
-                </button>
-
-                {getPageNumbers().map((pageNum, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handlePageChange(pageNum)}
-                    disabled={pageNum === "..."}
-                    aria-label={
-                      pageNum === "..."
-                        ? "Ellipsis"
-                        : pageNum === page
-                        ? `Current Page, Page ${pageNum}`
-                        : `Page ${pageNum}`
-                    }
-                    className={`px-3 py-2 text-sm font-medium rounded-md ${
-                      pageNum === page
-                        ? "bg-blue-500 text-white"
-                        : pageNum === "..."
-                        ? "bg-white text-gray-400 cursor-default"
-                        : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
-                    }`}
+                  {/* Edit Overlay */}
+                  <Link
+                    to={`/dashboard/update-pet/${pet._id}`}
+                    className="absolute inset-0 bg-stone-900/40 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center backdrop-blur-sm"
                   >
-                    {pageNum}
-                  </button>
-                ))}
+                    <motion.div
+                      whileHover={{ scale: 1.1 }}
+                      className="w-20 h-20 bg-background rounded-full flex items-center justify-center text-foreground shadow-2xl"
+                    >
+                      <FiArrowUpRight size={28} />
+                    </motion.div>
+                  </Link>
+                </div>
 
+                {/* Content */}
+                <div className="space-y-6 px-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="text-4xl font-serif italic text-foreground tracking-tighter">
+                        {pet.name}
+                      </h4>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary mt-1">
+                        {pet.category}
+                      </p>
+                    </div>
+                    <p className="text-[9px] font-black text-muted-foreground tracking-widest bg-surface-alt px-3 py-1 rounded-full uppercase">
+                      ID: {pet._id.slice(-6)}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-10 border-t border-border pt-6">
+                    <Link
+                      to={`/dashboard/update-pet/${pet._id}`}
+                      className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400 hover:text-foreground transition-colors cursor-pointer"
+                    >
+                      Edit File
+                    </Link>
+
+                    {!pet.adopted && (
+                      <button
+                        onClick={() =>
+                          setConfirmModal({
+                            type: "adopt",
+                            petId: pet._id,
+                            name: pet.name,
+                          })
+                        }
+                        className="text-[10px] font-black uppercase tracking-[0.2em] text-primary hover:tracking-[0.3em] transition-all cursor-pointer"
+                      >
+                        Mark Adopted
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() =>
+                        setConfirmModal({
+                          type: "delete",
+                          petId: pet._id,
+                          name: pet.name,
+                        })
+                      }
+                      className="text-[10px] font-black uppercase tracking-[0.2em] text-red-400 hover:text-red-600 transition-colors ml-auto cursor-pointer"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+      )}
+
+      {/* Custom Boutique Modal */}
+      <AnimatePresence>
+        {confirmModal && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setConfirmModal(null)}
+              className="absolute inset-0 bg-stone-950/60 backdrop-blur-md cursor-pointer"
+            />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative bg-background max-w-md w-full rounded-[3.5rem] p-12 text-center shadow-2xl border border-border"
+            >
+              <div
+                className={`w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-8 ${confirmModal.type === "delete" ? "bg-red-50 text-red-500" : "bg-primary/10 text-primary"}`}
+              >
+                <FiAlertTriangle size={36} />
+              </div>
+
+              <h2 className="text-3xl font-serif italic tracking-tighter mb-4 text-foreground">
+                {confirmModal.type === "delete"
+                  ? "Remove Entry?"
+                  : "Confirm Adoption?"}
+              </h2>
+
+              <p className="text-muted-foreground text-sm leading-relaxed mb-10">
+                Are you sure you want to{" "}
+                {confirmModal.type === "delete"
+                  ? "permanently delete"
+                  : "finalize the adoption for"}{" "}
+                <strong>{confirmModal.name}</strong>?
+                {confirmModal.type === "delete" &&
+                  " This record cannot be recovered."}
+              </p>
+
+              <div className="flex flex-col gap-3">
                 <button
-                  onClick={() => handlePageChange(page + 1)}
-                  disabled={!pagination.hasNextPage}
-                  aria-label="Next Page"
-                  className={`px-3 py-2 text-sm font-medium rounded-md ${
-                    !pagination.hasNextPage
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
-                  }`}
+                  onClick={() =>
+                    confirmModal.type === "delete"
+                      ? handleDeleteAction(confirmModal.petId)
+                      : handleAdoptAction(confirmModal.petId)
+                  }
+                  className={`w-full py-5 rounded-full text-[10px] font-black uppercase tracking-[0.3em] transition-all cursor-pointer shadow-lg ${confirmModal.type === "delete" ? "bg-red-500 text-white shadow-red-500/20 hover:bg-red-600" : "bg-foreground text-background hover:bg-primary"}`}
                 >
-                  Next
+                  Yes, Authorize
+                </button>
+                <button
+                  onClick={() => setConfirmModal(null)}
+                  className="py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                >
+                  Cancel Request
                 </button>
               </div>
-            </div>
-          )}
-        </>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Pagination Footer */}
+      {pagination.totalPages > 1 && (
+        <footer className="pt-20 flex flex-col md:flex-row justify-between items-center gap-8">
+          <span className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground">
+            Entry <span className="text-foreground">{page}</span> of{" "}
+            {pagination.totalPages}
+          </span>
+          <div className="flex items-center gap-16">
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={!pagination.hasPrevPage}
+              className="group flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.3em] disabled:opacity-20 hover:text-primary transition-all cursor-pointer"
+            >
+              <FiChevronLeft className="group-hover:-translate-x-2 transition-transform" />{" "}
+              Previous
+            </button>
+            <button
+              onClick={() =>
+                setPage((p) => Math.min(pagination.totalPages, p + 1))
+              }
+              disabled={!pagination.hasNextPage}
+              className="group flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.3em] disabled:opacity-20 hover:text-primary transition-all cursor-pointer"
+            >
+              Next{" "}
+              <FiChevronRight className="group-hover:translate-x-2 transition-transform" />
+            </button>
+          </div>
+        </footer>
       )}
     </div>
   );

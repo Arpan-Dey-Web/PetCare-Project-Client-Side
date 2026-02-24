@@ -1,247 +1,287 @@
 import React, { useContext, useState } from "react";
-import { NavLink, useNavigate } from "react-router";
-import { motion } from "framer-motion"; // 🌀 Import motion
-import { FaGoogle, FaGithub } from "react-icons/fa";
-import { AuthContext } from "../context/AuthContext";
-import Swal from "sweetalert2";
+import { NavLink, useNavigate, Link } from "react-router";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  MoveUpRight,
+  ShieldCheck,
+  Fingerprint,
+  Bird,
+} from "lucide-react";
+import { AuthContext } from "@/context/AuthContext";
 import toast, { Toaster } from "react-hot-toast";
-import useAxiosPublic from "../hooks/useAxiosPublic";
+import { FiAlertTriangle } from "react-icons/fi";
 
 const Login = () => {
-  const { signInuser, logInWithGoogle, logInWithGithub } =
-    useContext(AuthContext);
+  const { signInuser, logInWithGoogle } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [passwordError, setPasswordError] = useState("");
+
+  // UI States
+  const [errorModal, setErrorModal] = useState(null); // { title: string, message: string }
   const [emailError, setEmailError] = useState("");
-  const axiosPublic = useAxiosPublic();
+  const [passwordError, setPasswordError] = useState("");
+
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setEmailError("");
+    setPasswordError("");
+
     const userEmail = e.target.email.value.trim();
     const userPassword = e.target.password.value.trim();
     let valid = true;
 
-    setPasswordError("");
-    setEmailError("");
-
-    if (!userEmail) {
-      setEmailError("Email is required.");
-      valid = false;
-    } else if (!/\S+@\S+\.\S+/.test(userEmail)) {
-      setEmailError("Please enter a valid email address.");
+    if (!userEmail || !/\S+@\S+\.\S+/.test(userEmail)) {
+      setEmailError("A valid email is required to identify your account.");
       valid = false;
     }
-
     if (!userPassword) {
-      setPasswordError("Password is required.");
-      valid = false;
-    } else if (!passwordRegex.test(userPassword)) {
-      setPasswordError(
-        "Password must be at least 6 characters, include uppercase, lowercase, and a number."
-      );
+      setPasswordError("Please enter your security credentials.");
       valid = false;
     }
 
     if (!valid) return;
-    const getUser = await axiosPublic(`/get/user/${userEmail}`);
-    console.log(getUser);
-    if (getUser) {
-      signInuser(userEmail, userPassword);
+
+    try {
+      await signInuser(userEmail, userPassword);
+      toast.success("Welcome back to the Sanctuary.");
       navigate("/");
+    } catch (err) {
+      setErrorModal({
+        title: "Access Denied",
+        message:
+          "The credentials provided do not match our records. Please verify your details and try again.",
+      });
     }
-
-    // Swal.fire({
-    //   icon: "error",
-    //   title: "Oops...",
-    //   text: "Something went wrong!",
-    // });
   };
-  const handleGithubLogin = () => {
-    logInWithGithub()
-      .then(async (res) => {
-        Swal.fire({
-          title: "Drag me!",
-          icon: "success",
-          draggable: true,
-        });
 
-        navigate("/");
-      })
-      .catch((err) => {
-        toast.error("Oops Something Wrong");
+  const handleGoogleLogin = async () => {
+    try {
+      await logInWithGoogle();
+      toast.success("Identity verified via Google.");
+      navigate("/");
+    } catch (err) {
+      setErrorModal({
+        title: "Authentication Failed",
+        message:
+          "We couldn't establish a connection with Google. Please try again or use your email credentials.",
       });
-  };
-  const handleGoogleLogin = () => {
-    logInWithGoogle()
-      .then(async (res) => {
-        const userInfo = {
-          name: res?.user?.displayName,
-          email: res?.user?.email,
-          image: res?.user?.photoURL,
-          role: "user",
-        };
-        const getUser = await axiosPublic(`/get/user/${userInfo.email}`);
-        Swal.fire({
-          title: "Logged In!",
-          icon: "success",
-          draggable: true,
-        });
-        navigate("/");
-      })
-      .catch((err) => {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Please Enter Valid Email Password!",
-        });
-      });
+    }
   };
 
   return (
-    <motion.div
-      key="login"
-      initial={{ opacity: 0, x: -40 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 40 }}
-      transition={{ duration: 0.4, ease: "easeInOut" }}
-    >
-      <div className="min-h-screen flex items-center justify-center  px-4">
-        <div className="w-full max-w-xl bg-white shadow-lg rounded-lg p-8">
-          <div className="grid grid-cols-2 gap-4 mb-8">
+    <div className="min-h-screen bg-background flex flex-col lg:flex-row overflow-hidden mt-24">
+      {/* LEFT: Editorial Visual */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.5 }}
+        className="hidden lg:flex lg:w-1/2 relative bg-surface-dark items-center justify-center p-20 overflow-hidden"
+      >
+        <motion.img
+          initial={{ scale: 1.1 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 10, repeat: Infinity, repeatType: "reverse" }}
+          src="https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg"
+          alt="Boutique Visual"
+          className="absolute inset-0 w-full h-full object-cover grayscale opacity-40"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80" />
+
+        <div className="relative z-10 w-full">
+          <div className="flex items-center gap-4 mb-12">
+            <span className="w-12 h-[1px] bg-primary" />
+            <span className="text-primary font-black text-[10px] uppercase tracking-[0.6em]">
+              Secure Gateway
+            </span>
+          </div>
+
+          <h2 className="text-8xl font-serif text-white italic tracking-tighter leading-[0.8] mb-12">
+            Identity <br />
+            <span className="text-primary not-italic">Verification.</span>
+          </h2>
+
+          <p className="text-stone-400 text-xl font-light leading-relaxed max-w-sm italic">
+            Returning to the sanctuary? Please verify your credentials to manage
+            your residents and contributions.
+          </p>
+        </div>
+
+        {/* Dynamic Status Bar */}
+        <div className="absolute bottom-12 left-12 right-12 flex justify-between items-center border-t border-white/5 pt-12">
+          <div className="space-y-2">
+            <p className="text-[8px] font-black uppercase tracking-[0.4em] text-primary">
+              System Integrity
+            </p>
+            <div className="flex items-center gap-3">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <p className="text-[10px] font-bold uppercase tracking-widest text-white/40">
+                Encrypted Session Active
+              </p>
+            </div>
+          </div>
+          <Bird className="text-primary/10 -rotate-12" size={120} />
+        </div>
+      </motion.div>
+
+      {/* RIGHT: Sophisticated Form */}
+      <div className="flex-1 flex flex-col justify-center items-center px-8 lg:px-24 bg-background relative">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md space-y-16"
+        >
+          {/* Navigation Tabs */}
+          <div className="flex items-center gap-12 border-b border-border">
             <NavLink
               to="/login"
               className={({ isActive }) =>
-                `text-center px-8 py-2 rounded-2xl font-semibold text-lg shadow-md transition duration-300 ${
-                  isActive
-                    ? "bg-blue-600 text-white shadow-xl scale-105"
-                    : "bg-white text-blue-700 border border-blue-500 hover:bg-blue-50"
-                }`
+                `text-[10px] font-black uppercase tracking-[0.4em] pb-6 transition-all relative ${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"}`
               }
             >
               Login
+              <motion.div
+                layoutId="tab"
+                className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary"
+              />
             </NavLink>
-
             <NavLink
               to="/register"
-              className={({ isActive }) =>
-                `text-center px-8 py-2 rounded-2xl font-semibold text-lg shadow-md transition duration-300 ${
-                  isActive
-                    ? "bg-blue-600 text-white shadow-xl scale-105"
-                    : "bg-white text-blue-700 border border-blue-500 hover:bg-blue-50"
-                }`
-              }
+              className="text-[10px] font-black uppercase tracking-[0.4em] pb-6 text-muted-foreground hover:text-foreground transition-all"
             >
               Register
             </NavLink>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-4" noValidate>
-            {/* Email */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Email Address
-              </label>
-              <input
-                type="email"
-                name="email"
-                className={`w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  emailError ? "border-red-500" : ""
-                }`}
-                required
-              />
-              {emailError && (
-                <p className="text-red-600 text-sm mt-1">{emailError}</p>
-              )}
-            </div>
+          <div className="space-y-4">
+            <h1 className="text-5xl font-serif italic text-foreground tracking-tighter">
+              Welcome Back.
+            </h1>
+            <p className="text-muted-foreground text-sm font-light leading-relaxed italic">
+              Log in to your dashboard to resume oversight.
+            </p>
+          </div>
 
-            {/* Password */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <input
-                type="password"
-                name="password"
-                className={`w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  passwordError ? "border-red-500" : ""
-                }`}
-                required
-              />
-              {passwordError && (
-                <p className="text-red-600 text-sm mt-1">{passwordError}</p>
-              )}
+          <form onSubmit={handleLogin} className="space-y-10" noValidate>
+            <div className="space-y-8">
+              <div className="group space-y-2">
+                <label className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground transition-colors group-focus-within:text-primary">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="name@sanctuary.com"
+                  className="w-full bg-transparent border-b border-border py-4 text-sm focus:outline-none focus:border-primary transition-all placeholder:text-stone-200"
+                />
+                {emailError && (
+                  <p className="text-[10px] text-red-400 font-bold uppercase tracking-tight mt-2">
+                    {emailError}
+                  </p>
+                )}
+              </div>
+
+              <div className="group space-y-2">
+                <label className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground transition-colors group-focus-within:text-primary">
+                  Security Password
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="••••••••"
+                  className="w-full bg-transparent border-b border-border py-4 text-sm focus:outline-none focus:border-primary transition-all placeholder:text-stone-200"
+                />
+                {passwordError && (
+                  <p className="text-[10px] text-red-400 font-bold uppercase tracking-tight mt-2">
+                    {passwordError}
+                  </p>
+                )}
+              </div>
             </div>
 
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+              className="w-full bg-foreground text-background py-6 rounded-full text-[10px] font-black uppercase tracking-[0.4em] hover:bg-primary transition-all duration-700 flex items-center justify-center gap-4 cursor-pointer shadow-xl shadow-foreground/5"
             >
-              Login
+              Authorize Access <MoveUpRight size={14} />
             </button>
           </form>
-          <div className="border border-t-0 mt-5 border-gray-500 "></div>
-          <div className=" grid grid-cols-2 gap-4 mt-5  ">
-            {/* Github login */}
-            <div>
-              <button
-                onClick={handleGithubLogin}
-                className="flex items-center justify-center gap-1 md:gap-3 w-full py-2 px-4 bg-black text-white border border-black rounded-md hover:shadow-lg transition duration-300"
-              >
-                <svg
-                  aria-label="GitHub logo"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="white"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z" />
-                </svg>
-                <span className="font-medium">Login with GitHub</span>
-              </button>
+
+          {/* Social Divider */}
+          <div className="space-y-8">
+            <div className="relative flex items-center">
+              <div className="flex-grow border-t border-border"></div>
+              <span className="flex-shrink mx-4 text-[8px] font-black uppercase tracking-[0.4em] text-muted-foreground">
+                Alternative Verification
+              </span>
+              <div className="flex-grow border-t border-border"></div>
             </div>
-            {/* Google Login */}
-            <div>
-              <button
-                onClick={handleGoogleLogin}
-                className="flex items-center justify-center gap-1 md:gap-3 w-full py-2 px-4 bg-white text-black border border-gray-300 rounded-md hover:shadow-lg transition duration-300"
-              >
-                <svg
-                  aria-label="Google logo"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 512 512"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <g>
-                    <path d="M0 0H512V512H0" fill="#fff" />
-                    <path
-                      fill="#34a853"
-                      d="M153 292c30 82 118 95 171 60h62v48A192 192 0 0190 341"
-                    />
-                    <path
-                      fill="#4285f4"
-                      d="m386 400a140 175 0 0053-179H260v74h102q-7 37-38 57"
-                    />
-                    <path
-                      fill="#fbbc02"
-                      d="m90 341a208 200 0 010-171l63 49q-12 37 0 73"
-                    />
-                    <path
-                      fill="#ea4335"
-                      d="m153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55"
-                    />
-                  </g>
-                </svg>
-                <span className="font-medium">Login with Google</span>
-              </button>
-            </div>
+
+            <button
+              onClick={handleGoogleLogin}
+              className="w-full py-5 rounded-full border border-border flex items-center justify-center gap-4 hover:bg-surface-alt transition-all group cursor-pointer"
+            >
+              <Fingerprint
+                className="text-primary group-hover:scale-110 transition-transform"
+                size={18}
+              />
+              <span className="text-[10px] font-black uppercase tracking-widest">
+                Verify with Google
+              </span>
+            </button>
           </div>
-        </div>
+
+          <p className="text-center text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+            New to the Sanctuary?{" "}
+            <Link
+              to="/register"
+              className="text-primary hover:tracking-[0.3em] transition-all ml-2 underline underline-offset-8 decoration-primary/20"
+            >
+              Create Portfolio
+            </Link>
+          </p>
+        </motion.div>
       </div>
-      <Toaster position="top-right" reverseOrder={false} />
-    </motion.div>
+
+      {/* BOUTIQUE ERROR MODAL */}
+      <AnimatePresence>
+        {errorModal && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setErrorModal(null)}
+              className="absolute inset-0 bg-stone-950/60 backdrop-blur-md cursor-pointer"
+            />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative bg-background max-w-sm w-full rounded-[3rem] p-12 text-center shadow-2xl border border-border"
+            >
+              <div className="w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-8 bg-red-50 text-red-500">
+                <FiAlertTriangle size={36} />
+              </div>
+              <h2 className="text-3xl font-serif italic tracking-tighter mb-4 text-foreground">
+                {errorModal.title}
+              </h2>
+              <p className="text-muted-foreground text-sm leading-relaxed mb-10 italic">
+                {errorModal.message}
+              </p>
+              <button
+                onClick={() => setErrorModal(null)}
+                className="w-full py-5 rounded-full bg-foreground text-background text-[10px] font-black uppercase tracking-[0.3em] hover:bg-primary transition-all cursor-pointer"
+              >
+                Return to Login
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <Toaster position="bottom-right" />
+    </div>
   );
 };
 

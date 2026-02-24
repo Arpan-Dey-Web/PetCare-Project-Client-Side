@@ -1,7 +1,13 @@
 import React, { useContext } from "react";
-import { LuUser, LuMail, LuCalendar, LuShield, LuMapPin } from "react-icons/lu";
-import { FaGoogle, FaGithub, FaEnvelope } from "react-icons/fa";
-import { AuthContext } from "../context/AuthContext";
+import { motion } from "framer-motion";
+import {
+  LuFingerprint,
+  LuShield,
+  LuClock,
+  LuArrowUpRight,
+} from "react-icons/lu";
+import { AuthContext } from "@/context/AuthContext";
+import { Link } from "react-router";
 
 const UserProfile = () => {
   const { user } = useContext(AuthContext);
@@ -9,219 +15,168 @@ const UserProfile = () => {
   const userData = {
     uid: user?.uid,
     email: user?.email,
-    emailVerified: user?.emailVerified,
-    displayName: user?.displayName || "User",
-    photoURL: user?.photoURL || "https://via.placeholder.com/150",
+    displayName: user?.displayName || "Guardian",
+    photoURL:
+      user?.photoURL ||
+      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1780&auto=format&fit=crop",
     createdAt: user?.metadata?.creationTime,
     lastLoginAt: user?.metadata?.lastSignInTime,
-    provider: user?.providerData?.[0]?.providerId,
   };
 
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
-    return new Date(dateString).toLocaleString("en-US", {
+    return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
     });
   };
 
-  const getProviderIcon = (provider) => {
-    switch (provider) {
-      case "google.com":
-        return <FaGoogle className="w-5 h-5 text-red-500" />;
-      case "github.com":
-        return <FaGithub className="w-5 h-5 text-gray-800" />;
-      case "password":
-        return <FaEnvelope className="w-5 h-5 text-blue-500" />;
-      default:
-        return <LuUser className="w-5 h-5 text-gray-500" />;
-    }
-  };
-
-  const getProviderName = (provider) => {
-    switch (provider) {
-      case "google.com":
-        return "Google";
-      case "github.com":
-        return "GitHub";
-      case "password":
-        return "Email/Password";
-      default:
-        return provider || "Unknown";
-    }
-  };
-
   return (
-    <div className="max-w-4xl mx-auto my-8">
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-        {/* Header Section with Gradient */}
-        <div className="bg-gradient-to-r from-amber-500 to-orange-600 px-8 py-10">
-          <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-            {/* Profile Picture */}
-            <div className="relative">
-              <img
-                src={userData.photoURL}
-                alt={userData.displayName}
-                className="w-24 h-24 rounded-full border-4 border-white shadow-xl object-cover"
-              />
-              {userData.emailVerified && (
-                <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-green-500 rounded-full border-3 border-white flex items-center justify-center">
-                  <LuShield className="w-4 h-4 text-white" />
-                </div>
-              )}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="max-w-7xl mx-auto py-12 px-4"
+    >
+      {/* 1. MASSIVE TYPOGRAPHY HEADER */}
+      <header className="border-b border-border pb-20 mb-20">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12">
+          <div className="space-y-6">
+            <div className="flex items-center gap-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40">
+                Identity Registry
+              </span>
             </div>
+            <h1 className="text-7xl md:text-8xl font-serif italic tracking-tighter text-foreground leading-[0.8]">
+              Guardian <br />
+              <span className="text-primary italic">
+                {userData.displayName.split(" ")[0]}.
+              </span>
+            </h1>
+          </div>
 
-            {/* User Info */}
-            <div className="text-center md:text-left text-white flex-1">
-              <h1 className="text-3xl font-bold mb-2">
-                {userData.displayName}
-              </h1>
-              <p className="text-amber-100 text-sm mb-3">{userData.email}</p>
-              <div className="flex items-center justify-center md:justify-start gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 w-fit">
-                {getProviderIcon(userData.provider)}
-                <span className="text-sm font-medium">
-                  Connected via {getProviderName(userData.provider)}
-                </span>
-              </div>
+          <div className="flex gap-16 h-fit py-2">
+            <div className="space-y-1">
+              <p className="text-4xl font-serif italic leading-none">VIP</p>
+              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-foreground/30">
+                Access Level
+              </p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-4xl font-serif italic leading-none">12</p>
+              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-foreground/30">
+                Total Saves
+              </p>
             </div>
           </div>
         </div>
+      </header>
 
-        {/* Profile Content */}
-        <div className="p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Account Information */}
-            <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2 mb-4">
-                <LuUser className="w-6 h-6 text-amber-600" />
-                Account Information
+      {/* 2. OPEN-AIR CONTENT SPLIT */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-24">
+        {/* LEFT: Portrait (The only "contained" element) */}
+        <div className="lg:col-span-4">
+          <div className="relative aspect-[3/4] overflow-hidden rounded-[3rem] grayscale hover:grayscale-0 transition-all duration-1000 shadow-2xl">
+            <img
+              src={userData.photoURL}
+              className="w-full h-full object-cover scale-110 hover:scale-100 transition-transform duration-1000"
+              alt={userData.displayName}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+          </div>
+          <div className="mt-8 px-4 flex justify-between items-center">
+            <p className="text-[10px] font-black uppercase tracking-widest text-foreground/30">
+              Portrait 01
+            </p>
+            {/* <button className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline">
+              Update Image
+            </button> */}
+          </div>
+        </div>
+
+        {/* RIGHT: The Editorial List */}
+        <div className="lg:col-span-8 space-y-20">
+          {/* Section: Credentials */}
+          <div className="space-y-12">
+            <div className="flex items-center gap-6">
+              <LuFingerprint className="text-primary" />
+              <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40">
+                Primary Credentials
               </h3>
-
-              {/* Email */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                  <LuMail className="w-5 h-5 text-gray-500 mt-0.5" />
-                  <div className="flex-1">
-                    <p className="text-sm text-gray-600 mb-1">Email Address</p>
-                    <p className="font-medium text-gray-900 break-all">
-                      {userData.email}
-                    </p>
-                    <div className="flex items-center mt-2">
-                      <LuShield
-                        className={`w-4 h-4 mr-1.5 ${
-                          userData.emailVerified
-                            ? "text-green-500"
-                            : "text-red-500"
-                        }`}
-                      />
-                      <span
-                        className={`text-xs font-semibold ${
-                          userData.emailVerified
-                            ? "text-green-600"
-                            : "text-red-600"
-                        }`}
-                      >
-                        {userData.emailVerified
-                          ? "Email Verified"
-                          : "Email Not Verified"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* User ID */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                  <LuUser className="w-5 h-5 text-gray-500 mt-0.5" />
-                  <div className="flex-1">
-                    <p className="text-sm text-gray-600 mb-1">User ID</p>
-                    <p className="font-mono text-xs text-gray-700 break-all bg-white p-2 rounded border border-gray-200">
-                      {userData.uid}
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <div className="h-px flex-1 bg-border/50"></div>
             </div>
 
-            {/* Account Activity */}
-            <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2 mb-4">
-                <LuCalendar className="w-6 h-6 text-amber-600" />
-                Account Activity
-              </h3>
-
-              {/* Member Since */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                  <LuCalendar className="w-5 h-5 text-gray-500 mt-0.5" />
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Member Since</p>
-                    <p className="font-medium text-gray-900">
-                      {formatDate(userData.createdAt)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Last Login */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                  <LuCalendar className="w-5 h-5 text-gray-500 mt-0.5" />
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Last Login</p>
-                    <p className="font-medium text-gray-900">
-                      {formatDate(userData.lastLoginAt)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Provider Info */}
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                  {getProviderIcon(userData.provider)}
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">
-                      Authentication Provider
-                    </p>
-                    <p className="font-semibold text-amber-900">
-                      {getProviderName(userData.provider)}
-                    </p>
-                  </div>
-                </div>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-16 gap-x-12">
+              <ProfileField label="Full Name" value={userData.displayName} />
+              <ProfileField label="Registry Email" value={userData.email} />
+              <ProfileField
+                label="Guardian Since"
+                value={formatDate(userData.createdAt)}
+              />
+              <ProfileField
+                label="Last Check-in"
+                value={formatDate(userData.lastLoginAt)}
+              />
             </div>
           </div>
 
-          {/* Additional Info Card */}
-          <div className="mt-8 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-6">
-            <div className="flex items-start gap-4">
-              <div className="bg-amber-100 rounded-full p-3">
-                <LuShield className="w-6 h-6 text-amber-700" />
-              </div>
+          {/* Section: Technical Key */}
+          <div className="pt-12 border-t border-border space-y-8">
+            <div className="flex justify-between items-center">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40 italic">
+                System Identity Key
+              </h3>
+              <LuShield size={16} className="opacity-20" />
+            </div>
+            <p className="text-xs font-mono opacity-40 break-all tracking-tighter">
+              {userData.uid}
+            </p>
+          </div>
+
+          {/* CTA / Action Row */}
+          <div className="flex flex-col md:flex-row gap-8 pt-12">
+            <Link
+              to="/dashboard/settings"
+              className="group flex items-center justify-between p-8 border border-border rounded-3xl hover:border-foreground transition-all flex-1"
+            >
               <div>
-                <h4 className="font-semibold text-gray-900 mb-1">
-                  Account Security
-                </h4>
-                <p className="text-sm text-gray-600">
-                  Your account is secured with{" "}
-                  <span className="font-semibold">
-                    {getProviderName(userData.provider)}
-                  </span>{" "}
-                  authentication. Keep your login credentials safe and don't
-                  share them with anyone.
+                <p className="text-xl font-serif italic leading-none">
+                  Modify Profile
+                </p>
+                <p className="text-[9px] font-bold uppercase tracking-widest text-foreground/30 mt-2">
+                  Personalize your identity
                 </p>
               </div>
+              <LuArrowUpRight className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            </Link>
+
+            <div className="p-8 bg-surface-alt rounded-3xl flex-1 border border-transparent">
+              <p className="text-[9px] font-black uppercase tracking-widest text-primary mb-2">
+                Security Note
+              </p>
+              <p className="text-xs leading-relaxed text-foreground/50 font-medium">
+                Your profile is encrypted and synced with the Sanctuary Global
+                Ledger.
+              </p>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
+
+// --- Boutique Field Atom ---
+const ProfileField = ({ label, value }) => (
+  <div className="space-y-2 group cursor-default">
+    <p className="text-[9px] font-black uppercase tracking-widest text-foreground/20 group-hover:text-primary transition-colors">
+      {label}
+    </p>
+    <p className="text-2xl font-serif italic text-foreground tracking-tight">
+      {value}
+    </p>
+  </div>
+);
 
 export default UserProfile;

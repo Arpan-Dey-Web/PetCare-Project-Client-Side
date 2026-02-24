@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext";
 
@@ -12,9 +11,11 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import { auth } from "../utils/firebase.init";
 
-import useAxiosSecure from "../hooks/useAxiosSecure";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
+import { auth } from "@/app/utils/firebase.init";
+
+
 
 // import axios from "axios";
 const googleProvider = new GoogleAuthProvider();
@@ -55,10 +56,10 @@ const AuthProvider = ({ children }) => {
             withCredentials: true,
           })
           .then((res) => {
-            console.log(res);
+            // console.log(res);
           })
           .catch((err) => {
-            console.log(err);
+            // console.log(err);
           });
       }
 

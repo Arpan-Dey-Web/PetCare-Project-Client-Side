@@ -1,21 +1,13 @@
 import React from "react";
-
+import Logos2 from "../../assets/petcarelogo.png";
 const Logo = () => {
   return (
     <div className="flex items-center gap-2">
       <img
-        className="w-10 rounded-xl"
-        src="https://i.ibb.co/d4FJcpGW/Paw-s-Home-Logo-with-Vibrant-Compassionate-Design.png"
+        className="w-20 rounded-xl"
+        src={"https://res.cloudinary.com/dioe6nj4y/image/upload/v1771904531/petcarelogo_fpabmx.png"}
         alt="Paw's Home Logo"
       />
-      <h1
-        className="
-          font-bold 
-          transition-colors duration-300
-        "
-      >
-        PetCare
-      </h1>
     </div>
   );
 };

@@ -1,256 +1,256 @@
-import React, { useContext, useState } from "react";
+import React, { useState, useContext, useRef } from "react";
 import axios from "axios";
-import toast from "react-hot-toast";
-import { AuthContext } from "../context/AuthContext";
-import useAxiosSecure from "../hooks/useAxiosSecure";
+import toast, { Toaster } from "react-hot-toast";
+import { AuthContext } from "@/context/AuthContext";
+import { motion } from "framer-motion";
+import { FiPlus, FiArrowRight, FiImage } from "react-icons/fi";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
 
 const CreateDonationCampaign = () => {
-  const [imageFile, setImageFile] = useState(null);
-  const [imageError, setImageError] = useState("");
-  const [petName, setPetName] = useState(""); // 👈 Added missing petName field
-  const [maxDonation, setMaxDonation] = useState("");
-  const [lastDate, setLastDate] = useState("");
-  const [shortDescription, setShortDescription] = useState("");
-  const [longDescription, setLongDescription] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false); // 👈 Added loading state
-  const imgbbAPI = import.meta.env.VITE_imgbb_api_key;
-  const [errors, setErrors] = useState({});
   const { user } = useContext(AuthContext);
-
   const axiosSecure = useAxiosSecure();
+  const fileInputRef = useRef(null);
 
-  const handleImageUpload = async () => {
-    if (!imageFile) {
-      setImageError("Please select an image before submitting.");
-      return null;
-    }
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
 
-    const formData = new FormData();
-    formData.append("image", imageFile);
+  const [formData, setFormData] = useState({
+    petName: "",
+    maxDonation: "",
+    lastDate: "",
+    shortDescription: "",
+    longDescription: "",
+  });
 
-    try {
-      const res = await axios.post(
-        `https://api.imgbb.com/1/upload?key=${imgbbAPI}`,
-        formData
-      );
-      setImageError("");
-      toast.success("Image uploaded!");
-      return res.data.data.url;
-    } catch (error) {
-      setImageError("Image upload failed.");
-      toast.error("Image upload failed.");
-      return null;
+  const imgbbAPI = import.meta.env.VITE_imgbb_api_key;
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+      setErrors((prev) => ({ ...prev, image: "" }));
     }
   };
 
   const validate = () => {
     const newErrors = {};
-
-    if (!imageFile) newErrors.image = "Please select a pet image";
-    if (!petName) newErrors.petName = "Pet name is required"; // 👈 Added petName validation
-    if (!maxDonation)
-      newErrors.maxDonation = "Maximum donation amount is required";
-    if (!lastDate) newErrors.lastDate = "Last date is required";
-    if (!shortDescription)
-      newErrors.shortDescription = "Short description is required";
-    if (!longDescription)
-      newErrors.longDescription = "Long description is required";
-
+    if (!imageFile) newErrors.image = "Portrait is required";
+    if (!formData.petName) newErrors.petName = "Name is required";
+    if (!formData.maxDonation) newErrors.maxDonation = "Goal is required";
+    if (!formData.lastDate) newErrors.lastDate = "Date is required";
+    if (!formData.shortDescription)
+      newErrors.shortDescription = "Intro required";
+    if (formData.longDescription.length < 20)
+      newErrors.longDescription = "More details needed";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validate()) return;
 
-    if (!user || !user.email) {
-      toast.error("User not authenticated");
-      return;
-    }
-
     setIsSubmitting(true);
-
     try {
-      // First upload image
-      const uploadedImageUrl = await handleImageUpload();
-      if (!uploadedImageUrl) {
-        toast.error("Image upload failed.");
-        setIsSubmitting(false);
-        return;
-      }
+      const data = new FormData();
+      data.append("image", imageFile);
+      const res = await axios.post(
+        `https://api.imgbb.com/1/upload?key=${imgbbAPI}`,
+        data,
+      );
 
       const campaignData = {
-        petName, // 👈 Added petName field
+        ...formData,
+        maxDonation: parseFloat(formData.maxDonation),
+        image: res.data.data.url,
         owner: user.email,
         ownerName: user.displayName,
-        image: uploadedImageUrl,
-        maxDonation: parseFloat(maxDonation), // 👈 Ensure it's a number
-        lastDate,
-        shortDescription,
-        longDescription,
+        donatedAmount: 0,
+        isPaused: false,
         createdAt: new Date().toISOString(),
       };
 
-      const res = await axiosSecure.post("/donation-campaigns", campaignData);
-
-      if (res.status === 201) {
-        toast.success("Campaign created successfully!");
-
-        // ✅ Reset form on success
-        setPetName("");
-        setMaxDonation("");
-        setLastDate("");
-        setShortDescription("");
-        setLongDescription("");
-        setImageFile(null);
-        setImageError("");
-        setErrors({});
-
-        // Reset file input
-        const fileInput = document.querySelector('input[type="file"]');
-        if (fileInput) fileInput.value = "";
-      }
+      await axiosSecure.post("/donation-campaigns", campaignData);
+      toast.success("Campaign Registered.");
+      setFormData({
+        petName: "",
+        maxDonation: "",
+        lastDate: "",
+        shortDescription: "",
+        longDescription: "",
+      });
+      setImagePreview(null);
     } catch (err) {
-      if (err.response?.data?.message) {
-        toast.error(err.response.data.message);
-      } else {
-        toast.error("Something went wrong!");
-      }
+      toast.error("Upload failed.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div
-      className={`max-w-3xl mx-auto p-6  shadow-md border border-gray-200 rounded-xl  bg-white `}
-    >
-      <h2
-        className={`  text-3xl font-semibold  mb-6 text-center  text-light`}
+    <div className="max-w-7xl mx-auto py-12 px-4">
+      {/* 1. EDITORIAL HEADER */}
+      <header className="border-b-2 border-foreground pb-16 mb-20">
+        <div className="space-y-4">
+          <span className="text-[11px] font-black uppercase tracking-[0.4em] text-primary">
+            Funding Initiative
+          </span>
+          <h1 className="text-7xl md:text-9xl font-serif italic tracking-tighter text-foreground leading-[0.8]">
+            New <br /> <span className="text-primary italic">Campaign.</span>
+          </h1>
+        </div>
+      </header>
+
+      <form
+        onSubmit={handleSubmit}
+        className="grid grid-cols-1 lg:grid-cols-12 gap-24"
       >
-        Create Donation Campaign
-      </h2>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Pet Name Field - Added */}
-        <div>
-          <label className="block mb-1 font-medium ">Pet Name *</label>
-          <input
-            type="text"
-            value={petName}
-            onChange={(e) => setPetName(e.target.value)}
-            placeholder="Enter pet name"
-            className="w-full border border-gray-300 rounded-lg px-4 py-2"
-            disabled={isSubmitting}
-          />
-          {errors.petName && (
-            <p className="text-red-500 text-sm mt-1">{errors.petName}</p>
-          )}
-        </div>
-
-        {/* Image Upload */}
-        <div>
-          <label className="block mb-1 font-medium ">Pet Image *</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setImageFile(e.target.files[0])} // 👈 Fixed: using setImageFile
-            disabled={isSubmitting}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2"
-          />
+        {/* LEFT: PORTRAIT UPLOAD */}
+        <div className="lg:col-span-4 space-y-8">
+          <p className="text-[12px] font-black uppercase tracking-widest text-foreground">
+            Campaign Portrait
+          </p>
+          <div
+            onClick={() => fileInputRef.current.click()}
+            className="relative aspect-[3/4] rounded-[3.5rem] overflow-hidden bg-stone-100 border-2 border-dashed border-stone-300 group hover:border-primary transition-all cursor-pointer"
+          >
+            {imagePreview ? (
+              <img
+                src={imagePreview}
+                className="w-full h-full object-cover"
+                alt="Preview"
+              />
+            ) : (
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-12 text-center">
+                <FiImage className="text-stone-300 mb-4" size={48} />
+                <p className="text-lg font-serif italic text-stone-400">
+                  Select Portrait
+                </p>
+              </div>
+            )}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleImageChange}
+              className="hidden"
+              accept="image/*"
+            />
+          </div>
           {errors.image && (
-            <p className="text-red-500 text-sm mt-1">{errors.image}</p>
-          )}
-          {imageError && (
-            <p className="text-red-500 text-sm mt-1">{imageError}</p>
-          )}
-        </div>
-
-        {/* Max Donation */}
-        <div>
-          <label className="block mb-1 font-medium ">
-            Maximum Donation Amount *
-          </label>
-          <input
-            type="number"
-            value={maxDonation}
-            onChange={(e) => setMaxDonation(e.target.value)}
-            placeholder="Enter amount in BDT"
-            className="w-full border border-gray-300 rounded-lg px-4 py-2"
-            disabled={isSubmitting}
-            min="1"
-          />
-          {errors.maxDonation && (
-            <p className="text-red-500 text-sm mt-1">{errors.maxDonation}</p>
-          )}
-        </div>
-
-        {/* Last Date */}
-        <div>
-          <label className="block mb-1 font-medium">Last Date *</label>
-          <input
-            type="date"
-            value={lastDate}
-            onChange={(e) => setLastDate(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2"
-            disabled={isSubmitting}
-            min={new Date().toISOString().split("T")[0]} // 👈 Prevent past dates
-          />
-          {errors.lastDate && (
-            <p className="text-red-500 text-sm mt-1">{errors.lastDate}</p>
-          )}
-        </div>
-
-        {/* Short Description */}
-        <div>
-          <label className="block mb-1 font-medium ">Short Description *</label>
-          <textarea
-            value={shortDescription}
-            onChange={(e) => setShortDescription(e.target.value)}
-            rows={2}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2"
-            disabled={isSubmitting}
-            placeholder="Brief description of the campaign"
-          />
-          {errors.shortDescription && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.shortDescription}
+            <p className="text-primary text-[10px] font-bold uppercase">
+              {errors.image}
             </p>
           )}
         </div>
 
-        {/* Long Description */}
-        <div>
-          <label className="block mb-1 font-medium ">Long Description *</label>
-          <textarea
-            value={longDescription}
-            onChange={(e) => setLongDescription(e.target.value)}
-            rows={5}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2"
-            disabled={isSubmitting}
-            placeholder="Detailed description of the campaign"
-          />
-          {errors.longDescription && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.longDescription}
-            </p>
-          )}
-        </div>
+        {/* RIGHT: DATA FIELDS */}
+        <div className="lg:col-span-8 space-y-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-16">
+            <BoutiqueField
+              label="Pet's Name"
+              name="petName"
+              placeholder="Who needs help?"
+              value={formData.petName}
+              onChange={handleChange}
+              error={errors.petName}
+            />
+            <BoutiqueField
+              label="Donation Goal (BDT)"
+              name="maxDonation"
+              type="number"
+              placeholder="e.g. 10000"
+              value={formData.maxDonation}
+              onChange={handleChange}
+              error={errors.maxDonation}
+            />
+            <BoutiqueField
+              label="Last Date to Donate"
+              name="lastDate"
+              type="date"
+              value={formData.lastDate}
+              onChange={handleChange}
+              error={errors.lastDate}
+            />
+          </div>
 
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className={`w-full py-2 px-4 rounded-lg transition  
-            button-light
-          `}
-        >
-          {isSubmitting ? "Creating Campaign..." : "Submit Campaign"}
-        </button>
+          <BoutiqueField
+            label="Catchy Intro"
+            name="shortDescription"
+            placeholder="Sum up the urgency in one sentence..."
+            value={formData.shortDescription}
+            onChange={handleChange}
+            error={errors.shortDescription}
+            fullWidth
+          />
+
+          <div className="space-y-6">
+            <p className="text-[12px] font-black uppercase tracking-widest text-foreground">
+              Full Story & Financial Need
+            </p>
+            <textarea
+              name="longDescription"
+              value={formData.longDescription}
+              onChange={handleChange}
+              rows={6}
+              className="w-full bg-transparent border-b-2 border-stone-800 py-4 text-2xl font-serif italic text-black outline-none focus:border-primary transition placeholder:text-stone-200 resize-none"
+              placeholder="Explain why this companion needs support..."
+            />
+            {errors.longDescription && (
+              <p className="text-primary text-[10px] font-bold uppercase">
+                {errors.longDescription}
+              </p>
+            )}
+          </div>
+
+          {/* SUBMIT */}
+          <div className="pt-12">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="group flex items-center justify-between w-full border-b-4 border-foreground pb-6 hover:border-primary transition-all disabled:opacity-20 cursor-pointer"
+            >
+              <span className="text-5xl md:text-7xl font-serif italic tracking-tighter text-foreground">
+                {isSubmitting ? "Initiating..." : "Launch Campaign."}
+              </span>
+              <FiArrowRight
+                className="text-primary group-hover:translate-x-6 transition-transform"
+                size={60}
+              />
+            </button>
+          </div>
+        </div>
       </form>
+      <Toaster position="bottom-center" />
     </div>
   );
 };
+
+// Reusable Boutique Field
+const BoutiqueField = ({ label, name, error, fullWidth = false, ...props }) => (
+  <div className={`space-y-4 group ${fullWidth ? "md:col-span-2" : ""}`}>
+    <p className="text-[12px] font-black uppercase tracking-widest text-foreground group-focus-within:text-primary transition-colors">
+      {label}
+    </p>
+    <input
+      {...props}
+      name={name}
+      className="w-full bg-transparent border-b-2 border-stone-800 py-4 text-2xl font-serif italic text-black outline-none focus:border-primary transition placeholder:text-stone-200"
+    />
+    {error && (
+      <p className="text-primary text-[10px] font-bold uppercase mt-2">
+        {error}
+      </p>
+    )}
+  </div>
+);
 
 export default CreateDonationCampaign;

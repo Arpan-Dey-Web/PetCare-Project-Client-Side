@@ -1,31 +1,32 @@
+import RootLayout from "@/Layout/RootLayout";
 import { createBrowserRouter } from "react-router";
-import Login from "../SharedComponent/Login";
-import Register from "../SharedComponent/Register";
-import Dashboard from "../Layout/Dashboard";
-import AddPet from "../DashboardComponent/AddPet";
-import PrivateRoute from "./PrivateRoute";
-import MyAddedPets from "../DashboardComponent/MyAddedPets";
-import Pets from "../Pages/Pets";
 import Home from "../Pages/Home";
-import RootLayout from "../Layout/RootLayout";
-import PetDetails from "../SharedComponent/PetDetails";
-import AdoptionRequests from "../DashboardComponent/AdoptionRequests";
-import UpdatePet from "../DashboardComponent/UpdatePet";
-import CreateDonationCampaign from "../DashboardComponent/CreateDonationCampaign";
-import MyDonationCampaigns from "../DashboardComponent/MyDonationCampaigns";
-import ErrorPage from "../Pages/ErrorPage";
-import EditMyDonation from "../DashboardComponent/EditMyDonation";
 import DonationCampaigns from "../Pages/DonationCampaigns";
-import DonationDetailsPage from "../Pages/DonationDetailsPage";
-import AdminRoute from "./AdminRoute";
-import Users from "../DashboardComponent/Users";
-import AllPet from "../DashboardComponent/AllPet";
-import AlldonationCampaign from "../DashboardComponent/AlldonationCampaign";
-import MyDonations from "../DashboardComponent/MyDonations";
-import DashboardHomePage from "../DashboardComponent/DashboardHomePage";
-import AdminDashboard from "../DashboardComponent/AdminDashboard";
-import UserProfile from "../DashboardComponent/UserProfile";
-import AboutUsSection from "../SharedComponent/AboutUsSection";
+import PetDonationDetailsPage from "../Pages/DonationDetailsPage";
+import Login from "@/components/SharedComponent/Login";
+import Register from "@/components/SharedComponent/Register";
+import Pets from "../Pages/Pets";
+import PetDetails from "@/components/SharedComponent/PetDetails";
+import AboutUsSection from "../Pages/AboutUs";
+import DashboardHomePage from "@/components/DashboardComponent/DashboardHomePage";
+import Dashboard from "@/Layout/DashboardLayout";
+import ErrorPage from "../Pages/ErrorPage";
+import UserProfile from "@/components/DashboardComponent/UserProfile";
+import AddPet from "@/components/DashboardComponent/AddPet";
+import MyAddedPets from "@/components/DashboardComponent/MyAddedPets";
+import AdoptionRequests from "@/components/DashboardComponent/AdoptionRequests";
+import UpdatePet from "@/components/DashboardComponent/UpdatePet";
+import CreateDonationCampaign from "@/components/DashboardComponent/CreateDonationCampaign";
+import MyDonationCampaigns from "@/components/DashboardComponent/MyDonationCampaigns";
+import EditMyDonation from "@/components/DashboardComponent/EditMyDonation";
+import MyDonations from "@/components/DashboardComponent/MyDonations";
+import AdminDashboard from "@/components/DashboardComponent/AdminDashboard";
+import UsersComponent from "@/components/DashboardComponent/Users";
+import AllPet from "@/components/DashboardComponent/AllPet";
+import AlldonationCampaign from "@/components/DashboardComponent/AlldonationCampaign";
+import PrivateRoute from "./PrivateRoutes";
+import AdminRoute from "./AdminRoutes";
+
 
 const router = createBrowserRouter([
   {
@@ -43,7 +44,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/donations-details/:id",
-        Component: DonationDetailsPage,
+        Component: PetDonationDetailsPage,
       },
       {
         path: "/login",
@@ -73,19 +74,19 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     element: (
       <PrivateRoute>
-        <Dashboard></Dashboard>
+        <Dashboard/>
       </PrivateRoute>
     ),
     children: [
       {
         index: true,
-        element: <DashboardHomePage></DashboardHomePage>,
+        element: <DashboardHomePage/>,
       },
       {
         path: "profile",
         element: (
           <PrivateRoute>
-            <UserProfile></UserProfile>
+            <UserProfile/>
           </PrivateRoute>
         ),
       },
@@ -117,7 +118,7 @@ const router = createBrowserRouter([
         path: "update-pet/:id",
         element: (
           <PrivateRoute>
-            <UpdatePet></UpdatePet>
+            <UpdatePet/>
           </PrivateRoute>
         ),
       },
@@ -125,7 +126,7 @@ const router = createBrowserRouter([
         path: "create-donation-campaign",
         element: (
           <PrivateRoute>
-            <CreateDonationCampaign></CreateDonationCampaign>
+            <CreateDonationCampaign/>
           </PrivateRoute>
         ),
       },
@@ -133,7 +134,7 @@ const router = createBrowserRouter([
         path: "my-donation-campaigns",
         element: (
           <PrivateRoute>
-            <MyDonationCampaigns></MyDonationCampaigns>
+            <MyDonationCampaigns/>
           </PrivateRoute>
         ),
       },
@@ -141,7 +142,7 @@ const router = createBrowserRouter([
         path: "edit-donation/:id",
         element: (
           <PrivateRoute>
-            <EditMyDonation></EditMyDonation>
+            <EditMyDonation/>
           </PrivateRoute>
         ),
       },
@@ -149,7 +150,7 @@ const router = createBrowserRouter([
         path: "my-donations",
         element: (
           <PrivateRoute>
-            <MyDonations></MyDonations>
+            <MyDonations/>
           </PrivateRoute>
         ),
       },
@@ -157,7 +158,7 @@ const router = createBrowserRouter([
         path: "admin-dashboard",
         element: (
           <AdminRoute>
-            <AdminDashboard></AdminDashboard>
+            <AdminDashboard/>
           </AdminRoute>
         ),
       },
@@ -165,7 +166,7 @@ const router = createBrowserRouter([
         path: "admin/allusers",
         element: (
           <AdminRoute>
-            <Users></Users>
+            <UsersComponent/>
           </AdminRoute>
         ),
       },
@@ -173,7 +174,7 @@ const router = createBrowserRouter([
         path: "admin/allpets",
         element: (
           <AdminRoute>
-            <AllPet></AllPet>
+            <AllPet/>
           </AdminRoute>
         ),
       },
@@ -181,7 +182,7 @@ const router = createBrowserRouter([
         path: "admin/alldonation",
         element: (
           <AdminRoute>
-            <AlldonationCampaign></AlldonationCampaign>
+            <AlldonationCampaign/>
           </AdminRoute>
         ),
       },

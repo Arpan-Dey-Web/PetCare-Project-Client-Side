@@ -1,114 +1,129 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router";
-
-import eagleImage from "@/assets/eagle.png";
-import dogImage from "@/assets/dogBanner.png";
-import catImage from "@/assets/catlying.png";
+import { ArrowRight, Heart } from "lucide-react";
+import Button from "./Button";
 
 const Banner = () => {
+
   return (
-    <div className="relative h-[90vh] w-full mb-16 bg-[#0f172a] overflow-hidden">
-      {/* Dark Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/40 z-10"></div>
+    <div className="relative w-full bg-background pb-20">
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[10%] right-[-5%] w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] opacity-40" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-accent/10 rounded-full blur-[100px] opacity-40" />
+      </div>
 
-      {/* Background Decorative "Glow" */}
-      <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-pink-500/20 rounded-full blur-[120px] animate-pulse"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-amber-500/20 rounded-full blur-[120px]"></div>
+      <div className="max-w-7xl mx-auto  relative z-10 w-full">
+        <div className="grid lg:grid-cols-12 gap-16 items-center">
+          {/* LEFT CONTENT */}
+          <div className="lg:col-span-7 text-center lg:text-left">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="flex items-center justify-center lg:justify-start gap-3 mb-10"
+            >
+              <span className="w-10 h-[1px] bg-primary" />
+              <span className="text-primary font-bold text-[10px] uppercase tracking-[0.5em]">
+                The Furry Friends Crew • Est. 2026
+              </span>
+            </motion.div>
 
-      <div className="relative flex justify-between h-full z-20  ">
-        {/* Left Side: Floating Eagle */}
-        <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
-          className="h-full items-end hidden lg:flex flex-1"
-        >
-          <motion.img
-            animate={{ y: [0, -20, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            src={eagleImage}
-            alt="Eagle"
-            className="h-[80%] object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
-          />
-        </motion.div>
+            <motion.h1
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              className="text-6xl md:text-8xl lg:text-[7.5rem] font-serif text-foreground leading-[0.8] tracking-tighter mb-12"
+            >
+              Unconditional <br />
+              <span className="text-primary italic font-normal relative ">
+                love
+                <svg
+                  className="absolute -bottom-2 left-0 w-full h-4 opacity-40"
+                  viewBox="0 0 100 10"
+                  preserveAspectRatio="none"
+                >
+                  <path
+                    d="M0,5 Q50,10 100,5"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    fill="none"
+                  />
+                </svg>
+              </span>
+              <br /> has a face.
+            </motion.h1>
 
-        {/* Center Content */}
-        <div className="flex flex-col items-center justify-center text-white text-center px-6 z-30 flex-[2] mt-10">
-          <motion.span
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="px-4 py-1 rounded-full bg-white/10 border border-white/20 text-sm font-medium mb-6 uppercase tracking-widest"
-          >
-            🐾 Premium Pet Care
-          </motion.span>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+              className="text-muted-foreground text-xl md:text-2xl font-light leading-relaxed mb-14 max-w-lg mx-auto lg:mx-0"
+            >
+              A super chill spot where happy vibes meet wagging tails. We’re all
+              about making sure your future best friend is pampered, loved, and
+              ready for snuggles.
+            </motion.p>
 
-          <motion.h1
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-5xl md:text-6xl lg:text-8xl font-black mb-6 leading-tight"
-          >
-            The Best Care for <br />
-            <span className="bg-gradient-to-r from-amber-400 via-pink-500 to-red-500 bg-clip-text text-transparent italic font-serif">
-              Your Best Friend
-            </span>
-          </motion.h1>
-
-          {/* Button Area with Cat Interaction */}
-          <div className="relative group">
-            <Link to="/pets">
-              <button className="relative z-10 mt-5 px-10 py-5 rounded-2xl text-2xl font-bold bg-gradient-to-r from-amber-500 to-pink-600 shadow-[0_10px_30px_rgba(236,72,153,0.3)] hover:shadow-[0_15px_40px_rgba(236,72,153,0.5)] hover:-translate-y-1 active:scale-95 transition-all cursor-pointer">
-                Browse Pets
-              </button>
-            </Link>
+            {/* MAGNETIC CTA */}
+            <div className="flex justify-center lg:justify-start">
+              <Link to="/pets" className="relative group">
+                <Button text="Adopt a soul" variant="primary" />
+              </Link>
+            </div>
           </div>
 
-          <p className="mt-8 text-gray-300 max-w-md text-lg italic">
-            "Because every paw deserves a warm home and a happy heart."
-          </p>
-        </div>
+          {/* RIGHT VISUALS */}
+          <div className="lg:col-span-5 relative h-[600px] md:h-[800px] flex items-center justify-center">
+            {/* Main Image Blob */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+              className="relative w-full aspect-[4/5] z-20"
+            >
+              <div className="w-full h-full bg-background rounded-[30%_70%_70%_30%/30%_30%_70%_70%] overflow-hidden border-[16px] border-background shadow-2xl">
+                <img
+                  src="https://images.unsplash.com/photo-1552053831-71594a27632d?q=80&w=1000"
+                  alt="Sanctuary Dog"
+                  className="w-full h-full object-cover grayscale-[15%] hover:grayscale-0 transition-all duration-700"
+                />
+              </div>
+            </motion.div>
 
-        {/* Right Side: Sliding Dog */}
-        <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
-          className="hidden lg:flex h-full items-end flex-1"
-        >
-          <img
-            src={dogImage}
-            alt="Dog"
-            className="h-[85%] object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
-          />
-        </motion.div>
+            <motion.div
+              animate={{ y: [0, -30, 0], rotate: [0, 2, 0] }}
+              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute top-4 -right-4 md:right-[-5%] w-48 h-48 md:w-72 md:h-72 z-30 border-[12px] border-background rounded-[60%_40%_30%_70%/60%_40%_70%_30%] overflow-hidden shadow-2xl"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=1000"
+                alt="Sanctuary Cat"
+                className="w-full h-full object-cover grayscale-[10%] hover:grayscale-0 transition-all duration-700"
+              />
+            </motion.div>
 
-        {/* Improved Wave - Matches your #f8fafc background */}
-        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0]">
-          <svg
-            className="relative block w-full h-24"
-            viewBox="0 0 1200 120"
-            preserveAspectRatio="none"
-          >
-            <path
-              d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C58.47,88.71,133.26,81,189.39,72.52c41.35-6.24,85-11.23,132-16.08Z"
-              fill="#f8fafc"
-            ></path>
-          </svg>
+            {/* Decorative Label */}
+            <div className="absolute bottom-10 -left-10 z-40 bg-background px-8 py-5 rounded-[2rem] shadow-2xl border border-border hidden xl:block">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-surface-alt rounded-full flex items-center justify-center">
+                  <Heart className="w-5 h-5 text-primary" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
+                    Care Standard
+                  </span>
+                  <span className="text-sm font-serif text-foreground">
+                    Premium Comfort
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-      {/* This SVG at the bottom of your dark banner makes it "bleed" into the white section below */}
-      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0]">
-        <svg
-          className="relative block w-full h-24"
-          viewBox="0 0 1200 120"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C58.47,88.71,133.26,81,189.39,72.52c41.35-6.24,85-11.23,132-16.08Z"
-            fill="#ffffff"
-          ></path>
-        </svg>
       </div>
     </div>
   );

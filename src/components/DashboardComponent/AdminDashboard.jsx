@@ -1,244 +1,147 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  FaUsers,
-  FaPaw,
-  FaDonate,
-  FaChartLine,
-  FaArrowUp,
-  FaArrowRight,
-} from "react-icons/fa";
+import { motion } from "framer-motion";
+import { FiArrowUpRight, FiMoreHorizontal } from "react-icons/fi";
 import { Link } from "react-router";
-import useRole from "../hooks/useRole";
-import useAxiosSecure from "../hooks/useAxiosSecure";
-import { AuthContext } from "../context/AuthContext";
-import Loading from "../SharedComponent/Loading";
+import { AuthContext } from "@/context/AuthContext";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
 
 const AdminDashboard = () => {
-  const [loading, setLoading] = useState(true);
-  const [totalUsers, setTotalUsers] = useState([]);
-  const [availablePets, setAvailablePets] = useState([]);
-  const [donationCampaigns, setDonationCampaigns] = useState([]);
-
   const { user } = useContext(AuthContext);
   const axiosSecure = useAxiosSecure();
-  const role = useRole();
-  const adminRole = role[0] === "admin";
+  const [data, setData] = useState({ users: 0, pets: 0, campaigns: 0 });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [usersRes, petsRes, campaignsRes] = await Promise.all([
-          axiosSecure.get(`/users`),
+        const [u, p, c] = await Promise.all([
+          axiosSecure.get("/users"),
           axiosSecure.get("/available-pets"),
           axiosSecure.get("/donation-campaigns"),
         ]);
-
-        setTotalUsers(usersRes.data);
-        setAvailablePets(petsRes.data);
-        setDonationCampaigns(campaignsRes.data.campaigns);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
+        setData({
+          users: u.data.length,
+          pets: p.data.length,
+          campaigns: c.data.campaigns.length,
+        });
+      } catch (e) {
+        // console.error(e);
       }
     };
-
-    if (user && adminRole) {
-      fetchData();
-    }
-  }, [user, adminRole]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loading />
-      </div>
-    );
-  }
-
-  const statsCards = [
-    {
-      title: "Total Users",
-      value: totalUsers?.length || 0,
-      icon: <FaUsers className="text-3xl" />,
-      bgColor: "bg-blue-50",
-      iconColor: "text-blue-600",
-      borderColor: "border-blue-200",
-      link: "/dashboard/admin/allusers",
-    },
-    {
-      title: "Available Pets",
-      value: availablePets?.length || 0,
-      icon: <FaPaw className="text-3xl" />,
-      bgColor: "bg-green-50",
-      iconColor: "text-green-600",
-      borderColor: "border-green-200",
-      link: "/dashboard/admin/allpets",
-    },
-    {
-      title: "Donation Campaigns",
-      value: donationCampaigns?.length || 0,
-      icon: <FaDonate className="text-3xl" />,
-      bgColor: "bg-amber-50",
-      iconColor: "text-amber-600",
-      borderColor: "border-amber-200",
-      link: "/dashboard/admin/alldonation",
-    },
-  ];
-
-  const quickActions = [
-    {
-      title: "Manage Users",
-      description: "View and manage all registered users",
-      icon: <FaUsers className="text-2xl" />,
-      link: "/dashboard/admin/allusers",
-      color: "blue",
-    },
-    {
-      title: "Manage Pets",
-      description: "View and manage all pet listings",
-      icon: <FaPaw className="text-2xl" />,
-      link: "/dashboard/admin/allpets",
-      color: "green",
-    },
-    {
-      title: "Manage Campaigns",
-      description: "View and manage donation campaigns",
-      icon: <FaDonate className="text-2xl" />,
-      link: "/dashboard/admin/alldonation",
-      color: "amber",
-    },
-    {
-      title: "Create Campaign",
-      description: "Start a new donation campaign",
-      icon: <FaChartLine className="text-2xl" />,
-      link: "/dashboard/create-donation-campaign",
-      color: "purple",
-    },
-  ];
+    fetchData();
+  }, [axiosSecure]);
 
   return (
-    <div className="min-h-screen  py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Admin Dashboard
-          </h1>
-          <p className="text-gray-600">
-            Welcome back! Here's what's happening with your platform today.
-          </p>
-        </div>
+    <div className="min-h-screen  text-stone-900 selection:bg-stone-900 selection:text-white overflow-hidden">
+      {/* 1. THE VERTICAL BRAND AXIS */}
+      <div className="fixed left-12 top-0 bottom-0 w-px bg-stone-200/60 hidden lg:block" />
+      <div className="fixed left-6 top-1/2 -rotate-90 origin-left hidden lg:block">
+        <span className="text-[9px] font-black uppercase tracking-[0.8em] text-stone-300">
+          Sanctuary.Intelligence.Systems
+        </span>
+      </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {statsCards.map((stat, index) => (
-            <Link key={index} to={stat.link}>
-              <div
-                className={`${stat.bgColor} border-2 ${stat.borderColor} rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 p-6 cursor-pointer group`}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-600 mb-1">
-                      {stat.title}
-                    </p>
-                    <p className="text-4xl font-bold text-gray-900 mb-2">
-                      {stat.value}
-                    </p>
-                    <div className="flex items-center text-green-600 text-sm font-semibold">
-                      <FaArrowUp className="mr-1" />
-                      <span>View Details</span>
-                    </div>
-                  </div>
-                  <div
-                    className={`${stat.iconColor} opacity-80 group-hover:opacity-100 transition-opacity`}
-                  >
-                    {stat.icon}
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+      <main className="max-w-7xl mx-auto px-10 lg:px-24 pt-20 pb-40">
+        {/* 2. THE EDITORIAL HEADER */}
+        <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12 mb-32">
+          <div className="space-y-6">
+            <p className="text-[10px] font-black uppercase tracking-[0.5em] text-primary">
+              Master Access
+            </p>
+            <h1 className="text-[12vw] md:text-[9rem] font-serif italic leading-[0.7] tracking-tighter">
+              The <br />{" "}
+              <span className="text-stone-900 font-normal">Console.</span>
+            </h1>
+          </div>
+          <div className=" border border-stone-100 p-8 rounded-[2rem] shadow-2xl shadow-stone-200/50">
+            <p className="text-[10px] font-black uppercase tracking-widest text-stone-300 mb-2">
+              Authenticated Operator
+            </p>
+            <p className="text-2xl font-serif italic text-stone-900">
+              {user?.displayName}
+            </p>
+          </div>
+        </header>
 
-        {/* Quick Actions Section */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Quick Actions</h2>
-            <FaChartLine className="text-amber-600 text-2xl" />
+        {/* 3. THE INTERACTIVE LOG: LARGE & MONOCHROME */}
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-20 border-t border-stone-200 pt-20">
+          {/* Left: Global Stats List */}
+          <div className="lg:col-span-7 space-y-24">
+            <BigStatRow
+              label="Guardian Network"
+              count={data.users}
+              to="/dashboard/admin/allusers"
+            />
+            <BigStatRow
+              label="Animal Registry"
+              count={data.pets}
+              to="/dashboard/admin/allpets"
+            />
+            <BigStatRow
+              label="Financial Capital"
+              count={data.campaigns}
+              to="/dashboard/admin/alldonation"
+            />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {quickActions.map((action, index) => (
-              <Link key={index} to={action.link}>
-                <div
-                  className={`bg-gradient-to-r ${
-                    action.color === "blue"
-                      ? "from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200"
-                      : action.color === "green"
-                      ? "from-green-50 to-green-100 hover:from-green-100 hover:to-green-200"
-                      : action.color === "amber"
-                      ? "from-amber-50 to-amber-100 hover:from-amber-100 hover:to-amber-200"
-                      : "from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200"
-                  } border-2 ${
-                    action.color === "blue"
-                      ? "border-blue-200"
-                      : action.color === "green"
-                      ? "border-green-200"
-                      : action.color === "amber"
-                      ? "border-amber-200"
-                      : "border-purple-200"
-                  } rounded-lg p-5 transition-all duration-300 cursor-pointer group`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div
-                          className={`${
-                            action.color === "blue"
-                              ? "text-blue-600"
-                              : action.color === "green"
-                              ? "text-green-600"
-                              : action.color === "amber"
-                              ? "text-amber-600"
-                              : "text-purple-600"
-                          }`}
-                        >
-                          {action.icon}
-                        </div>
-                        <h3 className="text-lg font-bold text-gray-900">
-                          {action.title}
-                        </h3>
-                      </div>
-                      <p className="text-sm text-gray-600 mb-3">
-                        {action.description}
-                      </p>
-                      <div
-                        className={`flex items-center ${
-                          action.color === "blue"
-                            ? "text-blue-600"
-                            : action.color === "green"
-                            ? "text-green-600"
-                            : action.color === "amber"
-                            ? "text-amber-600"
-                            : "text-purple-600"
-                        } text-sm font-semibold group-hover:gap-2 transition-all`}
-                      >
-                        <span>Go to page</span>
-                        <FaArrowRight className="transition-transform group-hover:translate-x-1" />
-                      </div>
+          {/* Right: The Feature Action */}
+          <div className="lg:col-span-5 relative">
+            <div className="sticky top-32">
+              <Link
+                to="/dashboard/create-donation-campaign"
+                className="group block aspect-[3/4] bg-stone-900 rounded-[4rem] overflow-hidden relative"
+              >
+                <div className="absolute inset-0 p-12 flex flex-col justify-between text-[#fff4ea]">
+                  <div className="flex justify-between items-start">
+                    <span className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center">
+                      <FiMoreHorizontal />
+                    </span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">
+                      Action_01
+                    </span>
+                  </div>
+                  <div>
+                    <h2 className="text-6xl font-serif italic leading-none mb-8 group-hover:text-primary transition-colors">
+                      Launch <br /> Campaign.
+                    </h2>
+                    <div className="w-20 h-20 rounded-full bg-white hover:bg-primary text-stone-900 flex items-center justify-center group-hover:scale-110 transition-transform duration-700">
+                      <FiArrowUpRight size={32} />
                     </div>
                   </div>
+                </div>
+                {/* Decorative Texture */}
+                <div className="absolute -bottom-20 -right-20 text-[20rem] font-serif italic text-white/[0.03] pointer-events-none">
+                  S
                 </div>
               </Link>
-            ))}
+            </div>
           </div>
-        </div>
-
-        
-      </div>
+        </section>
+      </main>
     </div>
   );
 };
+
+// --- SUB-COMPONENT ---
+
+const BigStatRow = ({ label, count, to }) => (
+  <Link to={to} className="group flex flex-col gap-6">
+    <div className="flex justify-between items-end">
+      <div className="space-y-2">
+        <span className="text-[9px] font-black uppercase tracking-[0.4em] text-stone-300">
+          Registry Entry
+        </span>
+        <h3 className="text-5xl md:text-7xl font-serif italic text-stone-900 tracking-tighter group-hover:text-primary transition-all duration-500">
+          {label}
+        </h3>
+      </div>
+      <div className="text-right">
+        <p className="text-8xl md:text-9xl font-serif leading-none text-stone-100 group-hover:text-stone-200 transition-colors">
+          {count.toString().padStart(2, "0")}
+        </p>
+      </div>
+    </div>
+    <div className="w-full h-px  group-hover:bg-primary transition-all duration-1000" />
+  </Link>
+);
 
 export default AdminDashboard;

@@ -6,9 +6,11 @@ import axios from "axios";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import toast, { Toaster } from "react-hot-toast";
-import useAxiosSecure from "../hooks/useAxiosSecure";
-import { AuthContext } from "../context/AuthContext";
-import { FaUpload, FaPlus } from "react-icons/fa";
+import { motion } from "framer-motion";
+
+import { LuImagePlus, LuArrowRight } from "react-icons/lu";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
+import { AuthContext } from "@/context/AuthContext";
 
 const imgbbAPI = import.meta.env.VITE_imgbb_api_key;
 
@@ -17,16 +19,16 @@ const categoryOptions = [
   { value: "Cat", label: "Cat" },
   { value: "Bird", label: "Bird" },
   { value: "Rabbit", label: "Rabbit" },
-  { value: "Other", label: "Other" },
+  { value: "Other", label: "Other Species" },
 ];
 
 const validationSchema = Yup.object({
-  name: Yup.string().required("Pet name is required"),
-  age: Yup.string().required("Pet age is required"),
-  category: Yup.object().required("Pet category is required"),
+  name: Yup.string().required("Name is required"),
+  age: Yup.string().required("Age is required"),
+  category: Yup.object().required("Please select a category"),
   location: Yup.string().required("Location is required"),
-  shortDescription: Yup.string().required("Short description is required"),
-  image: Yup.mixed().required("Image is required"),
+  shortDescription: Yup.string().required("A short intro is required"),
+  image: Yup.mixed().required("A photo is required"),
 });
 
 const AddPet = () => {
@@ -39,64 +41,59 @@ const AddPet = () => {
     content: "",
     editorProps: {
       attributes: {
-        class: "prose max-w-none focus:outline-none min-h-[120px] p-4",
+        class:
+          "prose max-w-none focus:outline-none min-h-[180px] p-0 font-serif italic text-2xl text-foreground",
       },
     },
   });
 
-  // Custom styles for react-select
   const selectStyles = {
     control: (provided, state) => ({
       ...provided,
-      backgroundColor: "white",
-      borderColor: state.isFocused ? "#d97706" : "#d1d5db",
-      boxShadow: state.isFocused ? "0 0 0 2px rgba(217, 119, 6, 0.2)" : "none",
-      minHeight: "44px",
-      "&:hover": {
-        borderColor: "#d97706",
-      },
+      backgroundColor: "transparent",
+      border: "none",
+      borderBottom: state.isFocused
+        ? "2px solid var(--primary)"
+        : "2px solid #2d2d2d", // High contrast dark gray
+      borderRadius: "0",
+      padding: "12px 0",
+      boxShadow: "none",
+      "&:hover": { borderBottom: "2px solid var(--primary)" },
+    }),
+    valueContainer: (provided) => ({ ...provided, padding: "0" }),
+    singleValue: (provided) => ({
+      ...provided,
+      color: "#000000", // Solid black for max visibility
+      fontSize: "1.5rem",
+      fontFamily: "serif",
+      fontStyle: "italic",
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: "#000000",
+      opacity: 0.2,
+      fontSize: "1.5rem",
+      fontFamily: "serif",
+      fontStyle: "italic",
     }),
     menu: (provided) => ({
       ...provided,
-      backgroundColor: "white",
-      border: "1px solid #d1d5db",
-    }),
-    option: (provided, state) => ({
-      ...provided,
-      backgroundColor: state.isSelected
-        ? "#d97706"
-        : state.isFocused
-        ? "#fef3c7"
-        : "white",
-      color: state.isSelected ? "white" : "#111827",
-      "&:active": {
-        backgroundColor: "#d97706",
-      },
+      backgroundColor: "var(--background)",
+      border: "1px solid var(--border)",
+      borderRadius: "1rem",
+      zIndex: 50,
     }),
   };
 
-  const handleAddPet = async (
-    values,
-    resetForm,
-    setFieldError,
-    setSubmitting
-  ) => {
+  const handleAddPet = async (values, resetForm, setSubmitting) => {
     try {
       setUploading(true);
-
-      const handleImageUpload = async (file) => {
-        const formData = new FormData();
-        formData.append("image", file);
-
-        const response = await axios.post(
-          `https://api.imgbb.com/1/upload?key=${imgbbAPI}`,
-          formData
-        );
-
-        return response.data.data.url;
-      };
-
-      const imageUrl = await handleImageUpload(values.image);
+      const formData = new FormData();
+      formData.append("image", values.image);
+      const response = await axios.post(
+        `https://api.imgbb.com/1/upload?key=${imgbbAPI}`,
+        formData,
+      );
 
       const newPet = {
         name: values.name,
@@ -104,22 +101,20 @@ const AddPet = () => {
         category: values.category.value,
         location: values.location,
         shortDescription: values.shortDescription,
-        longDescription: editor?.getText() || "",
-        image: imageUrl,
+        longDescription: editor?.getHTML() || "",
+        image: response.data.data.url,
         adopted: false,
         owner: user?.email,
         ownerName: user?.displayName,
         createdAt: new Date().toISOString(),
       };
 
-      const res = await axiosSecure.post("/pet", newPet);
-
-      toast.success("Pet added successfully!");
+      await axiosSecure.post("/pet", newPet);
+      toast.success("Listing created successfully");
       resetForm();
       editor?.commands.setContent("");
     } catch (err) {
-      setFieldError("submit", "Failed to add pet. Please try again.");
-      toast.error("Failed to add pet. Please try again.");
+      toast.error("Error creating listing.");
     } finally {
       setUploading(false);
       setSubmitting(false);
@@ -127,239 +122,174 @@ const AddPet = () => {
   };
 
   return (
-    <div className="w-full py-6">
-      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Add a New Pet
-          </h2>
-          <p className="text-gray-600">Help pets find their forever homes</p>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="max-w-7xl mx-auto py-12 px-4"
+    >
+      <header className="border-b-2 border-foreground pb-16 mb-20">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12">
+          <div className="space-y-4">
+            <span className="text-[11px] font-black uppercase tracking-[0.4em] text-primary">
+              New Listing
+            </span>
+            <h1 className="text-7xl md:text-8xl font-serif italic tracking-tighter text-foreground leading-[0.8]">
+              Add a <span className="text-primary italic">Companion.</span>
+            </h1>
+          </div>
         </div>
+      </header>
 
-        <Formik
-          initialValues={{
-            name: "",
-            age: "",
-            category: null,
-            location: "",
-            shortDescription: "",
-            image: null,
-          }}
-          validationSchema={validationSchema}
-          onSubmit={(values, { resetForm, setFieldError, setSubmitting }) =>
-            handleAddPet(values, resetForm, setFieldError, setSubmitting)
-          }
-        >
-          {({ setFieldValue, isSubmitting, values }) => (
-            <Form className="space-y-6">
-              {/* Image Upload */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Pet Image <span className="text-red-500">*</span>
-                </label>
-                <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-amber-500 transition-colors">
+      <Formik
+        initialValues={{
+          name: "",
+          age: "",
+          category: null,
+          location: "",
+          shortDescription: "",
+          image: null,
+        }}
+        validationSchema={validationSchema}
+        onSubmit={(values, { resetForm, setSubmitting }) =>
+          handleAddPet(values, resetForm, setSubmitting)
+        }
+      >
+        {({ setFieldValue, isSubmitting, values }) => (
+          <Form className="grid grid-cols-1 lg:grid-cols-12 gap-24">
+            {/* PORTRAIT SECTION */}
+            <div className="lg:col-span-4">
+              <div className="space-y-6">
+                <p className="text-[12px] font-black uppercase tracking-widest text-foreground">
+                  Upload Portrait
+                </p>
+                <div className="relative aspect-[3/4] rounded-[3rem] overflow-hidden bg-stone-100 border-2 border-dashed border-stone-300 group hover:border-primary transition-colors">
+                  {values.image ? (
+                    <img
+                      src={URL.createObjectURL(values.image)}
+                      className="w-full h-full object-cover"
+                      alt="Preview"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-12 text-center cursor-pointer">
+                      <LuImagePlus className="text-stone-400 mb-4" size={48} />
+                      <p className="text-lg font-serif italic text-stone-500">
+                        Select a clear photo
+                      </p>
+                    </div>
+                  )}
                   <input
                     type="file"
                     accept="image/*"
                     onChange={(e) =>
                       setFieldValue("image", e.currentTarget.files[0])
                     }
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    className="absolute inset-0 opacity-0 cursor-pointer"
                   />
-                  <div className="text-center">
-                    <FaUpload className="mx-auto text-gray-400 text-3xl mb-2" />
-                    <p className="text-sm font-medium text-gray-700">
-                      Click to upload pet image
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      PNG, JPG, GIF up to 10MB
-                    </p>
-                  </div>
                 </div>
-                {values.image && (
-                  <div className="mt-2 p-3 bg-green-50 rounded-lg">
-                    <p className="text-sm text-gray-700">
-                      Selected:{" "}
-                      <span className="font-medium text-green-600">
-                        {values.image.name}
-                      </span>
-                    </p>
-                  </div>
-                )}
                 <ErrorMessage
                   name="image"
                   component="div"
-                  className="text-red-500 text-sm mt-1"
+                  className="text-primary text-[10px] font-bold uppercase"
                 />
               </div>
+            </div>
 
-              {/* Grid Layout for Form Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Name */}
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Pet Name <span className="text-red-500">*</span>
-                  </label>
-                  <Field
-                    type="text"
-                    name="name"
-                    placeholder="Enter pet's name"
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
-                  />
-                  <ErrorMessage
-                    name="name"
-                    component="div"
-                    className="text-red-500 text-sm mt-1"
-                  />
-                </div>
+            {/* FORM FIELDS SECTION */}
+            <div className="lg:col-span-8 space-y-20">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-16">
+                <BoutiqueField
+                  label="Pet's Name"
+                  name="name"
+                  placeholder="Enter name"
+                />
+                <BoutiqueField
+                  label="Pet's Age"
+                  name="age"
+                  placeholder="e.g. 2 Years / 4 Months"
+                />
 
-                {/* Age */}
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Pet Age <span className="text-red-500">*</span>
-                  </label>
-                  <Field
-                    type="text"
-                    name="age"
-                    placeholder="e.g., 2 years, 6 months"
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
-                  />
-                  <ErrorMessage
-                    name="age"
-                    component="div"
-                    className="text-red-500 text-sm mt-1"
-                  />
-                </div>
-
-                {/* Category */}
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Category <span className="text-red-500">*</span>
-                  </label>
+                <div className="space-y-4">
+                  <p className="text-[12px] font-black uppercase tracking-widest text-foreground">
+                    Category
+                  </p>
                   <Select
                     options={categoryOptions}
-                    value={values.category}
-                    onChange={(option) => setFieldValue("category", option)}
                     styles={selectStyles}
-                    placeholder="Select pet category..."
+                    placeholder="Choose species"
+                    onChange={(opt) => setFieldValue("category", opt)}
                   />
                   <ErrorMessage
                     name="category"
                     component="div"
-                    className="text-red-500 text-sm mt-1"
+                    className="text-primary text-[10px] font-bold uppercase"
                   />
                 </div>
 
-                {/* Location */}
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Pickup Location <span className="text-red-500">*</span>
-                  </label>
-                  <Field
-                    type="text"
-                    name="location"
-                    placeholder="City, State"
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
-                  />
-                  <ErrorMessage
-                    name="location"
-                    component="div"
-                    className="text-red-500 text-sm mt-1"
-                  />
-                </div>
-              </div>
-
-              {/* Short Description */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Short Description <span className="text-red-500">*</span>
-                </label>
-                <Field
-                  type="text"
-                  name="shortDescription"
-                  placeholder="Brief description of the pet"
-                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
-                />
-                <ErrorMessage
-                  name="shortDescription"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
+                <BoutiqueField
+                  label="Location"
+                  name="location"
+                  placeholder="City, State"
                 />
               </div>
 
-              {/* Long Description */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Long Description
-                </label>
-                <div className="border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-amber-500 focus-within:border-transparent transition">
-                  <EditorContent editor={editor} className="prose max-w-none" />
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  Provide detailed information about the pet's personality and
-                  care requirements
+              <BoutiqueField
+                label="One-Line Description"
+                name="shortDescription"
+                placeholder="A catchy intro for the listing..."
+                fullWidth
+              />
+
+              <div className="space-y-8">
+                <p className="text-[12px] font-black uppercase tracking-widest text-foreground">
+                  Detailed Story & Personality
                 </p>
+                <div className="border-b-2 border-stone-800 ">
+                  <EditorContent editor={editor} />
+                </div>
               </div>
 
-              {/* Submit Button */}
-              <div className="pt-4">
+              {/* ACTION */}
+              <div className="pt-12">
                 <button
                   type="submit"
                   disabled={isSubmitting || uploading}
-                  className="w-full flex items-center justify-center gap-3 bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 rounded-lg font-semibold text-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+                  className="group flex items-center justify-between w-full border-b-4 border-foreground pb-6 hover:border-primary transition-all disabled:opacity-20 hover:cursor-pointer"
                 >
-                  {uploading ? (
-                    <>
-                      <svg
-                        className="animate-spin h-5 w-5"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8v8H4z"
-                        ></path>
-                      </svg>
-                      <span>Uploading Image...</span>
-                    </>
-                  ) : (
-                    <>
-                      <FaPlus className="w-5 h-5" />
-                      <span>Add Pet</span>
-                    </>
-                  )}
+                  <span className="text-5xl md:text-6xl font-serif italic tracking-tighter text-foreground">
+                    {uploading ? "Publishing..." : "Finalize Listing."}
+                  </span>
+                  <LuArrowRight
+                    className="text-primary group-hover:translate-x-6 transition-transform"
+                    size={50}
+                  />
                 </button>
-                <ErrorMessage
-                  name="submit"
-                  component="div"
-                  className="text-red-500 text-sm mt-3 text-center font-medium"
-                />
               </div>
-            </Form>
-          )}
-        </Formik>
-
-        <Toaster
-          position="top-right"
-          reverseOrder={false}
-          toastOptions={{
-            className: "bg-white text-gray-900",
-          }}
-        />
-      </div>
-    </div>
+            </div>
+          </Form>
+        )}
+      </Formik>
+      <Toaster position="bottom-center" />
+    </motion.div>
   );
 };
+
+// --- Boutique Field Atom ---
+const BoutiqueField = ({ label, name, placeholder, fullWidth = false }) => (
+  <div className={`space-y-4 group ${fullWidth ? "md:col-span-2" : ""}`}>
+    <p className="text-[12px] font-black uppercase tracking-widest text-foreground group-focus-within:text-primary transition-colors">
+      {label}
+    </p>
+    <Field
+      name={name}
+      placeholder={placeholder}
+      className="w-full bg-transparent border-b-2 border-stone-800 py-4 text-2xl font-serif italic text-black outline-none focus:border-primary transition placeholder:text-stone-300"
+    />
+    <ErrorMessage
+      name={name}
+      component="div"
+      className="text-primary text-[10px] font-bold uppercase mt-2"
+    />
+  </div>
+);
 
 export default AddPet;

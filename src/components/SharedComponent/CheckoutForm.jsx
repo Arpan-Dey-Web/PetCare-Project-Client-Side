@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
-import useAxiosSecure from "../hooks/useAxiosSecure";
-import { AuthContext } from "../context/AuthContext";
+
+import { AuthContext } from "@/context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
 const CheckoutForm = ({
   amount,
   campaignId,
@@ -63,13 +64,12 @@ const CheckoutForm = ({
         };
 
         const postdonation = await axiosSecure.post("/donations", donation);
-   
+
         // 4. Update campaign donated amount
         const result = await axiosSecure.put("/update-donation-amount", {
           campaignId,
           amount,
         });
- 
 
         // 4. Callback to parent
         onSuccess();
@@ -77,7 +77,6 @@ const CheckoutForm = ({
         // update donation value
       }
     } catch (err) {
-
       setError(err.message);
     } finally {
       setProcessing(false);

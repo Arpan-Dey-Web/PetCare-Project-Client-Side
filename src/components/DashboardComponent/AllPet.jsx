@@ -1,31 +1,34 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
-import useAxiosSecure from "../hooks/useAxiosSecure";
-import Swal from "sweetalert2";
 import Loading from "../SharedComponent/Loading";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  FaEdit,
-  FaTrash,
-  FaCheck,
-  FaChevronLeft,
-  FaChevronRight,
-} from "react-icons/fa";
+  FiEdit3,
+  FiTrash2,
+  FiCheckCircle,
+  FiChevronLeft,
+  FiChevronRight,
+  FiMapPin,
+  FiCalendar,
+  FiX,
+  FiAlertTriangle,
+} from "react-icons/fi";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
 
 const AllPet = () => {
   const queryClient = useQueryClient();
-  const [editingPet, setEditingPet] = useState(null);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const petsPerPage = 5;
   const axiosSecure = useAxiosSecure();
 
-  // Fetch all pets
-  const {
-    data: pets = [],
-    isLoading,
-    error,
-  } = useQuery({
+  // States
+  const [editingPet, setEditingPet] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null); // { type: 'delete' | 'adopt', pet: obj }
+  const [currentPage, setCurrentPage] = useState(1);
+  const petsPerPage = 6;
+
+  // Fetch
+  const { data: pets = [], isLoading } = useQuery({
     queryKey: ["all-pets"],
     queryFn: async () => {
       const res = await axiosSecure.get("/available-pets");
@@ -33,521 +36,304 @@ const AllPet = () => {
     },
   });
 
-  // Calculate pagination
+  // Pagination
   const totalPages = Math.ceil(pets.length / petsPerPage);
-  const indexOfLastPet = currentPage * petsPerPage;
-  const indexOfFirstPet = indexOfLastPet - petsPerPage;
-  const currentPets = pets.slice(indexOfFirstPet, indexOfLastPet);
+  const currentPets = pets.slice(
+    (currentPage - 1) * petsPerPage,
+    currentPage * petsPerPage,
+  );
 
-  // Pagination handlers
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  };
-
-  // Delete pet mutation
+  // Mutations
   const deletePetMutation = useMutation({
-    mutationFn: async (petId) => {
-      const res = await axiosSecure.delete(`/pets/${petId}`);
-      return res.data;
-    },
+    mutationFn: async (petId) => axiosSecure.delete(`/pets/${petId}`),
     onSuccess: () => {
       queryClient.invalidateQueries(["all-pets"]);
-      toast.success("Pet deleted successfully!");
-      // Adjust page if current page is empty after deletion
-      if (currentPets.length === 1 && currentPage > 1) {
-        setCurrentPage(currentPage - 1);
-      }
-    },
-    onError: (error) => {
-      toast.error(error.response?.data?.message || "Failed to delete pet");
+      toast.success("Resident registry expunged.");
+      setConfirmAction(null);
     },
   });
 
-  // Update pet adoption status mutation
   const updateStatusMutation = useMutation({
-    mutationFn: async ({ petId, status }) => {
-      const updateData = { status: status };
-      const res = await axiosSecure.put(`/pets/${petId}`, updateData);
-      return res.data;
-    },
+    mutationFn: async ({ petId, status }) =>
+      axiosSecure.put(`/pets/${petId}`, { status }),
     onSuccess: () => {
       queryClient.invalidateQueries(["all-pets"]);
-      toast.success("Pet status updated successfully!");
-    },
-    onError: (error) => {
-      toast.error(error.response?.data?.message || "Failed to update status");
+      toast.success("Status synchronized.");
+      setConfirmAction(null);
     },
   });
 
-  // Update pet details mutation
-  const updatePetMutation = useMutation({
-    mutationFn: async ({ petId, petData }) => {
-      const { _id, ...cleanPetData } = petData;
-      const res = await axiosSecure.put(`/pets/${petId}`, cleanPetData);
-      return res.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["all-pets"]);
-      setShowEditModal(false);
-      setEditingPet(null);
-      toast.success("Pet updated successfully!");
-    },
-    onError: (error) => {
-      toast.error(error.response?.data?.message || "Failed to update pet");
-    },
-  });
-
-  const handleStatusChange = (petId, currentStatus) => {
-    const newStatus = currentStatus === "adopted" ? "available" : "adopted";
-    const messages = {
-      adopted: {
-        title: "Mark as Adopted?",
-        text: "This pet will be marked as adopted",
-        confirmText: "Yes, Mark Adopted",
-      },
-      available: {
-        title: "Mark as Available?",
-        text: "This pet will be available for adoption again",
-        confirmText: "Yes, Mark Available",
-      },
-    };
-
-    const message = messages[newStatus];
-
-    Swal.fire({
-      title: message.title,
-      text: message.text,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d97706",
-      cancelButtonColor: "#6b7280",
-      confirmButtonText: message.confirmText,
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        updateStatusMutation.mutate({ petId, status: newStatus });
-      }
-    });
-  };
-
-  const handleUpdatePet = (e) => {
-    e.preventDefault();
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You want to update this pet?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d97706",
-      cancelButtonColor: "#6b7280",
-      confirmButtonText: "Yes, Update it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        updatePetMutation.mutate({
-          petId: editingPet._id,
-          petData: editingPet,
-        });
-      }
-    });
-  };
-
-  const handleDeletePet = (petId, petName) => {
-    Swal.fire({
-      title: `Delete ${petName}?`,
-      text: "This action cannot be undone.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#ef4444",
-      cancelButtonColor: "#6b7280",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        deletePetMutation.mutate(petId);
-      }
-    });
-  };
-
-  const handleEditPet = (pet) => {
-    setEditingPet(pet);
-    setShowEditModal(true);
-  };
-
-  const handleInputChange = (field, value) => {
-    setEditingPet((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loading />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center text-red-600">
-        Error loading pets: {error.message}
-      </div>
-    );
-  }
+  if (isLoading) return <Loading />;
 
   return (
-    <div className="container mx-auto py-6">
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-6">
-          <h2 className="text-3xl font-bold text-white mb-2">
-            All Pets Management
+    <div className="space-y-12 pb-20">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-stone-100 pb-12">
+        <div>
+          <span className="text-[10px] font-black uppercase tracking-[0.5em] text-primary">
+            Management
+          </span>
+          <h2 className="text-6xl font-serif italic tracking-tighter text-stone-900 mt-2">
+            Pet Directory.
           </h2>
-          <div className="flex items-center justify-between">
-            <p className="text-amber-100">
-              Total Pets:{" "}
-              <span className="font-bold text-white">{pets.length}</span>
-            </p>
-            <p className="text-amber-100">
-              Page {currentPage} of {totalPages}
-            </p>
-          </div>
         </div>
-
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                  Image
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                  Pet Details
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                  Category
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {currentPets.map((pet) => (
-                <tr
-                  key={pet._id}
-                  className="hover:bg-gray-50 transition-colors"
-                >
-                  <td className="px-6 py-4">
-                    <div className="h-16 w-16 rounded-lg overflow-hidden bg-gray-200 shadow-md">
-                      {pet.image ? (
-                        <img
-                          src={pet.image}
-                          alt={pet.name}
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        <div className="h-full w-full flex items-center justify-center text-xs text-gray-500">
-                          No Image
-                        </div>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm font-bold text-gray-900">
-                      {pet.name}
-                    </div>
-                    <div className="text-sm text-gray-600">Age: {pet.age}</div>
-                    <div className="text-sm text-gray-600">
-                      Location: {pet.location}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                      {pet.category}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
-                        pet.status === "adopted"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-yellow-100 text-yellow-800"
-                      }`}
-                    >
-                      {pet.status === "adopted" ? "Adopted" : "Available"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        onClick={() => handleEditPet(pet)}
-                        className="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-md text-xs font-semibold transition-colors"
-                        title="Edit Pet"
-                      >
-                        <FaEdit />
-                        Edit
-                      </button>
-
-                      <button
-                        onClick={() => handleStatusChange(pet._id, pet.status)}
-                        disabled={updateStatusMutation.isLoading}
-                        className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
-                          pet.status === "adopted"
-                            ? "bg-yellow-600 hover:bg-yellow-700 text-white"
-                            : "bg-green-600 hover:bg-green-700 text-white"
-                        }`}
-                        title={
-                          pet.status === "adopted"
-                            ? "Mark as Available"
-                            : "Mark as Adopted"
-                        }
-                      >
-                        <FaCheck />
-                        {pet.status === "adopted" ? "Available" : "Adopted"}
-                      </button>
-
-                      <button
-                        onClick={() => handleDeletePet(pet._id, pet.name)}
-                        disabled={deletePetMutation.isLoading}
-                        className="inline-flex items-center gap-1 bg-red-600 hover:bg-red-700 disabled:bg-red-300 text-white px-3 py-1.5 rounded-md text-xs font-semibold transition-colors"
-                        title="Delete Pet"
-                      >
-                        <FaTrash />
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="bg-stone-50 px-6 py-3 rounded-full border border-stone-100">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">
+            Total Residents: <span className="text-primary">{pets.length}</span>
+          </p>
         </div>
-
-        {/* Empty State */}
-        {pets.length === 0 && (
-          <div className="text-center py-16">
-            <div className="text-gray-400 mb-4">
-              <FaCheck className="w-16 h-16 mx-auto" />
-            </div>
-            <p className="text-gray-600 text-lg">No pets found.</p>
-          </div>
-        )}
-
-        {/* Pagination */}
-        {pets.length > 0 && (
-          <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
-            <div className="flex items-center justify-between">
-              <div className="text-sm text-gray-600">
-                Showing {indexOfFirstPet + 1} to{" "}
-                {Math.min(indexOfLastPet, pets.length)} of {pets.length} pets
-              </div>
-
-              <div className="flex items-center gap-2">
-                {/* Previous Button */}
-                <button
-                  onClick={handlePrevPage}
-                  disabled={currentPage === 1}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  <FaChevronLeft className="w-3 h-3" />
-                  Previous
-                </button>
-
-                {/* Page Numbers */}
-                <div className="flex gap-1">
-                  {[...Array(totalPages)].map((_, index) => {
-                    const pageNumber = index + 1;
-                    // Show first page, last page, current page, and pages around current
-                    if (
-                      pageNumber === 1 ||
-                      pageNumber === totalPages ||
-                      (pageNumber >= currentPage - 1 &&
-                        pageNumber <= currentPage + 1)
-                    ) {
-                      return (
-                        <button
-                          key={pageNumber}
-                          onClick={() => handlePageChange(pageNumber)}
-                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                            currentPage === pageNumber
-                              ? "bg-amber-600 text-white"
-                              : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
-                          }`}
-                        >
-                          {pageNumber}
-                        </button>
-                      );
-                    } else if (
-                      pageNumber === currentPage - 2 ||
-                      pageNumber === currentPage + 2
-                    ) {
-                      return (
-                        <span
-                          key={pageNumber}
-                          className="px-2 py-2 text-gray-500"
-                        >
-                          ...
-                        </span>
-                      );
-                    }
-                    return null;
-                  })}
-                </div>
-
-                {/* Next Button */}
-                <button
-                  onClick={handleNextPage}
-                  disabled={currentPage === totalPages}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  Next
-                  <FaChevronRight className="w-3 h-3" />
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* Edit Modal */}
-      {showEditModal && editingPet && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-4 rounded-t-xl">
-              <h3 className="text-2xl font-bold text-white">Edit Pet</h3>
-            </div>
-
-            <form onSubmit={handleUpdatePet} className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Pet Name
-                </label>
-                <input
-                  type="text"
-                  value={editingPet.name}
-                  onChange={(e) => handleInputChange("name", e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
-                  required
+      {/* Grid Layout */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <AnimatePresence mode="popLayout">
+          {currentPets.map((pet) => (
+            <motion.div
+              layout
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              key={pet._id}
+              className="group bg-white border border-stone-100 rounded-[2.5rem] overflow-hidden hover:shadow-2xl transition-all duration-700 hover:-translate-y-2"
+            >
+              <div className="relative h-64 overflow-hidden">
+                <img
+                  src={pet.image}
+                  alt={pet.name}
+                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-110"
                 />
+                <div className="absolute top-6 right-6">
+                  <span
+                    className={`px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-widest shadow-xl backdrop-blur-md ${pet.status === "adopted" ? "bg-emerald-500/90 text-white" : "bg-primary/90 text-white"}`}
+                  >
+                    {pet.status}
+                  </span>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Age
-                </label>
-                <input
-                  type="text"
-                  value={editingPet.age}
-                  onChange={(e) => handleInputChange("age", e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
-                  required
-                />
-              </div>
+              <div className="p-8 space-y-6">
+                <div>
+                  <h3 className="text-3xl font-serif italic text-stone-900">
+                    {pet.name}
+                  </h3>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-primary mt-1">
+                    {pet.category}
+                  </p>
+                </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Category
-                </label>
-                <select
-                  value={editingPet.category}
-                  onChange={(e) =>
-                    handleInputChange("category", e.target.value)
-                  }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
-                  required
-                >
-                  <option value="dog">Dog</option>
-                  <option value="cat">Cat</option>
-                  <option value="bird">Bird</option>
-                  <option value="rabbit">Rabbit</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
+                <div className="flex gap-6 text-stone-400 border-b border-stone-50 pb-6">
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-tighter">
+                    <FiCalendar className="text-primary" /> {pet.age}
+                  </div>
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-tighter">
+                    <FiMapPin className="text-primary" /> {pet.location}
+                  </div>
+                </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Location
-                </label>
-                <input
-                  type="text"
-                  value={editingPet.location}
-                  onChange={(e) =>
-                    handleInputChange("location", e.target.value)
-                  }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
-                  required
-                />
+                {/* --- UPDATED ACTION BUTTONS WITH TEXT --- */}
+                <div className="grid grid-cols-3 gap-3">
+                  <CardAction
+                    label="Edit"
+                    icon={<FiEdit3 />}
+                    onClick={() => {
+                      setEditingPet(pet);
+                      setShowEditModal(true);
+                    }}
+                  />
+                  <CardAction
+                    label={pet.status === "adopted" ? "Cancel" : "Adopt"}
+                    icon={<FiCheckCircle />}
+                    onClick={() => setConfirmAction({ type: "adopt", pet })}
+                    active={pet.status === "adopted"}
+                  />
+                  <CardAction
+                    label="Delete"
+                    icon={<FiTrash2 />}
+                    isDestructive
+                    onClick={() => setConfirmAction({ type: "delete", pet })}
+                  />
+                </div>
               </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Image URL
-                </label>
-                <input
-                  type="url"
-                  value={editingPet.image}
-                  onChange={(e) => handleInputChange("image", e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Description
-                </label>
-                <textarea
-                  value={editingPet.description}
-                  onChange={(e) =>
-                    handleInputChange("description", e.target.value)
-                  }
-                  rows={3}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition resize-none"
-                />
-              </div>
-
-              <div className="flex gap-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowEditModal(false);
-                    setEditingPet(null);
-                  }}
-                  className="flex-1 px-4 py-2.5 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 font-semibold transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={updatePetMutation.isLoading}
-                  className="flex-1 px-4 py-2.5 bg-amber-600 text-white rounded-lg hover:bg-amber-700 disabled:bg-amber-300 font-semibold transition-colors"
-                >
-                  {updatePetMutation.isLoading ? "Updating..." : "Update Pet"}
-                </button>
-              </div>
-            </form>
-          </div>
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-10 pt-16">
+          <NavButton
+            direction="left"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((p) => p - 1)}
+          />
+          <span className="text-[11px] font-black uppercase tracking-[0.5em] text-stone-300">
+            {currentPage} <span className="text-primary mx-2">/</span>{" "}
+            {totalPages}
+          </span>
+          <NavButton
+            direction="right"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((p) => p + 1)}
+          />
         </div>
       )}
+
+      {/* --- MODALS --- */}
+      <AnimatePresence>
+        {/* CUSTOM CONFIRMATION MODAL (ADOPT & DELETE) */}
+        {confirmAction && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setConfirmAction(null)}
+              className="absolute inset-0 bg-stone-900/40 backdrop-blur-md cursor-pointer"
+            />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative bg-white max-w-md w-full rounded-[3rem] p-12 text-center shadow-2xl"
+            >
+              <div
+                className={`w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-8 ${confirmAction.type === "delete" ? "bg-red-50 text-red-500" : "bg-emerald-50 text-emerald-500"}`}
+              >
+                <FiAlertTriangle size={32} />
+              </div>
+              <h2 className="text-3xl font-serif italic tracking-tighter mb-4">
+                Confirm Action
+              </h2>
+              <p className="text-stone-500 text-sm leading-relaxed mb-10">
+                Are you sure you want to{" "}
+                <strong>
+                  {confirmAction.type === "delete"
+                    ? "permanently delete"
+                    : "update status for"}
+                </strong>{" "}
+                {confirmAction.pet.name}?
+              </p>
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={() =>
+                    confirmAction.type === "delete"
+                      ? deletePetMutation.mutate(confirmAction.pet._id)
+                      : updateStatusMutation.mutate({
+                          petId: confirmAction.pet._id,
+                          status:
+                            confirmAction.pet.status === "adopted"
+                              ? "available"
+                              : "adopted",
+                        })
+                  }
+                  className={`w-full py-5 rounded-full text-[10px] font-black uppercase tracking-[0.3em] transition-all cursor-pointer ${confirmAction.type === "delete" ? "bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-100" : "bg-stone-900 text-white hover:bg-primary shadow-lg shadow-stone-200"}`}
+                >
+                  Authorize Request
+                </button>
+                <button
+                  onClick={() => setConfirmAction(null)}
+                  className="py-4 text-[10px] font-black uppercase tracking-widest text-stone-300 hover:text-stone-900 cursor-pointer transition-colors"
+                >
+                  Abort
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {/* Edit Modal (Side Drawer Style) */}
+        {showEditModal && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowEditModal(false)}
+              className="fixed inset-0 bg-stone-900/10 backdrop-blur-sm z-[150] cursor-pointer"
+            />
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 30 }}
+              className="fixed right-0 top-0 h-full w-full max-w-lg bg-white z-[151] p-16 shadow-2xl overflow-y-auto"
+            >
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="absolute top-12 right-12 text-stone-300 hover:text-stone-900"
+              >
+                <FiX size={24} />
+              </button>
+              <div className="mb-16">
+                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-stone-300">
+                  File Update
+                </span>
+                <h2 className="text-4xl font-serif italic tracking-tighter mt-2">
+                  Edit Resident.
+                </h2>
+              </div>
+              <div className="space-y-10">
+                <DrawerInput label="Name" defaultValue={editingPet?.name} />
+                <DrawerInput label="Age" defaultValue={editingPet?.age} />
+                <button className="w-full py-6 bg-stone-900 text-white rounded-full text-[10px] font-black uppercase tracking-[0.4em] hover:bg-primary shadow-xl shadow-stone-200 transition-all">
+                  Synchronize Records
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
+
+// --- HELPER COMPONENTS ---
+
+const CardAction = ({ label, icon, onClick, active, isDestructive }) => (
+  <button
+    onClick={onClick}
+    className={`flex flex-col items-center gap-2 p-4 rounded-[1.5rem] transition-all duration-500 cursor-pointer border
+      ${
+        isDestructive
+          ? "bg-red-50/50 border-red-50 text-red-500 hover:bg-red-500 hover:text-white"
+          : active
+            ? "bg-emerald-500 border-emerald-500 text-white"
+            : "bg-stone-50 border-stone-50 text-stone-400 hover:bg-stone-900 hover:text-white hover:border-stone-900"
+      }`}
+  >
+    <span className="text-xl">{icon}</span>
+    <span className="text-[9px] font-black uppercase tracking-widest">
+      {label}
+    </span>
+  </button>
+);
+
+const NavButton = ({ direction, disabled, onClick }) => (
+  <button
+    onClick={onClick}
+    disabled={disabled}
+    className={`w-14 h-14 flex items-center justify-center rounded-full border-2 transition-all duration-500 
+    ${disabled ? "border-stone-50 text-stone-200 cursor-not-allowed" : "bg-primary border-primary text-white hover:bg-transparent hover:text-primary shadow-lg shadow-primary/20 cursor-pointer"}`}
+  >
+    {direction === "left" ? (
+      <FiChevronLeft size={20} />
+    ) : (
+      <FiChevronRight size={20} />
+    )}
+  </button>
+);
+
+const DrawerInput = ({ label, defaultValue }) => (
+  <div className="space-y-2">
+    <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 ml-2">
+      {label}
+    </label>
+    <input
+      defaultValue={defaultValue}
+      className="w-full bg-stone-50 border-none rounded-full px-8 py-5 text-sm outline-none focus:ring-1 focus:ring-primary"
+    />
+  </div>
+);
 
 export default AllPet;

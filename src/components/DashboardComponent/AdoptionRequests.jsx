@@ -1,19 +1,18 @@
 import React, { useState, useContext } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  FaCheckCircle,
-  FaTimesCircle,
-  FaEye,
-  FaPhone,
-  FaEnvelope,
-  FaMapMarkerAlt,
-} from "react-icons/fa";
-
-import useAxiosSecure from "../hooks/useAxiosSecure";
-import { AuthContext } from "../context/AuthContext";
-
+  FiX,
+  FiMail,
+  FiPhone,
+  FiMapPin,
+  FiCalendar,
+  FiArrowUpRight,
+} from "react-icons/fi";
+import { AuthContext } from "@/context/AuthContext";
 import Loading from "../SharedComponent/Loading";
 import toast, { Toaster } from "react-hot-toast";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
 
 const AdoptionRequests = () => {
   const [selectedRequest, setSelectedRequest] = useState(null);
@@ -21,381 +20,279 @@ const AdoptionRequests = () => {
   const { user } = useContext(AuthContext);
   const queryClient = useQueryClient();
 
-  // Fetch adoption requests using TanStack Query
-  const {
-    data: requests = [],
-    isLoading,
-    error,
-    isError,
-  } = useQuery({
+  const { data: requests = [], isLoading } = useQuery({
     queryKey: ["adoption-requests", user?.email],
     queryFn: async () => {
-      if (!user?.email) {
-        throw new Error("User email not found");
-      }
       const response = await axiosSecure.get(
-        `/adoption-requests/${user.email}`
+        `/adoption-requests/${user.email}`,
       );
       return response.data;
     },
-    enabled: !!user?.email, // Only run query if user email exists
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 10 * 60 * 1000, // 10 minutes
+    enabled: !!user?.email,
   });
 
-  // Accept request mutation
-  const acceptRequestMutation = useMutation({
-    mutationFn: async (requestId) => {
-      const response = await axiosSecure.put(
-        `/adoption-requests/${requestId}/accept`,
-        { status: "accepted" }
-      );
-      return response.data;
-    },
-    onSuccess: (data, requestId) => {
-      // Update the cache optimistically
-      queryClient.setQueryData(["adoption-requests", user?.email], (old) => {
-        return old?.map((request) =>
-          request._id === requestId
-            ? { ...request, status: "accepted" }
-            : request
-        );
+  const updateStatusMutation = useMutation({
+    mutationFn: async ({ requestId, status }) => {
+      await axiosSecure.put(`/adoption-requests/${requestId}/${status}`, {
+        status,
       });
-      toast.success("Adoption request accepted!");
     },
-    onError: (error) => {
-
-      toast.error("Error accepting request. Please try again.");
-    },
-  });
-
-  // Reject request mutation
-  const rejectRequestMutation = useMutation({
-    mutationFn: async (requestId) => {
-      const response = await axiosSecure.put(
-        `/adoption-requests/${requestId}/reject`,
-        { status: "rejected" }
-      );
-      return response.data;
-    },
-    onSuccess: (data, requestId) => {
-      // Update the cache optimistically
-      queryClient.setQueryData(["adoption-requests", user?.email], (old) => {
-        return old?.map((request) =>
-          request._id === requestId
-            ? { ...request, status: "rejected" }
-            : request
-        );
-      });
-     toast.error("Adoption request rejected!");
-    },
-    onError: (error) => {
-  
-      toast.error("Error rejecting request. Please try again.");
+    onSuccess: (_, { status }) => {
+      queryClient.invalidateQueries(["adoption-requests", user?.email]);
+      status === "accept"
+        ? toast.success("Request Accepted")
+        : toast.error("Request Declined");
     },
   });
 
-  const handleAccept = (requestId) => {
-    acceptRequestMutation.mutate(requestId);
-  };
-
-  const handleReject = (requestId) => {
-    rejectRequestMutation.mutate(requestId);
-  };
-
-  const getStatusBadge = (status) => {
-    const statusStyles = {
-      pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
-      accepted: "bg-green-100 text-green-800 border-green-200",
-      rejected: "bg-red-100 text-red-800 border-red-200",
-    };
-
-    return (
-      <span
-        className={`px-2 py-1 rounded-full text-xs font-medium border ${statusStyles[status]}`}
-      >
-        {status.charAt(0).toUpperCase() + status.slice(1)}
-      </span>
-    );
-  };
-
-  const RequestDetailsModal = ({ request, onClose }) => {
-    if (!request) return null;
-
-    return (
-      <div className="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center p-4 z-50">
-        <div className="bg-white rounded-lg p-6 max-w-md w-full">
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="text-lg font-semibold">Request Details</h3>
-            <button
-              onClick={onClose}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              <FaTimesCircle size={20} />
-            </button>
-          </div>
-
-          <div className="space-y-4">
-            <div className="flex items-center space-x-3">
-              <img
-                src={
-                  request.petImage ||
-                  "https://images.unsplash.com/photo-1560807707-8cc77767d783?w=100&h=100&fit=crop"
-                }
-                alt={request.petName || "Pet"}
-                className="w-16 h-16 rounded-lg object-cover"
-              />
-              <div>
-                <h4 className="font-medium">{request.petName || "N/A"}</h4>
-                <p className="text-sm text-gray-600">
-                  Pet ID: {request.petId || "N/A"}
-                </p>
-              </div>
-            </div>
-
-            <div className="border-t pt-4">
-              <h5 className="font-medium mb-2">Requester Information</h5>
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm font-medium">Name:</span>
-                  <span className="text-sm">
-                    {request.requestedUserName || "N/A"}
-                  </span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <FaEnvelope size={16} className="text-gray-500" />
-                  <span className="text-sm">
-                    {request.requestedUserEmail || "N/A"}
-                  </span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <FaPhone size={16} className="text-gray-500" />
-                  <span className="text-sm">
-                    {request.requestedUserPhone || "N/A"}
-                  </span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <FaMapMarkerAlt size={16} className="text-gray-500" />
-                  <span className="text-sm">
-                    {request.requestedUserAddress || "N/A"}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-t pt-4">
-              <h5 className="font-medium mb-2">Owner Information</h5>
-              <div className="flex items-center space-x-2">
-                <FaEnvelope size={16} className="text-gray-500" />
-                <span className="text-sm">{request.owner || "N/A"}</span>
-              </div>
-            </div>
-
-            <div className="border-t pt-4">
-              <p className="text-sm text-gray-500">
-                Requested on:{" "}
-                {new Date(
-                  request.createdAt || request.requestDate || Date.now()
-                ).toLocaleDateString()}
-              </p>
-              <p className="text-sm text-gray-500">
-                Status: {getStatusBadge(request.status || "pending")}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  if (isLoading) {
-    return (
-      <Loading/>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="max-w-6xl mx-auto p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <FaTimesCircle className="h-5 w-5 text-red-400" />
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">
-                Error loading adoption requests
-              </h3>
-              <div className="mt-2 text-sm text-red-700">
-                <p>
-                  {error?.message || "Something went wrong. Please try again."}
-                </p>
-              </div>
-              <div className="mt-4">
-                <button
-                  onClick={() =>
-                    queryClient.invalidateQueries([
-                      "adoption-requests",
-                      user?.email,
-                    ])
-                  }
-                  className="bg-red-100 px-3 py-2 rounded-md text-sm font-medium text-red-800 hover:bg-red-200"
-                >
-                  Try Again
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  if (isLoading) return <Loading />;
 
   return (
-    <div className="max-w-6xl mx-auto p-6 ">
-      <div className="mb-6">
-        <h2
-          className={`text-2xl font-bold  mb-2 `}
-        >
-          Adoption Requests
-        </h2>
-        <p
-          className={`text-sm text-light`}  
-        >
-          Manage adoption requests for your pets
-        </p>
-      </div>
+    <div className="max-w-7xl mx-auto py-12 px-4 space-y-16">
+      {/* 1. EDITORIAL HEADER */}
+      <header className="border-b-4 border-foreground pb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
+        <div className="space-y-2">
+          <span className="text-[12px] font-black uppercase tracking-[0.4em] text-primary">
+            Inquiry Review
+          </span>
+          <h1 className="text-6xl md:text-8xl font-serif italic tracking-tighter text-foreground leading-[0.8]">
+            Adoption <span className="text-primary italic">Requests.</span>
+          </h1>
+        </div>
+        <div className="text-[11px] font-black uppercase tracking-widest text-foreground/40 border border-stone-200 px-6 py-3 rounded-full">
+          Total Queue: {requests.length}
+        </div>
+      </header>
 
-      <div className=" rounded-lg shadow-sm border border-gray-200">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-400">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                  Pet
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                  Requester
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                  Contact
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                  Location
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                  Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className={` divide-y divide-gray-200 card-light`}>
-              {requests.map((request) => (
-                <tr key={request._id} className="">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <img
-                        src={
-                          request.petImage ||
-                          "https://images.unsplash.com/photo-1560807707-8cc77767d783?w=100&h=100&fit=crop"
-                        }
-                        alt={request.petName || "Pet"}
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
-                      <div className="ml-4">
-                        <div className="text-sm font-medium ">
-                          {request.petName || "N/A"}
-                        </div>
-                      </div>
+      {/* 2. THE ADOPTION GRID */}
+      {requests.length === 0 ? (
+        <div className="py-40 text-center border-2 border-dashed border-stone-200 rounded-[4rem]">
+          <p className="text-3xl font-serif italic text-stone-300">
+            No active applications found.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-10 gap-y-16">
+          <AnimatePresence mode="popLayout">
+            {requests.map((request) => (
+              <motion.div
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                key={request._id}
+                className="group flex flex-col space-y-6"
+              >
+                {/* Visual Identity Frame */}
+                <div className="relative aspect-[4/5] rounded-[3.5rem] overflow-hidden bg-stone-100 group">
+                  <img
+                    src={request.petImage}
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
+                    alt={request.petName}
+                  />
+
+                  {/* Status Overlay */}
+                  <div className="absolute top-6 left-6">
+                    <span
+                      className={`px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest backdrop-blur-md ${
+                        request.status === "accepted"
+                          ? "bg-green-500 text-white"
+                          : request.status === "rejected"
+                            ? "bg-red-500 text-white"
+                            : "bg-white/90 text-black"
+                      }`}
+                    >
+                      {request.status || "requested"}
+                    </span>
+                  </div>
+
+                  {/* Deep Review Interaction */}
+                  <div
+                    onClick={() => setSelectedRequest(request)}
+                    className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center backdrop-blur-sm cursor-pointer"
+                  >
+                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-black mb-4">
+                      <FiArrowUpRight size={24} />
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium ">
-                      {request.requestedUserName || "N/A"}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm ">
-                      {request.requestedUserEmail || "N/A"}
-                    </div>
-                    <div className="text-sm ">
-                      {request.requestedUserPhone || "N/A"}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm ">
-                      {request.requestedUserAddress || "N/A"}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm ">
-                      {new Date(
-                        request.createdAt || request.requestDate || Date.now()
-                      ).toLocaleDateString()}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {getStatusBadge(request.status || "pending")}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex space-x-2">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">
+                      View Full Dossier
+                    </span>
+                  </div>
+                </div>
+
+                {/* Requester & Pet Data */}
+                <div className="space-y-4 px-2">
+                  <div>
+                    <h4 className="text-3xl font-serif italic text-foreground tracking-tight leading-none">
+                      {request.petName}
+                    </h4>
+                    <p className="text-[11px] font-black uppercase tracking-[0.15em] text-primary mt-2">
+                      Applied by: {request.requestedUserName}
+                    </p>
+                  </div>
+
+                  <div className="space-y-1 py-4 border-y border-stone-100">
+                    <p className="text-[10px] font-bold text-stone-400 truncate flex items-center gap-2">
+                      <FiMail className="text-primary" />{" "}
+                      {request.requestedUserEmail}
+                    </p>
+                    <p className="text-[10px] font-bold text-stone-400 flex items-center gap-2">
+                      <FiPhone className="text-primary" />{" "}
+                      {request.requestedUserPhone}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Text-Based Commands */}
+                <div className="flex items-center gap-8 px-2">
+                  {request.status === "requested" || !request.status ? (
+                    <>
                       <button
-                        onClick={() => setSelectedRequest(request)}
-                        className="text-blue-600 hover:text-blue-900 p-1 rounded-full hover:bg-blue-50"
-                        title="View Details"
+                        onClick={() =>
+                          updateStatusMutation.mutate({
+                            requestId: request._id,
+                            status: "accept",
+                          })
+                        }
+                        className="text-[11px] font-black uppercase tracking-widest text-green-600 border-b-2 border-stone-100 hover:border-green-600 transition-all cursor-pointer"
                       >
-                        <FaEye size={16} />
+                        Accept
                       </button>
+                      <button
+                        onClick={() =>
+                          updateStatusMutation.mutate({
+                            requestId: request._id,
+                            status: "reject",
+                          })
+                        }
+                        className="text-[11px] font-black uppercase tracking-widest text-red-500 border-b-2 border-stone-100 hover:border-red-500 transition-all cursor-pointer"
+                      >
+                        Decline
+                      </button>
+                    </>
+                  ) : (
+                    <span className="text-[11px] font-black uppercase tracking-widest text-stone-300">
+                      Decision Finalized
+                    </span>
+                  )}
 
-                      {(request.status === "requested" || !request.status) && (
-                        <>
-                          <button
-                            onClick={() => handleAccept(request._id)}
-                            disabled={acceptRequestMutation.isLoading}
-                            className="text-green-600 hover:text-green-900 p-1 rounded-full hover:bg-green-50 disabled:opacity-50"
-                            title="Accept Request"
-                          >
-                            <FaCheckCircle size={16} />
-                          </button>
-                          <button
-                            onClick={() => handleReject(request._id)}
-                            disabled={rejectRequestMutation.isLoading}
-                            className="text-red-600 hover:text-red-900 p-1 rounded-full hover:bg-red-50 disabled:opacity-50"
-                            title="Reject Request"
-                          >
-                            <FaTimesCircle size={16} />
-                          </button>
-                        </>
-                      )}
+                  <button
+                    onClick={() => setSelectedRequest(request)}
+                    className="text-[11px] font-black uppercase tracking-widest text-foreground border-b-2 border-stone-100 hover:border-foreground transition-all ml-auto cursor-pointer"
+                  >
+                    Details
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+      )}
+
+      {/* 3. DOSSIER MODAL */}
+      <AnimatePresence>
+        {selectedRequest && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedRequest(null)}
+              className="absolute inset-0 bg-stone-900/40 backdrop-blur-md"
+            />
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative w-full max-w-xl bg-white rounded-[4rem] overflow-hidden shadow-2xl"
+            >
+              <div className="p-12 space-y-10">
+                <header className="flex justify-between items-start border-b border-stone-100 pb-8">
+                  <div>
+                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">
+                      Full Dossier
+                    </span>
+                    <h3 className="text-4xl font-serif italic text-foreground tracking-tighter mt-2">
+                      Application.
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => setSelectedRequest(null)}
+                    className="p-4 hover:bg-stone-50 rounded-full transition-colors cursor-pointer"
+                  >
+                    <FiX size={28} />
+                  </button>
+                </header>
+
+                <div className="grid grid-cols-1 gap-8">
+                  <div className="flex items-center gap-6 p-6 bg-stone-50 rounded-[2.5rem]">
+                    <img
+                      src={selectedRequest.petImage}
+                      className="w-24 h-24 rounded-3xl object-cover"
+                      alt=""
+                    />
+                    <div>
+                      <p className="text-[10px] font-black uppercase text-stone-400 tracking-widest">
+                        Regarding
+                      </p>
+                      <h4 className="text-2xl font-serif italic">
+                        {selectedRequest.petName}
+                      </h4>
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                  </div>
 
-      {requests.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-gray-500">No adoption requests found.</p>
-        </div>
-      )}
+                  <div className="space-y-4">
+                    <ModalRow
+                      icon={<FiMail />}
+                      label="Email Address"
+                      value={selectedRequest.requestedUserEmail}
+                    />
+                    <ModalRow
+                      icon={<FiPhone />}
+                      label="Phone Number"
+                      value={selectedRequest.requestedUserPhone}
+                    />
+                    <ModalRow
+                      icon={<FiMapPin />}
+                      label="Target Location"
+                      value={selectedRequest.requestedUserAddress}
+                    />
+                    <ModalRow
+                      icon={<FiCalendar />}
+                      label="Submission Date"
+                      value={new Date(
+                        selectedRequest.createdAt,
+                      ).toLocaleDateString("en-US", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
-      {selectedRequest && (
-        <RequestDetailsModal
-          request={selectedRequest}
-          onClose={() => setSelectedRequest(null)}
-        />
-      )}
-       <Toaster position="top-right" reverseOrder={false} />
+      <Toaster position="bottom-center" />
     </div>
   );
 };
+
+const ModalRow = ({ icon, label, value }) => (
+  <div className="flex items-center gap-6 p-6 border border-stone-100 rounded-3xl">
+    <div className="text-primary">{icon}</div>
+    <div>
+      <p className="text-[10px] font-black uppercase tracking-widest text-stone-300">
+        {label}
+      </p>
+      <p className="text-lg font-serif italic text-foreground">
+        {value || "Confidential"}
+      </p>
+    </div>
+  </div>
+);
 
 export default AdoptionRequests;

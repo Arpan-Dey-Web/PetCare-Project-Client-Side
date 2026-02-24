@@ -1,143 +1,165 @@
-// PetsCategorySection.jsx
-import { Link } from "react-router";
-import { FaCat, FaDog, FaFish, FaPaw } from "react-icons/fa";
-import { GiRabbit } from "react-icons/gi";
+import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import dogImage from "../../assets/dog.png";
-import catImage from "../../assets/cat.png";
-import birdImage from "../../assets/bird.png";
-import rabbitImage from "../../assets/rabbit.png";
+import { MoveRight } from "lucide-react";
+import { Link } from "react-router";
+import Button from "./Button";
 
 const PetsCategorySection = () => {
+  const buttonRef = useRef(null);
+  const [btnPos, setBtnPos] = useState({ x: 0, y: 0 });
 
+  const handleMagnetic = (e) => {
+    const { clientX, clientY } = e;
+    const { height, width, left, top } =
+      buttonRef.current.getBoundingClientRect();
+    const x = (clientX - (left + width / 2)) * 0.35;
+    const y = (clientY - (top + height / 2)) * 0.35;
+    setBtnPos({ x, y });
+  };
 
-  const petCategories = [
+  const resetMagnetic = () => setBtnPos({ x: 0, y: 0 });
+
+  const categories = [
     {
       name: "Dogs",
-      image: dogImage,
-      bgGradient: "from-orange-400 to-red-500",
-      hoverGradient: "from-orange-500 to-red-600",
+      img: "https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=800",
+      mask: "rounded-[30%_70%_70%_30%/30%_30%_70%_70%]",
+      pos: "lg:top-0 lg:left-0", // Top Left
+      size: "w-full lg:w-[280px] h-[380px]",
+      rotate: -4,
     },
     {
       name: "Cats",
-      image: catImage,
-      bgGradient: "from-purple-400 to-pink-500",
-      hoverGradient: "from-orange-500 to-red-600",
-    },
-    {
-      name: "Birds",
-      image: birdImage,
-      bgGradient: "from-blue-400 to-cyan-500",
-      hoverGradient: "from-orange-500 to-red-600",
+      img: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800",
+      mask: "rounded-[60%_40%_30%_70%/60%_40%_70%_30%]",
+      pos: "lg:top-40 lg:left-[32%]", // Shifted Right and Down to clear Dogs
+      size: "w-full lg:w-[260px] h-[400px]",
+      rotate: 2,
     },
     {
       name: "Rabbits",
-      image: rabbitImage,
-      bgGradient: "from-green-400 to-emerald-500",
-      hoverGradient: "from-orange-500 to-red-600",
+      img: "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=800",
+      mask: "rounded-[40%_60%_60%_40%/60%_30%_70%_40%]",
+      pos: "lg:top-0 lg:right-0", // Moved to far right to clear center
+      size: "w-full lg:w-[280px] h-[380px]",
+      rotate: 5,
+    },
+    {
+      name: "Birds",
+      img: "https://images.unsplash.com/photo-1452570053594-1b985d6ea890?q=80&w=1000",
+      mask: "rounded-[50%_50%_20%_80%/50%_20%_80%_50%]",
+      pos: "lg:bottom-0 lg:left-[5%]", // Bottom Left
+      size: "w-full lg:w-[240px] h-[300px]",
+      rotate: -6,
     },
   ];
 
   return (
-    <section className="my-16 px-4 relative overflow-hidden">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-10 right-10 w-40 h-40 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 w-36 h-36 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2"></div>
-      </div>
-
-      <div className="relative z-10">
-        {/* Enhanced Title Section */}
-        <div className="text-center mb-16">
-        
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            viewport={{ once: true }}
-            className="text-5xl md:text-7xl font-black text-slate-900 mb-4 tracking-tight"
-          >
-            Find Your Perfect <br />
-            <span className="bg-gradient-to-r from-pink-500 to-orange-500 bg-clip-text text-transparent">
-              Companion
-            </span>
-          </motion.h2>
-
-          <h3 className={`text-4xl font-bold  bg-clip-text text-light`}>
-            Companion
-          </h3>
-        </div>
-
-        {/* Enhanced Pet Categories Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4  gap-8 w-6/12 md:w-full  md:max-w-5xl  mx-auto ">
-          {petCategories.map((pet, index) => (
-            <div
-              key={pet.name}
-              className="group relative"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              {/* Main container */}
-              <div
-                className={`relative aspect-square rounded-full transition-all duration-500 cursor-pointer transform group-hover:scale-105  bg-white/80 backdrop-blur-sm group-hover:border-transparent
-                `}
+    <section className="relative w-full py-24 lg:py-32 bg-surface-alt overflow-hidden">
+      <div className="max-w-7xl mx-auto  relative z-10 w-full">
+        <div className="grid lg:grid-cols-12 gap-20 items-center">
+          {/* LEFT: Collage */}
+          <div className="lg:col-span-8 relative h-auto lg:h-[850px] grid grid-cols-1 md:grid-cols-2 lg:block gap-12">
+            {categories.map((cat, i) => (
+              <motion.div
+                key={cat.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: i * 0.1 }}
+                className={`lg:absolute ${cat.pos} ${cat.size} group cursor-pointer`}
+                style={{ zIndex: 10 + i }}
               >
-                {/* Gradient background on hover */}
+                {/* THE ROTATED WRAPPER */}
                 <div
-                  className={`absolute inset-0 bg-gradient-to-br ${pet.hoverGradient} rounded-full opacity-0 group-hover:opacity-90 transition-all duration-500`}
-                ></div>
-
-                {/* Image container */}
-                <div className="relative bottom-0  h-full flex  justify-center rounded-full overflow-hidden">
-                  <img
-                    src={pet.image}
-                    alt={pet.name}
-                    className=" max-h-full object-contain overflow-hidden transition-all duration-500 group-hover:scale-105 drop-shadow-lg  "
-                  />
-                </div>
-
-                {/* Floating particles effect */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                  <div
-                    className="absolute top-3/4 right-1/4 w-1 h-1 bg-white rounded-full animate-pulse"
-                    style={{ animationDelay: "0.5s" }}
-                  ></div>
-                  <div
-                    className="absolute bottom-1/4 left-1/3 w-1.5 h-1.5 bg-white rounded-full animate-pulse"
-                    style={{ animationDelay: "1s" }}
-                  ></div>
-                </div>
-              </div>
-
-              {/* Category name */}
-              <div className="text-center mt-4">
-                <h3
-                  className={`text-xl font-semibold transition-all duration-300 group-hover:scale-110 text-gray-800
-                  `}
+                  className="w-full h-full transition-all duration-700 ease-out"
+                  style={{ transform: `rotate(${cat.rotate}deg)` }}
                 >
-                  {pet.name}
-                </h3>
-                <div
-                  className={`w-0 h-0.5 bg-gradient-to-r ${pet.bgGradient} mx-auto mt-2 group-hover:w-12 transition-all duration-500 rounded-full`}
-                ></div>
-              </div>
-            </div>
-          ))}
-        </div>
+                  <div
+                    className={`relative w-full h-full ${cat.mask} bg-background shadow-xl border-[10px] border-background overflow-hidden`}
+                    style={{
+                      isolation: "isolate",
+                      WebkitMaskImage: "-webkit-radial-gradient(white, black)",
+                      clipPath: "content-box",
+                    }}
+                  >
+                    <img
+                      src={cat.img}
+                      alt={cat.name}
+                      className="absolute inset-0 w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 group-hover:scale-110 transition-transform duration-1000 ease-out"
+                    />
 
-        {/* Bottom decorative element */}
-        <div className="flex justify-center mt-16">
-          <div
-            className={`flex items-center gap-2 px-6 py-3 rounded-full bg-white/30 border border-gray-300
-            backdrop-blur-sm`}
-          >
-            <span
-              className={`text-sm font-medium text-gray-600
-              `}
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                      <span className="text-white text-3xl font-serif italic">
+                        {cat.name}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* RIGHT: Text & Action */}
+          <div className="lg:col-span-4 text-center lg:text-left">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="flex items-center justify-center lg:justify-start gap-3 mb-8"
             >
-              Choose your favorite pet category
-            </span>
+              <span className="w-10 h-[1px] bg-primary" />
+              <span className="text-primary font-bold text-[10px] uppercase tracking-[0.5em]">
+                Choose your companion
+              </span>
+            </motion.div>
+
+            <h2 className="text-6xl md:text-8xl font-serif text-foreground leading-[0.8] tracking-tighter mb-10">
+              Meet your new
+              <br />
+              <span className="italic text-primary font-normal relative inline-block">
+                best friend.
+                <svg
+                  className="absolute -bottom-2 left-0 w-full h-2 opacity-30"
+                  viewBox="0 0 100 10"
+                  preserveAspectRatio="none"
+                >
+                  <path
+                    d="M0,5 Q50,10 100,5"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    fill="none"
+                  />
+                </svg>
+              </span>
+            </h2>
+
+            <p className="text-muted-foreground text-lg md:text-xl font-light leading-relaxed mb-12 max-w-xs mx-auto lg:mx-0">
+              Explore our residents by category and find the perfect match for
+              your lifestyle and home.
+            </p>
+
+            {/* MAGNETIC BUTTON */}
+            <div className="flex justify-center lg:justify-start">
+              <Link to="/pets" className="relative group">
+                <motion.div
+                  ref={buttonRef}
+                  onMouseMove={handleMagnetic}
+                  onMouseLeave={resetMagnetic}
+                  animate={{ x: btnPos.x, y: btnPos.y }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 150,
+                    damping: 15,
+                    mass: 0.1,
+                  }}
+                  className="flex items-center gap-6"
+                >
+                  <Button text="Explore all pets" />
+                </motion.div>
+              </Link>
+            </div>
           </div>
         </div>
       </div>

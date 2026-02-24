@@ -1,221 +1,180 @@
-import React, { useContext } from "react";
-import { motion } from "framer-motion";
-import {
-  FaHeart,
-  FaHome,
-  FaStethoscope,
-  FaHandsHelping,
-  FaGift,
-  FaSearch,
-  FaPaw,
-  FaShieldAlt,
-} from "react-icons/fa";
-import { Sparkles } from "lucide-react";
+import React, { useRef, useState } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Heart, Home, Stethoscope, Check } from "lucide-react";
+
+const FeatureBlock = ({ service, index }) => {
+  const isEven = index % 2 === 0;
+  const containerRef = useRef(null);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  });
+
+  const imgY = useTransform(scrollYProgress, [0, 1], ["-12%", "12%"]);
+
+  return (
+    <div
+      ref={containerRef}
+      className={`flex flex-col ${isEven ? "md:flex-row" : "md:flex-row-reverse"} items-center gap-16 md:gap-24 relative`}
+    >
+      {/* Background Numeral */}
+      <span className="absolute -top-16 left-0 text-[14rem] md:text-[22rem] font-serif italic text-stone-100/50 select-none -z-10 leading-none">
+        0{index + 1}
+      </span>
+
+      {/* Image Box */}
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full md:w-[55%] relative"
+      >
+        <div className="relative aspect-[16/11] overflow-hidden rounded-[3rem] border-[12px] md:border-[16px] border-white shadow-2xl bg-white">
+          <motion.img
+            style={{ y: imgY }}
+            src={service.img}
+            alt={service.title}
+            className="absolute inset-0 w-full h-full object-cover scale-110 grayscale-[20%] hover:grayscale-0 transition-all duration-700 hover:cursor-pointer"
+          />
+        </div>
+
+        {/* Floating Tag */}
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          whileInView={{ scale: 1, opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.6 }}
+          className={`absolute -bottom-8 ${isEven ? "-right-8" : "-left-8"} z-20 bg-white p-6 rounded-[2rem] shadow-xl hidden lg:block border border-stone-100`}
+        >
+          <div
+            className={`w-14 h-14 ${service.color} rounded-2xl flex items-center justify-center mb-3 shadow-sm`}
+          >
+            {React.cloneElement(service.icon, { className: "w-6 h-6" })}
+          </div>
+          <p className="text-[9px] font-black tracking-[0.3em] text-primary uppercase">
+            Vibe {index + 1}
+          </p>
+        </motion.div>
+      </motion.div>
+
+      {/* Text Column */}
+      <div className="w-full md:w-[45%] z-10">
+        <motion.div
+          initial={{ opacity: 0, x: isEven ? 30 : -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          <h3 className="text-5xl md:text-7xl font-serif text-stone-900 leading-[0.9] mb-8">
+            {service.title.split(" ").slice(0, -1).join(" ")} <br />
+            <span className="italic text-primary font-normal relative inline-block">
+              {service.title.split(" ").pop()}
+            </span>
+          </h3>
+
+          <p className="text-stone-500 text-lg md:text-xl font-light leading-relaxed mb-10 pl-8 border-l-2 border-primary/20 italic">
+            {service.desc}
+          </p>
+
+          {/* Specification Block */}
+          <div className="flex flex-wrap gap-8 pt-6 border-t border-stone-100">
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-[0.3em] text-stone-300 mb-2">
+                The Cool Part
+              </p>
+              <div className="flex items-center gap-2 text-stone-900">
+                <Check className="w-4 h-4 text-primary" />
+                <span className="text-xs font-bold uppercase tracking-widest">
+                  {service.spec}
+                </span>
+              </div>
+            </div>
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-[0.3em] text-stone-300 mb-2">
+                Our Promise
+              </p>
+              <p className="text-xs font-bold uppercase tracking-widest text-stone-900">
+                {service.metric}
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+};
 
 const WeProvideFeatures = () => {
   const services = [
     {
-      title: "Pet Rescue & Rehabilitation",
-      desc: [
-        "24/7 emergency rescue operations",
-        "Medical rehabilitation programs",
-        "Safe shelter environments",
-        "Behavioral training support",
-      ],
-      icon: <FaHeart className="text-4xl" />,
-
-      gradient: "from-red-400 to-pink-500",
-      bgAccent: "bg-red-50",
+      title: "Cozy Nap",
+      desc: "Every cutie needs a soft place to land. We offer around-the-clock snuggles and a super chill space for pets to find their groove.",
+      spec: "Infinite Belly Rubs",
+      metric: "Luxury Snooze Spots",
+      icon: <Heart />,
+      color: "bg-primary/10 text-primary",
+      img: "https://images.unsplash.com/photo-1551730459-92db2a308d6a?q=80&w=1200",
     },
     {
-      title: "Smart Adoption Matching",
-      desc: [
-        "AI-powered compatibility matching",
-        "Comprehensive family assessments",
-        "Pre-adoption home visits",
-        "Lifetime support guarantee",
-      ],
-      icon: <FaHome className="text-4xl" />,
-
-      gradient: "from-blue-400 to-cyan-500",
-      bgAccent: "bg-blue-50",
+      title: "Bestie Matching",
+      desc: "Our matchmakers are pros at finding your soulmate. We pair cool humans with even cooler pets for a total friendship glow-up.",
+      spec: "Pawsitive Connections",
+      metric: "100% Tail Wags",
+      icon: <Home />,
+      color: "bg-stone-100 text-stone-900",
+      img: "https://images.unsplash.com/photo-1534361960057-19889db9621e?q=80&w=1200",
     },
     {
-      title: "Complete Health Services",
-      desc: [
-        "Full veterinary examinations",
-        "Vaccination & microchipping",
-        "Spay/neuter operations",
-        "Ongoing medical support",
-      ],
-      icon: <FaStethoscope className="text-4xl" />,
-
-      gradient: "from-green-400 to-emerald-500",
-      bgAccent: "bg-green-50",
-    },
-    {
-      title: "Community Volunteer Hub",
-      desc: [
-        "Pet socialization programs",
-        "Dog walking & exercise",
-        "Foster family network",
-        "Training & education workshops",
-      ],
-      icon: <FaHandsHelping className="text-4xl" />,
-
-      gradient: "from-purple-400 to-indigo-500",
-      bgAccent: "bg-purple-50",
-    },
-    {
-      title: "Donation & Support Center",
-      desc: [
-        "Essential supplies collection",
-        "Medical treatment funding",
-        "Facility improvement projects",
-        "Transparent impact reporting",
-      ],
-      icon: <FaGift className="text-4xl" />,
-
-      gradient: "from-yellow-400 to-orange-500",
-      bgAccent: "bg-yellow-50",
-    },
-    {
-      title: "Lost Pet Recovery System",
-      desc: [
-        "Advanced pet tracking network",
-        "Community alert system",
-        "Reunion coordination services",
-        "Prevention education programs",
-      ],
-      icon: <FaSearch className="text-4xl" />,
-
-      gradient: "from-teal-400 to-green-500",
-      bgAccent: "bg-teal-50",
+      title: "Health & Glow",
+      desc: "From wet noses to wagging tails, we keep our residents feeling 10/10. Full checkups and treats included to keep them shining.",
+      spec: "Sparkle & Vitality",
+      metric: "Healthy Happy Hearts",
+      icon: <Stethoscope />,
+      color: "bg-emerald-50 text-emerald-600",
+      img: "https://images.unsplash.com/photo-1581888227599-779811939961?q=80&w=1200",
     },
   ];
 
   return (
-    <section className="py-16 px-4 relative overflow-hidden">
-      {/* Background Decorations */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-20 left-20 w-32 h-32 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-20 w-40 h-40 bg-gradient-to-r from-pink-500 to-red-500 rounded-full blur-3xl"></div>
-      </div>
-
-      <div className="container mx-auto relative z-10">
+    <div className="w-full overflow-hidden bg-[#fffcf9] py-32">
+      <div className="max-w-7xl mx-auto ">
         {/* Header Section */}
-        <div className="text-center mb-20 max-w-3xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-100 text-slate-600 text-sm font-bold mb-6"
-          >
-            <Sparkles className="w-4 h-4 text-amber-500" />
-            WHAT WE DO
-          </motion.div>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight"
-          >
-            Empowering Your Love
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-lg text-slate-600 leading-relaxed"
-          >
-            Every tail deserves a happy ending. We build lasting bonds between
-            pets and families through specialized care systems.
-          </motion.p>
+        <div className="mb-40 flex flex-col md:flex-row justify-between items-end gap-12 border-b border-stone-100 pb-16">
+          <div className="max-w-3xl">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="flex items-center gap-3 mb-8"
+            >
+              <span className="w-10 h-[1px] bg-primary" />
+              <span className="text-primary font-bold text-[10px] uppercase tracking-[0.5em]">
+                The Happy Pet Way
+              </span>
+            </motion.div>
+            <h2 className="text-7xl md:text-[8rem] font-serif text-stone-900 leading-[0.8] tracking-tighter">
+              Spreading <br />
+              <span className="text-primary italic font-normal">
+                Good Vibes.
+              </span>
+            </h2>
+          </div>
+          <p className="text-stone-400 text-xl max-w-[320px] font-light leading-relaxed italic pr-6 text-right hidden md:block">
+            Designing a world where every furry friend is treated like the
+            absolute legend they are.
+          </p>
         </div>
 
-        {/* Services Grid */}
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
+        {/* Feature Blocks */}
+        <div className="space-y-48 md:space-y-80">
           {services.map((service, idx) => (
-            <div
-              key={idx}
-              className={`group relative ${service.bgAccent} rounded-3xl p-8 border transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 border-gray-200 hover:border-gray-300`}
-            >
-              {/* Gradient Glow Effect */}
-              <div
-                className={`absolute -inset-1 bg-gradient-to-r ${service.gradient} rounded-3xl opacity-0 group-hover:opacity-20 blur-sm transition-all duration-500`}
-              ></div>
-
-              {/* Content */}
-              <div className="relative">
-                {/* Icon Section */}
-                <div className="flex items-center justify-between mb-6">
-                  <div
-                    className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r ${service.gradient} rounded-2xl text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}
-                  >
-                    {service.icon}
-                  </div>
-                  <span className="text-4xl group-hover:scale-125 transition-transform duration-300">
-                    {service.emoji}
-                  </span>
-                </div>
-
-                {/* Title */}
-                <h3
-                  className={`text-2xl font-bold mb-4  transition-all duration-300 text-gray-800
-                  `}
-                >
-                  {service.title}
-                </h3>
-
-                {/* Description */}
-                <div className="space-y-3">
-                  {service.desc.map((line, i) => (
-                    <div key={i} className="flex items-start gap-3">
-                      <div
-                        className={`w-2 h-2 bg-gradient-to-r ${service.gradient} rounded-full mt-2 flex-shrink-0`}
-                      ></div>
-                      <p
-                        className={`text-sm leading-relaxed text-gray-600
-                        `}
-                      >
-                        {line}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <FeatureBlock key={idx} service={service} index={idx} />
           ))}
         </div>
-
-        {/* Stats Glassmorphism Bar */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          className="mt-20 p-1 bg-gradient-to-r from-pink-100 via-blue-100 to-amber-100 rounded-[3rem]"
-        >
-          <div className="bg-white/80 backdrop-blur-xl rounded-[2.9rem] py-12 px-8 grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              { number: "2,500+", label: "Pets Rescued" },
-              { number: "1,800+", label: "Happy Families" },
-              { number: "50+", label: "Partner Shelters" },
-              { number: "24/7", label: "Active Support" },
-            ].map((stat, idx) => (
-              <div
-                key={idx}
-                className="text-center border-r last:border-none border-slate-200/50"
-              >
-                <div className="text-3xl md:text-5xl font-black bg-gradient-to-br from-slate-900 to-slate-500 bg-clip-text text-transparent mb-2 tracking-tighter">
-                  {stat.number}
-                </div>
-                <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </div>
-        </motion.div>
       </div>
-    </section>
+    </div>
   );
 };
 

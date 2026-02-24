@@ -1,23 +1,30 @@
 import React, { useState, useContext } from "react";
 import { toast, Toaster } from "react-hot-toast";
-import Swal from "sweetalert2";
-import useAxiosSecure from "../hooks/useAxiosSecure";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "@/context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
-
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FiX,
+  FiPlus,
+  FiArrowUpRight,
+  FiAlertTriangle,
+  FiCheckCircle,
+} from "react-icons/fi";
 import Loading from "../SharedComponent/Loading";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
 
 const MyDonationCampaigns = () => {
   const [showDonatorsModal, setShowDonatorsModal] = useState(false);
+  const [confirmToggleModal, setConfirmToggleModal] = useState(null); // { campaign: obj, action: string }
   const [selectedCampaign, setSelectedCampaign] = useState(null);
+
   const axiosSecure = useAxiosSecure();
   const { user } = useContext(AuthContext);
 
   const {
-    data: campaigns = [], // Default to empty array, not object
+    data: campaigns = [],
     isLoading,
-    error,
     refetch,
   } = useQuery({
     queryKey: ["donation-campaigns", user?.email],
@@ -25,326 +32,317 @@ const MyDonationCampaigns = () => {
       const res = await axiosSecure.get(`/donation-campaigns/${user?.email}`);
       return res.data;
     },
-    enabled: !!user?.email, // Only run query when user email exists
-    staleTime: 5 * 60 * 1000, // Data stays fresh for 5 minutes
-    cacheTime: 10 * 60 * 1000, // Cache for 10 minutes
+    enabled: !!user?.email,
   });
 
-  const handlePauseToggle = async (campaignId) => {
-    const campaign = campaigns.find((c) => c._id === campaignId); // Use _id instead of id
-    const action = campaign.isPaused ? "unpause" : "pause";
-
-    const result = await Swal.fire({
-      title: `${action.charAt(0).toUpperCase() + action.slice(1)} Campaign?`,
-      text: `Are you sure you want to ${action} this donation campaign?`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: `Yes, ${action} it!`,
-    });
-
-    if (result.isConfirmed) {
-      try {
-        // Make API call to update the campaign status
-        await axiosSecure.patch(
-          `/donation-campaigns/${campaignId}/toggle-pause`
-        );
-
-        // Refetch the data to get updated state
-        refetch();
-
-        toast.success(`Campaign ${action}d successfully!`);
-
-        Swal.fire(
-          `${action.charAt(0).toUpperCase() + action.slice(1)}d!`,
-          `Your campaign has been ${action}d.`,
-          "success"
-        );
-      } catch (error) {
-        toast.error(`Failed to ${action} campaign`);
-      }
+  const handlePauseToggle = async (campaign) => {
+    try {
+      await axiosSecure.patch(
+        `/donation-campaigns/${campaign._id}/toggle-pause`,
+      );
+      refetch();
+      toast.success(`Protocol ${campaign.isPaused ? "Resumed" : "Suspended"}`);
+      setConfirmToggleModal(null);
+    } catch (error) {
+      toast.error(`Operation failed`);
     }
   };
 
-  const handleViewDonators = (campaign) => {
-    setSelectedCampaign(campaign);
-    setShowDonatorsModal(true);
-  };
-
-  const closeModal = () => {
-    setShowDonatorsModal(false);
-    setSelectedCampaign(null);
-  };
-
-  const getProgressPercentage = (current, max) => {
-    return Math.min((current / max) * 100, 100);
-  };
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
-  };
-
-  // Handle error state
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="text-red-600">
-              <svg
-                className="mx-auto h-12 w-12 text-red-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
-                />
-              </svg>
-              <h3 className="mt-2 text-sm font-medium text-gray-900">
-                Error loading campaigns
-              </h3>
-              <p className="mt-1 text-sm text-gray-500">
-                {error.message || "Something went wrong"}
-              </p>
-              <button
-                onClick={() => refetch()}
-                className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-              >
-                Try Again
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Handle loading state
-  if (isLoading) {
-    return <Loading />;
-  }
+  if (isLoading) return <Loading />;
 
   return (
-    <div className="min-h-screen  py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold ">My Donation Campaigns</h1>
-          <p className="mt-2 text-sm ">Manage your pet donation campaigns</p>
+    <div className="max-w-7xl mx-auto py-20 px-6 space-y-20">
+      {/* Editorial Header */}
+      <header className="border-b border-border pb-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+            <span className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground">
+              Financial Oversight
+            </span>
+          </div>
+          <h1 className="text-6xl md:text-8xl font-serif italic tracking-tighter text-foreground leading-[0.8]">
+            Funding <span className="text-primary italic">Portfolios.</span>
+          </h1>
         </div>
+        <Link
+          to="/dashboard/create-donation-campaign"
+          className="group flex items-center gap-6 bg-foreground text-background px-12 py-6 rounded-full hover:bg-primary transition-all duration-700 shadow-xl shadow-foreground/5"
+        >
+          <span className="text-[11px] font-black uppercase tracking-[0.3em]">
+            Start New Fund
+          </span>
+          <FiPlus className="group-hover:rotate-90 transition-transform duration-500" />
+        </Link>
+      </header>
 
-        {campaigns.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-gray-500">
-              <svg
-                className="mx-auto h-12 w-12 text-gray-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+      {/* Campaign Grid */}
+      {campaigns.length === 0 ? (
+        <div className="py-48 text-center border border-dashed border-border rounded-[4rem] bg-surface-alt/30">
+          <p className="text-2xl font-serif italic text-muted-foreground">
+            No active funds found in the registry.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-10 gap-y-24">
+          <AnimatePresence mode="popLayout">
+            {campaigns.map((campaign) => (
+              <motion.div
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                key={campaign._id}
+                className="group flex flex-col space-y-8"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002 2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                />
-              </svg>
-              <h3 className="mt-2 text-sm font-medium">No campaigns</h3>
-              <p className="mt-1 text-sm text-gray-500">
-                You haven't created any donation campaigns yet.
-              </p>
-            </div>
-          </div>
-        ) : (
-          <div className=" shadow-sm rounded-lg overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-400">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
-                      Pet Name
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
-                      Maximum Donation Amount
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
-                      Donation Progress
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody
-                  className={`${
-                    theme == "dark" ? "card-dark" : "card-light"
-                  } divide-y divide-gray-200`}
-                >
-                  {Array.isArray(campaigns) &&
-                    campaigns.map((campaign) => {
-                      const progressPercentage = getProgressPercentage(
-                        campaign.donatedAmount, // Use donatedAmount from your MongoDB data
-                        campaign.maxDonation // Use maxDonation from your MongoDB data
-                      );
-                      return (
-                        <tr key={campaign._id} className="">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-medium ">
-                              {campaign.petName || "Pet Campaign"}{" "}
-                              {/* Fallback if petName doesn't exist */}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm ">
-                              {formatCurrency(campaign.maxDonation)}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="w-full">
-                              <div className="flex justify-between text-sm  mb-1">
-                                <span>
-                                  {formatCurrency(campaign.donatedAmount)}
-                                </span>
-                                <span>{progressPercentage.toFixed(1)}%</span>
-                              </div>
-                              <div className="w-full bg-gray-200 rounded-full h-2">
-                                <div
-                                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                                  style={{ width: `${progressPercentage}%` }}
-                                ></div>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span
-                              className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                campaign.isPaused
-                                  ? "bg-red-100 text-red-800"
-                                  : "bg-green-100 text-green-800"
-                              }`}
-                            >
-                              {campaign.isPaused ? "Paused" : "Active"}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <div className="flex space-x-2">
-                              <button
-                                onClick={() => handlePauseToggle(campaign._id)}
-                                className={`px-3 py-1 rounded text-white text-xs font-medium transition-colors ${
-                                  campaign.isPaused
-                                    ? "bg-green-600 hover:bg-green-700"
-                                    : "bg-yellow-600 hover:bg-yellow-700"
-                                }`}
-                              >
-                                {campaign.isPaused ? "Unpause" : "Pause"}
-                              </button>
-                              <Link
-                                to={`/dashboard/edit-donation/${campaign._id}`}
-                                className="px-3 py-1 bg-blue-600 text-white rounded text-xs font-medium hover:bg-blue-700 transition-colors"
-                              >
-                                Edit
-                              </Link>
-                              <button
-                                onClick={() => handleViewDonators(campaign)}
-                                className="px-3 py-1 bg-gray-600 text-white rounded text-xs font-medium hover:bg-gray-700 transition-colors"
-                              >
-                                View Donators
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
+                {/* Visual Identity Frame */}
+                <div className="relative aspect-[4/5] rounded-[4rem] overflow-hidden bg-surface-alt group-hover:shadow-2xl transition-all duration-1000">
+                  <img
+                    src={campaign.image}
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-[1.5s]"
+                    alt=""
+                  />
 
-        {/* Donators Modal */}
-        {showDonatorsModal && selectedCampaign && (
-          <div className="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-2xl w-full max-h-96 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-medium text-gray-900">
-                    Donators for {selectedCampaign.petName || "Campaign"}
-                  </h3>
-                  <button
-                    onClick={closeModal}
-                    className="text-gray-400 hover:text-gray-600 transition-colors"
-                  >
-                    <svg
-                      className="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
+                  <div className="absolute top-8 left-8 right-8 flex justify-between items-start">
+                    <span
+                      className={`px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-widest backdrop-blur-xl border border-white/20 shadow-lg ${campaign.isPaused ? "bg-red-500/80 text-white" : "bg-white/90 text-stone-900"}`}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </div>
+                      {campaign.isPaused ? "Paused" : "Active Flow"}
+                    </span>
+                    <div className="bg-black/70 backdrop-blur-md px-5 py-3 rounded-[1.5rem] text-right border border-white/10">
+                      <p className="text-[7px] font-black uppercase text-stone-400 tracking-tighter">
+                        Progress
+                      </p>
+                      <p className="text-white text-sm font-serif italic">
+                        {Math.round(
+                          (campaign.donatedAmount / campaign.maxDonation) * 100,
+                        )}
+                        %
+                      </p>
+                    </div>
+                  </div>
 
-              <div className="px-6 py-4 max-h-80 overflow-y-auto">
-                {!selectedCampaign.donators ||
-                selectedCampaign.donators.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <p>No donations received yet.</p>
+                  <div
+                    onClick={() => {
+                      setSelectedCampaign(campaign);
+                      setShowDonatorsModal(true);
+                    }}
+                    className="absolute inset-0 bg-stone-900/40 opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col items-center justify-center backdrop-blur-sm cursor-pointer"
+                  >
+                    <div className="w-20 h-20 bg-background rounded-full flex items-center justify-center text-foreground mb-4 shadow-2xl">
+                      <FiArrowUpRight size={28} />
+                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white">
+                      Review Philanthropy
+                    </span>
                   </div>
-                ) : (
-                  <div className="space-y-4">
-                    {selectedCampaign.donators.map((donator) => (
-                      <div
-                        key={donator.id}
-                        className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
-                      >
-                        <div>
-                          <div className="font-medium text-gray-900">
-                            {donator.name}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            Donated on{" "}
-                            {new Date(donator.date).toLocaleDateString()}
-                          </div>
-                        </div>
-                        <div className="text-lg font-semibold text-green-600">
-                          {formatCurrency(donator.amount)}
-                        </div>
+                </div>
+
+                {/* Content & Metrics */}
+                <div className="space-y-6 px-4">
+                  <div>
+                    <h4 className="text-4xl font-serif italic text-foreground tracking-tighter">
+                      {campaign.petName}
+                    </h4>
+                    <div className="flex justify-between items-end mt-6 border-b border-border pb-6">
+                      <div>
+                        <p className="text-[9px] font-black uppercase text-muted-foreground tracking-widest mb-1">
+                          Target Goal
+                        </p>
+                        <p className="text-lg font-serif italic text-foreground">
+                          BDT {campaign.maxDonation.toLocaleString()}
+                        </p>
                       </div>
-                    ))}
+                      <div className="text-right">
+                        <p className="text-[9px] font-black uppercase text-primary tracking-widest mb-1">
+                          Funds Raised
+                        </p>
+                        <p className="text-lg font-serif italic text-primary">
+                          {campaign.donatedAmount.toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
                   </div>
+
+                  {/* Boutique Actions */}
+                  <div className="flex items-center gap-10">
+                    <button
+                      onClick={() =>
+                        setConfirmToggleModal({
+                          campaign,
+                          action: campaign.isPaused ? "resume" : "pause",
+                        })
+                      }
+                      className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all cursor-pointer border-b border-transparent ${campaign.isPaused ? "text-emerald-500 hover:border-emerald-500" : "text-amber-500 hover:border-amber-500"}`}
+                    >
+                      {campaign.isPaused ? "Resume Fund" : "Pause Flow"}
+                    </button>
+                    <Link
+                      to={`/dashboard/edit-donation/${campaign._id}`}
+                      className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      Modify
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setSelectedCampaign(campaign);
+                        setShowDonatorsModal(true);
+                      }}
+                      className="text-[10px] font-black uppercase tracking-[0.2em] text-primary hover:tracking-[0.3em] transition-all ml-auto cursor-pointer"
+                    >
+                      Benefactors
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+      )}
+
+      {/* Modal 1: PAUSE/RESUME CONFIRMATION (Boutique Style) */}
+      <AnimatePresence>
+        {confirmToggleModal && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setConfirmToggleModal(null)}
+              className="absolute inset-0 bg-stone-950/60 backdrop-blur-md cursor-pointer"
+            />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative bg-background max-w-md w-full rounded-[3.5rem] p-12 text-center shadow-2xl border border-border"
+            >
+              <div
+                className={`w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-8 ${confirmToggleModal.action === "pause" ? "bg-amber-50 text-amber-500" : "bg-emerald-50 text-emerald-500"}`}
+              >
+                {confirmToggleModal.action === "pause" ? (
+                  <FiAlertTriangle size={36} />
+                ) : (
+                  <FiCheckCircle size={36} />
                 )}
               </div>
-
-              <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Total Raised:</span>
-                  <span className="text-lg font-semibold text-green-600">
-                    {formatCurrency(selectedCampaign.donatedAmount)}
-                  </span>
-                </div>
+              <h2 className="text-3xl font-serif italic tracking-tighter mb-4 text-foreground capitalize">
+                {confirmToggleModal.action} Fund Flow?
+              </h2>
+              <p className="text-muted-foreground text-sm leading-relaxed mb-10 italic">
+                You are about to {confirmToggleModal.action} the donation
+                campaign for{" "}
+                <strong>{confirmToggleModal.campaign.petName}</strong>.
+                {confirmToggleModal.action === "pause"
+                  ? " This will temporarily suspend incoming contributions."
+                  : " This will allow contributors to send funds again."}
+              </p>
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={() => handlePauseToggle(confirmToggleModal.campaign)}
+                  className={`w-full py-5 rounded-full text-[10px] font-black uppercase tracking-[0.3em] transition-all cursor-pointer shadow-lg ${confirmToggleModal.action === "pause" ? "bg-amber-500 text-white shadow-amber-500/20" : "bg-emerald-600 text-white shadow-emerald-600/20"}`}
+                >
+                  Yes, Authorize
+                </button>
+                <button
+                  onClick={() => setConfirmToggleModal(null)}
+                  className="py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                >
+                  Cancel Request
+                </button>
               </div>
-            </div>
+            </motion.div>
           </div>
         )}
-      </div>
-      <Toaster position="top-right" reverseOrder={false} />
+      </AnimatePresence>
+
+      {/* Modal 2: BENEFACTOR LOG (Editorial Style) */}
+      <AnimatePresence>
+        {showDonatorsModal && selectedCampaign && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowDonatorsModal(false)}
+              className="absolute inset-0 bg-stone-950/60 backdrop-blur-md"
+            />
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative w-full max-w-xl bg-background rounded-[4rem] overflow-hidden shadow-2xl border border-border"
+            >
+              <div className="p-12 space-y-12">
+                <header className="flex justify-between items-start border-b border-border pb-10">
+                  <div>
+                    <span className="text-[10px] font-black uppercase tracking-[0.5em] text-primary">
+                      Philanthropy Log
+                    </span>
+                    <h3 className="text-4xl font-serif italic text-foreground tracking-tighter mt-4">
+                      Benefactors.
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => setShowDonatorsModal(false)}
+                    className="p-4 hover:bg-surface-alt rounded-full transition-colors cursor-pointer text-muted-foreground"
+                  >
+                    <FiX size={28} />
+                  </button>
+                </header>
+
+                <div className="space-y-4 max-h-[350px] overflow-y-auto pr-4 boutique-scroll">
+                  {!selectedCampaign.donators ||
+                  selectedCampaign.donators.length === 0 ? (
+                    <div className="py-20 text-center">
+                      <p className="text-serif italic text-muted-foreground text-xl leading-relaxed">
+                        The contribution ledger is <br /> currently blank.
+                      </p>
+                    </div>
+                  ) : (
+                    selectedCampaign.donators.map((donator, idx) => (
+                      <div
+                        key={idx}
+                        className="flex justify-between items-center p-8 bg-surface-alt/50 rounded-[2.5rem] border border-border/50"
+                      >
+                        <div>
+                          <p className="text-[8px] font-black uppercase text-stone-400 tracking-[0.2em] mb-1">
+                            Contributor
+                          </p>
+                          <p className="text-xl font-serif italic text-foreground">
+                            {donator.name}
+                          </p>
+                          <p className="text-[9px] text-muted-foreground mt-1 font-mono">
+                            {new Date(donator.date).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-[9px] font-black uppercase text-primary tracking-widest mb-1">
+                            Gift Amount
+                          </p>
+                          <p className="text-2xl font-serif italic text-primary">
+                            BDT {donator.amount.toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                <footer className="pt-10 border-t border-border flex justify-between items-end">
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">
+                    Cumulative Funding
+                  </p>
+                  <p className="text-5xl font-serif italic text-primary tracking-tighter">
+                    BDT {selectedCampaign.donatedAmount.toLocaleString()}
+                  </p>
+                </footer>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <Toaster position="bottom-center" />
     </div>
   );
 };
